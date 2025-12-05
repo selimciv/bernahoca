@@ -8,7 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VocabChall">
     <title>English Vocabulary Challenge</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R0BLZTK4J"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -17,27 +18,42 @@
 
         gtag('config', 'G-4R0BLZTK4J');
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div id="landing-page" class="landing-page">
         <div class="landing-content">
             <h2 class="game-title">English Vocabulary Challenge</h2>
+
+
+
             <div class="mode-buttons">
                 <button class="mode-btn" onclick="setGameMode('standard')">Level Game (A1-C2)</button>
                 <button class="mode-btn" onclick="setGameMode('grade9')">9th Grade Unit Vocabulary</button>
             </div>
             <div class="landing-footer">
                 <div class="teacher-name">Berna Fergana Civelek</div>
-                <div class="app-info">V05.12.2025.15 &copy; 2024</div>
+                <div class="app-info">V05.12.2025.16 &copy; 2024</div>
+
+                <details id="online-users-container" style="margin-top: 10px; cursor: pointer;">
+                    <summary style="font-weight: bold; color: #4ade80; list-style: none;">
+                        <span class="online-dot">●</span> <span id="online-number">...</span> Online (Listeyi Gör)
+                    </summary>
+                    <div id="online-user-list" class="online-user-list">
+                        <!-- List loaded here -->
+                    </div>
+                </details>
+
                 <button class="contact-btn" onclick="toggleContact()">İletişime Geç</button>
                 <div id="contact-info" class="telegram-id">Telegram: @selimciv</div>
             </div>
-            <div id="visitor-map-container"
-                style="margin-top: 20px; z-index: 1000; position: relative; min-height: 100px; display: flex; justify-content: center;">
-                <script type="text/javascript" id="mapmyvisitors"
-                    src="https://mapmyvisitors.com/map.js?d=vXwyZRd8BH6IGuIvXQNdYeKBxbhmU0Up3M0O4r3FNC4&cl=ffffff&w=a"></script>
-            </div>
+
         </div>
     </div>
 

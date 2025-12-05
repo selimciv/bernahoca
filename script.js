@@ -1,3 +1,126 @@
+// Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBVgv_rsdH28fL75PtcimN9t9cVA_1LKJc",
+    authDomain: "berna-18cec.firebaseapp.com",
+    projectId: "berna-18cec",
+    storageBucket: "berna-18cec.firebasestorage.app",
+    messagingSenderId: "108075319198",
+    appId: "1:108075319198:web:9ebf6d1cb10c4e8686e08f",
+    measurementId: "G-61ELZGJV24"
+};
+
+// Initialize Firebase
+try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database(); // Auto-detects URL from config or use default
+    // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
+    // Standard URL: https://<project-id>-default-rtdb.firebaseio.com
+    // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
+
+    // Presence Logic
+    const connectedRef = db.ref(".info/connected");
+    const connectionsRef = db.ref("connections");
+
+    // Shakespeare Character Names
+    const shakespeareNames = [
+        "Hamlet", "Macbeth", "Othello", "Romeo", "Juliet", "King Lear", "Viola",
+        "Ophelia", "Desdemona", "Iago", "Prospero", "Ariel", "Caliban", "Miranda",
+        "Mercutio", "Tybalt", "Lysander", "Hermia", "Puck", "Titania", "Oberon",
+        "Falstaff", "Shylock", "Portia", "Cleopatra", "Antony", "Brutus", "Cassius",
+        "Cordelia", "Goneril", "Regan", "Banquo", "Duncan", "Malcolm", "Horatio"
+    ];
+
+    function getRandomName() {
+        return shakespeareNames[Math.floor(Math.random() * shakespeareNames.length)];
+    }
+
+    // Track local connection ref to update it on name change
+    let myConRef = null;
+    let myName = localStorage.getItem("playerName");
+
+    if (!myName) {
+        myName = getRandomName();
+        localStorage.setItem("playerName", myName);
+    }
+
+    connectedRef.on("value", (snap) => {
+        if (snap.val() === true) {
+            // We're connected (or reconnected)!
+
+            // Generate a random ID if not exists or use simple push
+            myConRef = connectionsRef.push();
+
+            // When I disconnect, remove this device
+            myConRef.onDisconnect().remove();
+
+            // Set initial state
+            updateMyPresence();
+        }
+    });
+
+    // Function to update my presence data
+    window.updateMyPresence = function () {
+        if (!myConRef) return;
+
+        myConRef.set({
+            name: myName,
+            id: myConRef.key, // Save key to identify myself in list
+            onlineAt: firebase.database.ServerValue.TIMESTAMP
+        });
+    }
+
+    // Count Online Users & Render List
+    connectionsRef.on("value", (snap) => {
+        const users = snap.val() || {};
+        const count = Object.keys(users).length;
+
+        // Update Count UI
+        const countEl = document.getElementById("online-number");
+        if (countEl) {
+            countEl.innerText = count;
+        }
+
+        // Update List UI
+        const listEl = document.getElementById("online-user-list");
+        if (listEl) {
+            listEl.innerHTML = '';
+
+            // Convert to array
+            let userList = Object.values(users);
+
+            // Sort: My self first, then others alphabetically
+            userList.sort((a, b) => {
+                const isMeA = (a.id === myConRef?.key);
+                const isMeB = (b.id === myConRef?.key);
+
+                if (isMeA && !isMeB) return -1;
+                if (!isMeA && isMeB) return 1;
+                return (a.name || "").localeCompare(b.name || "");
+            });
+
+            userList.forEach(user => {
+                const div = document.createElement("div");
+                div.className = "online-user-item";
+
+                let displayName = user.name || "Unknown";
+
+                // Highlight myself
+                if (myConRef && user.id === myConRef.key) {
+                    div.style.fontWeight = "bold";
+                    div.style.color = "#4ade80"; // Greenish
+                    displayName += " (Sen)";
+                }
+
+                // Protect against XSS by using textContent
+                div.textContent = displayName;
+                listEl.appendChild(div);
+            });
+        }
+    });
+} catch (e) {
+    console.warn("Firebase not initialized correctly. Please check API keys.", e);
+}
+
 // Global state
 let currentGameMode = 'standard'; // 'standard' or 'grade9'
 let score = 0;
