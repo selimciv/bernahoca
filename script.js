@@ -1,3 +1,7 @@
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    alert("System Error: " + msg + " Line: " + lineNo);
+    return false;
+};
 var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
     authDomain: "bernavocab.firebaseapp.com",
