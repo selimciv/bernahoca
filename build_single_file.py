@@ -104,7 +104,11 @@ def build():
             print(f"Inlining {script_name}...")
             # Wrap in script tag
             js_block = f'<script>\n{js_content}\n</script>'
-            html_content = pattern.sub(js_block, html_content)
+            
+            # Use string replacement instead of re.sub to avoid escaping issues
+            match = pattern.search(html_content)
+            if match:
+                html_content = html_content[:match.start()] + js_block + html_content[match.end():]
         else:
             print(f"Error: {script_name} not found")
 

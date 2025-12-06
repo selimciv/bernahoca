@@ -1,4 +1,4 @@
-const gameData = {
+var gameData = {
     title: "English Vocabulary Challenge",
     preparedBy: "Demet Hoca",
     answerTime: 25,

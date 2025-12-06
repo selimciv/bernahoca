@@ -1,25 +1,46 @@
-// Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyBVgv_rsdH28fL75PtcimN9t9cVA_1LKJc",
-    authDomain: "berna-18cec.firebaseapp.com",
-    projectId: "berna-18cec",
-    storageBucket: "berna-18cec.firebasestorage.app",
-    messagingSenderId: "108075319198",
-    appId: "1:108075319198:web:9ebf6d1cb10c4e8686e08f",
-    measurementId: "G-61ELZGJV24"
+var firebaseConfig = {
+    apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
+    authDomain: "bernavocab.firebaseapp.com",
+    databaseURL: "https://bernavocab-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "bernavocab",
+    storageBucket: "bernavocab.firebasestorage.app",
+    messagingSenderId: "234781292902",
+    appId: "1:234781292902:web:617492bb14db69363cf0a7",
+    measurementId: "G-048H1LQCC0"
 };
+
+// Global Error Handler for Debugging
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+    alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo);
+    return false;
+};
+
+// Check if Firebase is loaded
+if (typeof firebase === 'undefined') {
+    alert("KRİTİK HATA: Firebase kütüphanesi yüklenemedi.\n\nİnternet bağlantınızı kontrol edin veya reklam engelleyici (AdBlock) varsa kapatın.");
+}
+
+let isFirebaseConnected = false;
 
 // Initialize Firebase
 try {
-    // Explicitly defines the databaseURL to avoid region detection issues
-    const configWithUrl = {
-        ...firebaseConfig,
-        databaseURL: "https://berna-18cec-default-rtdb.firebaseio.com"
-    };
-    firebase.initializeApp(configWithUrl);
+    // Initialize Firebase directly with the config object
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     console.log("Firebase initialized. Connecting...");
+
+    // Diagnostic Timeout - Check the flag, not the UI
+    setTimeout(() => {
+        if (!isFirebaseConnected) {
+            const headerEl = document.querySelector(".floating-header");
+            if (headerEl) {
+                headerEl.innerText = "BAĞLANTI YOK";
+                headerEl.style.color = "red";
+            }
+            alert("BAĞLANTI BAŞARISIZ:\n5 saniyedir sunucu ile iletişim kurulamadı.\n\n1. İnternetinizi kontrol edin.\n2. Sayfayı yenileyin.");
+        }
+    }, 5000);
 
     // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
     // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
@@ -51,8 +72,16 @@ try {
     }
 
     connectedRef.on("value", (snap) => {
+        const headerEl = document.querySelector(".floating-header");
+
         if (snap.val() === true) {
             console.log("Connected to Firebase!");
+            isFirebaseConnected = true; // Mark as connected
+
+            // Update UI status
+            if (headerEl) {
+                headerEl.style.color = "#4ade80";
+            }
             // We're connected (or reconnected)!
 
             // Generate a random ID if not exists or use simple push
@@ -65,6 +94,11 @@ try {
             updateMyPresence();
         } else {
             console.warn("Disconnected from Firebase.");
+            // Update UI status to show offline/connecting
+            if (headerEl) {
+                headerEl.innerText = "Connecting...";
+                headerEl.parentElement.style.color = "#ef4444"; // Red
+            }
         }
     });
 
@@ -85,9 +119,11 @@ try {
         const count = Object.keys(users).length;
 
         // Update Count Header in Floating Bubble
-        const countEl = document.getElementById("floating-count");
-        if (countEl) {
-            countEl.innerText = count;
+        const headerEl = document.querySelector(".floating-header");
+        if (headerEl) {
+            // Restore proper HTML structure with count
+            headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
+            headerEl.style.color = "#4ade80";
         }
 
         // Update List UI in Floating Bubble
@@ -124,6 +160,13 @@ try {
                 div.textContent = displayName;
                 listEl.appendChild(div);
             });
+        }
+    }, (error) => {
+        console.error("Connections Read Error:", error);
+        if (error.code === "PERMISSION_DENIED") {
+            const headerEl = document.querySelector(".floating-header");
+            if (headerEl) headerEl.innerText = "YETKİ HATASI (RULES)";
+            if (headerEl) headerEl.style.color = "red";
         }
     });
 } catch (e) {
@@ -211,7 +254,11 @@ function setGameMode(mode) {
         // changeLevel handles active class, but let's be safe
     }
     // History API for TV Back Button
-    history.pushState({ mode: mode }, "", `?mode=${mode}`);
+    try {
+        history.pushState({ mode: mode }, "", `?mode=${mode}`);
+    } catch (e) {
+        console.warn("History API not supported (likely running locally via file://)", e);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1040,3 +1087,4 @@ function toggleContact() {
     const info = document.getElementById('contact-info');
     info.classList.toggle('visible');
 }
+
