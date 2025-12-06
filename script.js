@@ -64,11 +64,16 @@ try {
 
     // Track local connection ref to update it on name change
     let myConRef = null;
-    let myName = localStorage.getItem("playerName");
-
-    if (!myName) {
-        myName = getRandomName();
-        localStorage.setItem("playerName", myName);
+    let myName;
+    try {
+        myName = localStorage.getItem("playerName");
+        if (!myName) {
+            myName = getRandomName();
+            localStorage.setItem("playerName", myName);
+        }
+    } catch (e) {
+        console.warn("LocalStorage error (Private Mode?):", e);
+        myName = getRandomName(); // Fallback
     }
 
     connectedRef.on("value", (snap) => {
