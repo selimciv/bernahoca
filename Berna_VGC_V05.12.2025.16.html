@@ -2520,8 +2520,8 @@ try {
 
             // Sort: My self first, then others alphabetically
             userList.sort((a, b) => {
-                const isMeA = (a.id === myConRef?.key);
-                const isMeB = (b.id === myConRef?.key);
+                const isMeA = (myConRef && a.id === myConRef.key);
+                const isMeB = (myConRef && b.id === myConRef.key);
 
                 if (isMeA && !isMeB) return -1;
                 if (!isMeA && isMeB) return 1;
