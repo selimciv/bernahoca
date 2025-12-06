@@ -126,7 +126,8 @@ try {
             listEl.innerHTML = '';
 
             // Convert to array
-            let userList = Object.values(users);
+            // Compatibility: Use Object.keys instead of Object.values for older Safari
+            let userList = Object.keys(users).map(function (key) { return users[key]; });
 
             // Sort: My self first, then others alphabetically
             userList.sort((a, b) => {
@@ -410,7 +411,8 @@ function initGame() {
 
 function updateTotalWordCount() {
     let total = 0;
-    Object.values(gameData.levelData).forEach(level => {
+    Object.keys(gameData.levelData).forEach(function (key) {
+        var level = gameData.levelData[key];
         level.forEach(cat => {
             total += cat.pool.length;
         });
