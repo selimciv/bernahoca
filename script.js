@@ -56,6 +56,23 @@ try {
     // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
     // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
 
+    // DIAGNOSTIC: Check raw HTTP access to Firebase
+    // This bypasses the SDK and checks if the phone allows the connection at all.
+    var checkUrl = "https://bernavocab-default-rtdb.europe-west1.firebasedatabase.app/.json?shallow=true";
+    logToScreen("Testing raw fetch to: " + checkUrl);
+
+    fetch(checkUrl).then(function (res) {
+        logToScreen("Fetch Result: " + res.status + " " + res.statusText);
+        if (res.ok) {
+            logToScreen("HTTP Access OK! Issue is SDK.");
+        } else {
+            logToScreen("HTTP Access Blocked: " + res.status);
+        }
+    }).catch(function (err) {
+        logToScreen("FETCH FAILED: " + err.message);
+        logToScreen("Likely SSL or Network Block.");
+    });
+
     // Presence Logic
     const connectedRef = db.ref(".info/connected");
     const connectionsRef = db.ref("connections");
