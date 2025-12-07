@@ -1312,7 +1312,7 @@ function saveHomeworkToFirebase() {
 
     // Save to Firebase
     // Path: /homeworks/{className}/{homeworkId}
-    var hwRef = db.ref('homeworks/' + currentHwClass);
+    var hwRef = firebase.database().ref('homeworks/' + currentHwClass);
     var newRef = hwRef.push();
     newRef.set(newHomework, function (error) {
         if (error) {
@@ -1329,7 +1329,7 @@ function loadPreviousHomeworks(className) {
     var container = document.getElementById('previous-homeworks');
     container.innerHTML = "Yükleniyor...";
 
-    var hwRef = db.ref('homeworks/' + className).orderByChild('date'); // Sort by date? or just getting all
+    var hwRef = firebase.database().ref('homeworks/' + className).orderByChild('date'); // Sort by date? or just getting all
     // Better to get last 10
     hwRef.limitToLast(10).once('value').then(function (snapshot) {
         container.innerHTML = "";
@@ -1402,7 +1402,7 @@ function loadReportData(filterClass) {
     body.innerHTML = "<tr><td colspan='6' style='text-align:center'>Veriler yükleniyor...</td></tr>";
 
     // We need to fetch ALL homeworks to aggregate stats
-    db.ref('homeworks').once('value').then(function (snapshot) {
+    firebase.database().ref('homeworks').once('value').then(function (snapshot) {
         var allData = snapshot.val();
         if (!allData) {
             body.innerHTML = "<tr><td colspan='6' style='text-align:center'>Hiç veri yok.</td></tr>";
