@@ -148,20 +148,31 @@ try {
                 // Compatibility: Use Object.keys instead of Object.values for older Safari
                 let userList = Object.keys(users).map(function (key) { return users[key]; });
 
-                // Sort: My self first, then others alphabetically
-                userList.sort((a, b) => {
-                    const isMeA = (myConRef && a.id === myConRef.key);
-                    const isMeB = (myConRef && b.id === myConRef.key);
+                // Sort: newer first (to handle duplicates easily)
+                userList.sort((a, b) => b.onlineAt - a.onlineAt);
 
+                const processedNames = new Set();
+                const finalDisplayList = [];
+
+                userList.forEach(user => {
+                    // If I have seen this name before, skip it (it's an older session of the same user)
+                    // This works because we sorted by time descending.
+                    if (user.name && processedNames.has(user.name)) return;
+
+                    if (user.name) processedNames.add(user.name);
+                    finalDisplayList.push(user);
+                });
+
+                // Re-sort alphabetically for display, but keep Me at top
+                finalDisplayList.sort((a, b) => {
+                    const isMeA = (a.name === myName);
+                    const isMeB = (b.name === myName);
                     if (isMeA && !isMeB) return -1;
                     if (!isMeA && isMeB) return 1;
                     return (a.name || "").localeCompare(b.name || "");
                 });
 
-                userList.forEach(user => {
-                    // Filter out stale sessions of myself (same name, diff ID)
-                    if (myConRef && user.name === myName && user.id !== myConRef.key) return;
-
+                finalDisplayList.forEach(user => {
                     const div = document.createElement("div");
                     div.className = "online-user-item";
 
@@ -169,7 +180,7 @@ try {
                     if (user.city) displayName += " (" + user.city + ")";
 
                     // Highlight myself
-                    if (myConRef && user.id === myConRef.key) {
+                    if (user.name === myName) {
                         div.style.fontWeight = "bold";
                         div.style.color = "#4ade80";
                         displayName += " (Sen)";
@@ -1417,15 +1428,34 @@ function loadPreviousHomeworks(className, highlightNewest) {
                 div.classList.add("flash-item");
             }
 
-            // Use data attributes to avoid quote escaping issues
+            // Use data attributes and event listeners
             div.innerHTML = `
                 <span>${item.val.date} - <b>${item.val.name}</b></span> 
                 <span>
-                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}" onclick="window.confirmEditHomework(this.getAttribute('data-id'))">Düzenle</button>
-                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}" onclick="window.confirmDeleteHomework(this.getAttribute('data-id'))">Sil</button>
+                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}">Düzenle</button>
+                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}">Sil</button>
                 </span>
             `;
             container.appendChild(div);
+        });
+
+        // Attach listeners safely
+        container.querySelectorAll('.edit-btn').forEach(function (btn) {
+            btn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var id = this.getAttribute('data-id');
+                window.confirmEditHomework(id);
+            };
+        });
+
+        container.querySelectorAll('.del-btn').forEach(function (btn) {
+            btn.onclick = function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var id = this.getAttribute('data-id');
+                window.confirmDeleteHomework(id);
+            };
         });
     });
 }
