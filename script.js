@@ -1126,3 +1126,374 @@ function toggleContact() {
     info.classList.toggle('visible');
 }
 
+
+// ============================================
+// HOMEWORK CONTROL SYSTEM
+// ============================================
+var currentHwClass = "";
+var currentHwStudents = [];
+var selectedHomeworkId = null;
+
+function openHomeworkControl() {
+    var password = prompt("Lütfen Öğretmen Şifresini Giriniz:");
+    if (password === "2702") {
+        document.getElementById('homework-modal').style.display = 'flex';
+        renderClassSelector();
+    } else {
+        alert("Hatalı Şifre!");
+    }
+}
+
+function closeHomeworkModal() {
+    document.getElementById('homework-modal').style.display = 'none';
+    resetHomeworkModal();
+}
+
+function resetHomeworkModal() {
+    document.getElementById('hw-step-1').style.display = 'block';
+    document.getElementById('hw-step-2').style.display = 'none';
+    currentHwClass = "";
+    document.getElementById('hw-name').value = "";
+    document.getElementById('hw-date').value = "";
+    document.getElementById('active-homework-container').style.display = 'none';
+}
+
+function renderClassSelector() {
+    var container = document.getElementById('class-selector');
+    container.innerHTML = "";
+
+    // Sort keys to keep order
+    var classes = Object.keys(studentData).sort();
+
+    classes.forEach(function (cls) {
+        var btn = document.createElement('button');
+        btn.className = "class-selector-btn";
+        btn.innerText = cls;
+        btn.onclick = function () { selectClassForHomework(cls); };
+        container.appendChild(btn);
+    });
+}
+
+function selectClassForHomework(className) {
+    currentHwClass = className;
+    document.getElementById('hw-step-1').style.display = 'none';
+    document.getElementById('hw-step-2').style.display = 'block';
+    document.getElementById('hw-class-title').innerText = className + " - Ödev Ekleme/Düzenleme";
+
+    // Load student data locally
+    currentHwStudents = JSON.parse(JSON.stringify(studentData[className] || []));
+
+    // Clear list
+    document.getElementById('student-list-container').innerHTML = "";
+
+    // Load existing homeworks
+    loadPreviousHomeworks(className);
+}
+
+function triggerAddHomework() {
+    var hwName = document.getElementById('hw-name').value;
+    var hwDate = document.getElementById('hw-date').value;
+
+    if (!hwName) {
+        alert("Lütfen ödev konusunu yazınız.");
+        return;
+    }
+
+    if (!hwDate) {
+        // Set today's date
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        hwDate = yyyy + '-' + mm + '-' + dd;
+        document.getElementById('hw-date').value = hwDate;
+    }
+
+    // Show student list to start marking
+    document.getElementById('active-homework-container').style.display = 'block';
+    document.getElementById('active-homework-title').innerText = hwName + " (" + hwDate + ")";
+
+    renderStudentListForMarking();
+}
+
+function renderStudentListForMarking() {
+    var container = document.getElementById('student-list-container');
+    container.innerHTML = "";
+
+    if (currentHwStudents.length === 0) {
+        container.innerHTML = "<div style='padding:20px; text-align:center;'>Bu sınıfta öğrenci kaydı yok. Lütfen settings.js dosyasını düzenleyin.</div>";
+        return;
+    }
+
+    currentHwStudents.forEach(function (student, index) {
+        var row = document.createElement('div');
+        row.className = "student-row row-pending";
+        row.id = "student-row-" + index;
+
+        // No
+        var noDiv = document.createElement('div');
+        noDiv.innerText = student.no;
+        row.appendChild(noDiv);
+
+        // Name
+        var nameDiv = document.createElement('div');
+        nameDiv.innerText = student.name;
+        row.appendChild(nameDiv);
+
+        // Status Buttons
+        var actionsDiv = document.createElement('div');
+        actionsDiv.className = "status-actions";
+
+        // Missing (Yapmadı)
+        var btnMissing = document.createElement('button');
+        btnMissing.className = "status-btn btn-missing";
+        btnMissing.innerText = "Yapmadı";
+        btnMissing.onclick = function () { setStudentStatus(index, 'missing'); };
+
+        // Done (Yaptı)
+        var btnDone = document.createElement('button');
+        btnDone.className = "status-btn btn-done";
+        btnDone.innerText = "Yaptı";
+        btnDone.onclick = function () { setStudentStatus(index, 'done'); };
+
+        // Unknown (Kontrol Edilemedi)
+        var btnPending = document.createElement('button');
+        btnPending.className = "status-btn btn-pending selected";
+        btnPending.innerText = "?";
+        btnPending.onclick = function () { setStudentStatus(index, 'pending'); };
+
+        actionsDiv.appendChild(btnMissing);
+        actionsDiv.appendChild(btnDone);
+        actionsDiv.appendChild(btnPending);
+
+        row.appendChild(actionsDiv);
+        container.appendChild(row);
+
+        // Initialize status in memory if not present
+        if (!student.status) student.status = 'pending';
+        // Apply visual state if editing
+        setStudentStatus(index, student.status);
+    });
+}
+
+function setStudentStatus(index, status) {
+    currentHwStudents[index].status = status;
+
+    var row = document.getElementById('student-row-' + index);
+    row.className = "student-row row-" + status;
+
+    // Update button states
+    var buttons = row.querySelectorAll('.status-btn');
+    buttons.forEach(function (btn) {
+        btn.classList.remove('selected');
+        if (btn.classList.contains('btn-' + status)) {
+            btn.classList.add('selected');
+        }
+    });
+}
+
+function saveHomeworkToFirebase() {
+    var hwName = document.getElementById('hw-name').value;
+    var hwDate = document.getElementById('hw-date').value;
+
+    if (!hwName || !currentHwClass) return;
+
+    var newHomework = {
+        name: hwName,
+        date: hwDate,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        results: {}
+    };
+
+    // Map student 'no' to status
+    currentHwStudents.forEach(function (s) {
+        newHomework.results[s.no] = s.status || 'pending';
+    });
+
+    // Save to Firebase
+    // Path: /homeworks/{className}/{homeworkId}
+    var hwRef = db.ref('homeworks/' + currentHwClass);
+    var newRef = hwRef.push();
+    newRef.set(newHomework, function (error) {
+        if (error) {
+            alert("Kaydetme başarısız: " + error);
+        } else {
+            alert("Ödev ve kontrol başarıyla kaydedildi!");
+            resetHomeworkModal();
+            closeHomeworkModal();
+        }
+    });
+}
+
+function loadPreviousHomeworks(className) {
+    var container = document.getElementById('previous-homeworks');
+    container.innerHTML = "Yükleniyor...";
+
+    var hwRef = db.ref('homeworks/' + className).orderByChild('date'); // Sort by date? or just getting all
+    // Better to get last 10
+    hwRef.limitToLast(10).once('value').then(function (snapshot) {
+        container.innerHTML = "";
+        var data = snapshot.val();
+        if (!data) {
+            container.innerHTML = "Henüz kayıtlı ödev yok.";
+            return;
+        }
+
+        // Convert to array and reverse to show newest first
+        var list = [];
+        snapshot.forEach(function (child) {
+            list.push({ key: child.key, val: child.val() });
+        });
+        list.reverse();
+
+        list.forEach(function (item) {
+            var div = document.createElement('div');
+            div.className = "prev-hw-item";
+            div.innerHTML = `<span>${item.val.date} - <b>${item.val.name}</b></span> <span>Kayıtlı</span>`;
+            // Optional: Add click to view/edit details
+            container.appendChild(div);
+        });
+    });
+}
+
+// ===================
+// REPORT SYSTEM
+// ===================
+function openHomeworkReport() {
+    document.getElementById('report-modal').style.display = 'flex';
+    generateReportControls();
+    loadReportData('all');
+}
+
+function closeReportModal() {
+    document.getElementById('report-modal').style.display = 'none';
+}
+
+function generateReportControls() {
+    var container = document.getElementById('report-class-filters');
+    container.innerHTML = "";
+
+    var classes = Object.keys(studentData).sort();
+    classes.forEach(function (cls) {
+        var btn = document.createElement('button');
+        btn.className = "filter-btn";
+        btn.innerText = cls;
+        btn.style.marginLeft = "5px";
+        btn.style.padding = "5px 10px";
+        btn.style.background = "rgba(255,255,255,0.1)";
+        btn.style.border = "none";
+        btn.style.borderRadius = "4px";
+        btn.style.color = "white";
+        btn.style.cursor = "pointer";
+
+        btn.onclick = function () {
+            // Reset active states
+            document.querySelectorAll('.filter-btn').forEach(b => b.style.background = "rgba(255,255,255,0.1)");
+            btn.style.background = "var(--accent-color)";
+            loadReportData(cls);
+        };
+
+        container.appendChild(btn);
+    });
+}
+
+function loadReportData(filterClass) {
+    var body = document.getElementById('report-body');
+    body.innerHTML = "<tr><td colspan='6' style='text-align:center'>Veriler yükleniyor...</td></tr>";
+
+    // We need to fetch ALL homeworks to aggregate stats
+    db.ref('homeworks').once('value').then(function (snapshot) {
+        var allData = snapshot.val();
+        if (!allData) {
+            body.innerHTML = "<tr><td colspan='6' style='text-align:center'>Hiç veri yok.</td></tr>";
+            return;
+        }
+
+        var stats = {}; // Key: "CLASS-NO" -> { name, class, done, missing, pending }
+
+        // Initialize stats with student list
+        Object.keys(studentData).forEach(function (cls) {
+            if (filterClass !== 'all' && cls !== filterClass) return;
+
+            studentData[cls].forEach(function (s) {
+                var key = cls + "-" + s.no;
+                stats[key] = {
+                    class: cls,
+                    no: s.no,
+                    name: s.name,
+                    done: 0,
+                    missing: 0,
+                    pending: 0
+                };
+            });
+        });
+
+        // Iterate through homeworks
+        Object.keys(allData).forEach(function (clsKey) {
+            if (filterClass !== 'all' && clsKey !== filterClass) return;
+
+            var classHws = allData[clsKey];
+            Object.values(classHws).forEach(function (hw) {
+                var results = hw.results || {};
+                Object.keys(results).forEach(function (studentNo) {
+                    var key = clsKey + "-" + studentNo;
+                    if (stats[key]) {
+                        var status = results[studentNo];
+                        if (status === 'done') stats[key].done++;
+                        else if (status === 'missing') stats[key].missing++;
+                        else stats[key].pending++;
+                    }
+                });
+            });
+        });
+
+        // Convert to array and sort by MISSING descending
+        var sortedStats = Object.values(stats).sort(function (a, b) {
+            return b.missing - a.missing; // Most missing first
+        });
+
+        renderReportTable(sortedStats);
+    });
+}
+
+function renderReportTable(data) {
+    var body = document.getElementById('report-body');
+    body.innerHTML = "";
+
+    if (data.length === 0) {
+        body.innerHTML = "<tr><td colspan='6' style='text-align:center'>Bu kriterde öğrenci bulunamadı.</td></tr>";
+        return;
+    }
+
+    data.forEach(function (item) {
+        var tr = document.createElement('tr');
+        // Highlight if missing count is high
+        if (item.missing > 3) tr.style.background = "rgba(255, 71, 87, 0.2)";
+
+        tr.innerHTML = `
+            <td>${item.class}</td>
+            <td>${item.no}</td>
+            <td>${item.name}</td>
+            <td style="color:#ff4757; font-weight:bold;">${item.missing}</td>
+            <td style="color:#2ecc71;">${item.done}</td>
+            <td style="color:#f1c40f;">${item.pending}</td>
+        `;
+        body.appendChild(tr);
+    });
+}
+
+// Add these to window scope if needed or ensure script loads
+window.openHomeworkControl = openHomeworkControl;
+window.closeHomeworkModal = closeHomeworkModal;
+window.triggerAddHomework = triggerAddHomework;
+window.saveHomeworkToFirebase = saveHomeworkToFirebase;
+window.openHomeworkReport = openHomeworkReport;
+window.closeReportModal = closeReportModal;
+window.filterReport = function (cls) {
+    // UI Update
+    document.querySelectorAll('.filter-btn').forEach(b => b.style.background = "rgba(255,255,255,0.1)");
+    // Find the 'All' button - usually first
+    if (cls === 'all') document.querySelector('.filter-btn').style.background = "var(--accent-color)";
+
+    loadReportData(cls);
+};

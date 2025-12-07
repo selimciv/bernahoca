@@ -985,3 +985,19 @@ var gameData = {
         ]
     }
 };
+
+// Student Data (Placeholders - Teacher needs to fill these)
+var studentData = {
+    "9-B": [
+        { no: 101, name: "Ahmet Yılmaz" },
+        { no: 102, name: "Ayşe Demir" },
+        { no: 103, name: "Mehmet Kaya" }
+    ],
+    "9-E": [
+        { no: 201, name: "Fatma Çelik" },
+        { no: 202, name: "Ali Vural" },
+        { no: 203, name: "Zeynep Şahin" }
+    ],
+    "10-A": [],
+    "10-B": []
+};
