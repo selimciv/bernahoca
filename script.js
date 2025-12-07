@@ -1147,7 +1147,12 @@ function openHomeworkControl() {
 function openPasswordModal() {
     document.getElementById('teacher-password').value = "";
     document.getElementById('password-modal').style.display = 'flex';
-    document.getElementById('teacher-password').focus();
+    var input = document.getElementById('teacher-password');
+    input.focus();
+    // Remove old listeners to prevent duplicates if any (though unlikely with this structure, safe practice)
+    input.onkeydown = function (e) {
+        if (e.key === 'Enter') checkTeacherPassword();
+    };
 }
 
 function closePasswordModal() {
@@ -1158,9 +1163,11 @@ function closePasswordModal() {
 function checkTeacherPassword() {
     var password = document.getElementById('teacher-password').value;
     if (password === "2702") {
+        var action = pendingAction; // Capture locally before it's cleared
         closePasswordModal();
-        if (pendingAction) pendingAction();
+        if (action) action();
     } else {
+        // Flash error or alert
         alert("Hatalı Şifre!");
         document.getElementById('teacher-password').value = "";
     }
