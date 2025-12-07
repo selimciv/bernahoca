@@ -1387,11 +1387,12 @@ function loadPreviousHomeworks(className, highlightNewest) {
                 div.classList.add("flash-item");
             }
 
+            // Use data attributes to avoid quote escaping issues
             div.innerHTML = `
                 <span>${item.val.date} - <b>${item.val.name}</b></span> 
                 <span>
-                    <button class="hw-action-btn edit-btn" onclick="confirmEditHomework('${item.key}')">Düzenle</button>
-                    <button class="hw-action-btn del-btn" onclick="confirmDeleteHomework('${item.key}')">Sil</button>
+                    <button type="button" class="hw-action-btn edit-btn" data-id="${item.key}" onclick="confirmEditHomework(this.getAttribute('data-id'))">Düzenle</button>
+                    <button type="button" class="hw-action-btn del-btn" data-id="${item.key}" onclick="confirmDeleteHomework(this.getAttribute('data-id'))">Sil</button>
                 </span>
             `;
             container.appendChild(div);
@@ -1400,11 +1401,13 @@ function loadPreviousHomeworks(className, highlightNewest) {
 }
 
 function confirmEditHomework(hwId) {
+    // console.log("Edit requested for:", hwId);
     pendingAction = function () { loadHomeworkForEdit(hwId); };
     openPasswordModal();
 }
 
 function confirmDeleteHomework(hwId) {
+    // console.log("Delete requested for:", hwId);
     pendingAction = function () { deleteHomework(hwId); };
     openPasswordModal();
 }

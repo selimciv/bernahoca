@@ -1513,3 +1513,47 @@ header {
 .filter-btn.active {
     background: var(--accent-color);
 }
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .student-list-header,
+    .student-row {
+        grid-template-columns: 35px 1.2fr 2fr;
+        /* Tighter logic */
+        font-size: 0.85rem;
+        gap: 5px;
+    }
+
+    .status-btn {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+    }
+
+    .prev-hw-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .prev-hw-item span:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .hw-action-btn {
+        padding: 8px 12px;
+        /* Larger touch area */
+        font-size: 0.9rem;
+    }
+
+    .nav-btn {
+        padding: 8px 12px;
+    }
+}

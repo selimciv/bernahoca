@@ -132,6 +132,22 @@ def build():
         
     print(f"Build Complete! Output: {output_path}")
     print(f"Size: {os.path.getsize(output_path) / 1024 / 1024:.2f} MB")
+    
+    # 4. Cleanup Old Versions (Keep last 3)
+    import glob
+    files = glob.glob(os.path.join(root_dir, 'Berna_VGC_*.html'))
+    # Sort by name (which corresponds to date due to naming convention VDD.MM.YYYY.HH.MM)
+    # Reverse to have newest first.
+    files.sort(reverse=True)
+    
+    if len(files) > 3:
+        print("Cleaning up old versions...")
+        for old_file in files[3:]:
+            try:
+                os.remove(old_file)
+                print(f"Deleted: {os.path.basename(old_file)}")
+            except Exception as e:
+                print(f"Failed to delete {old_file}: {e}")
 
 if __name__ == '__main__':
     build()
