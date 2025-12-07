@@ -37,12 +37,12 @@
                 <button class="mode-btn" onclick="setGameMode('grade9')">9th Grade Unit Vocabulary</button>
                 <button class="mode-btn homework-btn" style="margin-top: 20px; border-color: #fca5a5;"
                     onclick="openHomeworkControl()">Ödev Kontrolü</button>
-                <button class="mode-btn report-btn" style="font-size: 0.9rem; padding: 10px;"
+                <button class="mode-btn homework-btn" style="font-size: 0.9rem; padding: 10px; margin-top: 10px;"
                     onclick="openHomeworkReport()">Ödev Kontrol Raporu</button>
             </div>
             <div class="landing-footer">
                 <div class="teacher-name">Berna Fergana Civelek</div>
-                <div class="app-info">V08.12.2025.00.15 &copy; 2024</div>
+                <div class="app-info">V08.12.2025.00.42 &copy; 2024</div>
 
                 <button class="contact-btn" onclick="toggleContact()">İletişime Geç</button>
                 <div id="contact-info" class="telegram-id">Telegram: @selimciv</div>
@@ -130,11 +130,31 @@
 
     </div>
 
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3 style="color: white; margin-bottom: 20px;">Öğretmen Girişi</h3>
+            <input type="password" id="teacher-password" class="hw-input" placeholder="Şifre"
+                style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+            <div style="margin-top: 20px;">
+                <button class="action-btn" onclick="checkTeacherPassword()">Giriş</button>
+                <button class="action-btn secondary" onclick="closePasswordModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Homework Control Modal -->
     <div id="homework-modal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
-            <button type="button" class="close-btn" onclick="closeHomeworkModal()">&times;</button>
-            <h2 style="color: #fff; margin-bottom: 20px;">Ödev Kontrolü</h2>
+            <div class="modal-header-actions"
+                style="position: absolute; right: 20px; top: 15px; display: flex; gap: 10px;">
+                <button type="button" id="hw-back-btn" class="nav-btn" onclick="goBackInHomework()"
+                    style="display:none;">⬅ Geri</button>
+                <button type="button" class="close-btn" onclick="closeHomeworkModal()"
+                    style="position: static;">&times;</button>
+            </div>
+
+            <h2 style="color: #fff; margin-bottom: 20px; margin-top: 20px;">Ödev Kontrolü</h2>
 
             <!-- Step 1: Class Selection -->
             <div id="hw-step-1" class="hw-step">
@@ -150,9 +170,8 @@
 
                 <div class="hw-form">
                     <input type="text" id="hw-name" placeholder="Ödevin Konusu (Örn: Unit 1 Words)" class="hw-input">
-                    <input type="date" id="hw-date" class="hw-input">
+                    <!-- Date input removed as per request (auto-filled) -->
                     <button class="action-btn" onclick="triggerAddHomework()">Ödev Ekle</button>
-                    <!-- Hidden trigger for logic separation -->
                 </div>
 
                 <div id="active-homework-container" style="display:none;">
@@ -166,7 +185,7 @@
                         <!-- Student rows -->
                     </div>
                     <button class="action-btn secondary" onclick="saveHomeworkToFirebase()"
-                        style="margin-top: 20px; width: 100%;">KAYDET VE BİTİR</button>
+                        style="margin-top: 20px; width: 100%;">KAYDET</button>
                 </div>
 
                 <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
@@ -184,7 +203,7 @@
             <h2 style="color: var(--accent-color); margin-bottom: 20px;">Ödev Kontrol Raporu</h2>
 
             <div class="report-controls" style="margin-bottom: 20px;">
-                <button class="filter-btn active" onclick="filterReport('all')">Tümü</button>
+                <button class="filter-btn active" id="filter-all-btn" onclick="filterReport('all')">Tümü</button>
                 <div id="report-class-filters" style="display:inline;"></div>
             </div>
 
@@ -198,6 +217,7 @@
                             <th>Yapmadı ❌</th>
                             <th>Yaptı ✅</th>
                             <th>K. Edilemedi ⚠️</th>
+                            <th>Toplam Ödev 📚</th>
                         </tr>
                     </thead>
                     <tbody id="report-body">
