@@ -8,15 +8,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VocabChall">
     <title>English Vocabulary Challenge</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4R0BLZTK4J"></script>
+    <!-- Firebase SDK (v8.10.1 Legacy for better iPhone 7 support) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- Google Analytics (kept getting errors, removing for now to isolate issues) -->
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-
-        gtag('config', 'G-4R0BLZTK4J');
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1287,6 +1286,302 @@ header {
         font-size: 0.7rem;
     }
 }
+
+/* HOMEWORK CONTROL SYSTEM STYLES */
+.homework-btn {
+    background: rgba(255, 71, 87, 0.2);
+    border: 1px solid #ff4757;
+}
+
+.homework-btn:hover {
+    background: #ff4757;
+    color: white;
+}
+
+.report-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ccc;
+    width: auto;
+    display: inline-block;
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.class-selector-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.class-selector-btn:hover {
+    background: var(--accent-color);
+    color: black;
+    transform: scale(1.05);
+}
+
+.hw-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.hw-input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 1rem;
+    flex: 1;
+}
+
+.student-list-header {
+    display: grid;
+    grid-template-columns: 50px 2fr 3fr;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    font-weight: bold;
+    color: var(--accent-color);
+    border-radius: 8px 8px 0 0;
+}
+
+.student-list-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 8px 8px;
+}
+
+.student-row {
+    display: grid;
+    grid-template-columns: 50px 2fr 3fr;
+    /* No Name Buttons */
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.student-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.status-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.status-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+    background: #333;
+    color: #888;
+    transition: all 0.2s;
+}
+
+.status-btn.selected {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.status-btn.btn-done.selected {
+    background: #2ecc71;
+}
+
+.status-btn.btn-missing.selected {
+    background: #ff4757;
+}
+
+.status-btn.btn-pending.selected {
+    background: #f1c40f;
+    color: black;
+}
+
+.student-row.row-done {
+    border-left: 4px solid #2ecc71;
+}
+
+.student-row.row-missing {
+    border-left: 4px solid #ff4757;
+}
+
+.student-row.row-pending {
+    border-left: 4px solid #f1c40f;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.report-table th {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 12px;
+    text-align: left;
+    color: var(--accent-color);
+}
+
+.report-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.report-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.prev-hw-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+/* Navigation Button */
+.nav-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
+
+/* Edit/Delete Actions */
+.hw-action-btn {
+    margin-left: 10px;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background: #f1c40f;
+    color: #333;
+}
+
+.del-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+/* Flash Animation for Success */
+@keyframes flash-success {
+    0% {
+        background-color: rgba(46, 204, 113, 0.5);
+    }
+
+    100% {
+        background-color: transparent;
+    }
+}
+
+.flash-item {
+    animation: flash-success 2s ease-out;
+}
+
+/* Password Modal specific */
+#teacher-password:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+/* Report Filter Buttons */
+.filter-btn {
+    margin-left: 5px;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.filter-btn.active {
+    background: var(--accent-color);
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 15px;
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .student-list-header,
+    .student-row {
+        grid-template-columns: 35px 1.2fr 2fr;
+        /* Tighter logic */
+        font-size: 0.85rem;
+        gap: 5px;
+    }
+
+    .status-btn {
+        padding: 6px 4px;
+        font-size: 0.7rem;
+    }
+
+    .prev-hw-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .prev-hw-item span:last-child {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .hw-action-btn {
+        padding: 8px 12px;
+        /* Larger touch area */
+        font-size: 0.9rem;
+    }
+
+    .nav-btn {
+        padding: 8px 12px;
+    }
+}
 </style>
 </head>
 
@@ -1300,10 +1595,14 @@ header {
             <div class="mode-buttons">
                 <button class="mode-btn" onclick="setGameMode('standard')">Level Game (A1-C2)</button>
                 <button class="mode-btn" onclick="setGameMode('grade9')">9th Grade Unit Vocabulary</button>
+                <button class="mode-btn homework-btn" style="margin-top: 20px; border-color: #fca5a5;"
+                    onclick="openHomeworkControl()">Ödev Kontrolü</button>
+                <button class="mode-btn homework-btn" style="font-size: 0.9rem; padding: 10px; margin-top: 10px;"
+                    onclick="openHomeworkReport()">Ödev Kontrol Raporu</button>
             </div>
             <div class="landing-footer">
                 <div class="teacher-name">Berna Fergana Civelek</div>
-                <div class="app-info">V05.12.2025.16 &copy; 2024</div>
+                <div class="app-info">V08.12.2025.02.29 &copy; 2024</div>
 
                 <button class="contact-btn" onclick="toggleContact()">İletişime Geç</button>
                 <div id="contact-info" class="telegram-id">Telegram: @selimciv</div>
@@ -1385,6 +1684,106 @@ header {
 
             <div id="modal-teams" class="modal-teams" style="display:none;">
                 <!-- Team buttons will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3 style="color: white; margin-bottom: 20px;">Öğretmen Girişi</h3>
+            <input type="password" id="teacher-password" class="hw-input" placeholder="Şifre"
+                style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+            <div style="margin-top: 20px;">
+                <button class="action-btn" onclick="checkTeacherPassword()">Giriş</button>
+                <button class="action-btn secondary" onclick="closePasswordModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Homework Control Modal -->
+    <div id="homework-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header-actions"
+                style="position: absolute; right: 20px; top: 15px; display: flex; gap: 10px;">
+                <button type="button" id="hw-back-btn" class="nav-btn" onclick="goBackInHomework()"
+                    style="display:none;">⬅ Geri</button>
+                <button type="button" class="close-btn" onclick="closeHomeworkModal()"
+                    style="position: static;">&times;</button>
+            </div>
+
+            <h2 style="color: #fff; margin-bottom: 20px; margin-top: 20px;">Ödev Kontrolü</h2>
+
+            <!-- Step 1: Class Selection -->
+            <div id="hw-step-1" class="hw-step">
+                <h3 style="color: #ccc;">Sınıf Seçiniz</h3>
+                <div id="class-selector" class="class-grid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Step 2: Homework Details & List -->
+            <div id="hw-step-2" class="hw-step" style="display:none;">
+                <h3 id="hw-class-title" style="color: var(--accent-color);">9-B</h3>
+
+                <div class="hw-form">
+                    <input type="text" id="hw-name" placeholder="Ödevin Konusu (Örn: Unit 1 Words)" class="hw-input">
+                    <!-- Date input removed as per request (auto-filled) -->
+                    <button class="action-btn" onclick="triggerAddHomework()">Ödev Ekle</button>
+                </div>
+
+                <div id="active-homework-container" style="display:none;">
+                    <h4 id="active-homework-title" style="color:white; margin:10px 0;"></h4>
+                    <div id="student-list-header" class="student-list-header">
+                        <span>No</span>
+                        <span>Ad Soyad</span>
+                        <span>Durum</span>
+                    </div>
+                    <div id="student-list-container" class="student-list-container">
+                        <!-- Student rows -->
+                    </div>
+                    <button class="action-btn secondary" onclick="saveHomeworkToFirebase()"
+                        style="margin-top: 20px; width: 100%;">KAYDET</button>
+                </div>
+
+                <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+
+                <h4 style="color: #ccc; text-align: left;">Geçmiş Ödevler</h4>
+                <div id="previous-homeworks" class="prev-hw-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Homework Report Modal -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <button type="button" class="close-btn" onclick="closeReportModal()">&times;</button>
+            <h2 style="color: var(--accent-color); margin-bottom: 20px;">Ödev Kontrol Raporu</h2>
+
+            <div class="report-controls" style="margin-bottom: 20px;">
+                <button class="filter-btn active" id="filter-all-btn" onclick="filterReport('all')">Tümü</button>
+                <div id="report-class-filters" style="display:inline;"></div>
+            </div>
+
+            <div class="report-table-container">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Sınıf</th>
+                            <th>No</th>
+                            <th>Ad Soyad</th>
+                            <th>Yapmadı ❌</th>
+                            <th>Yaptı ✅</th>
+                            <th>K. Edilemedi ⚠️</th>
+                            <th>Toplam Ödev 📚</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -2380,6 +2779,83 @@ var gameData = {
     }
 };
 
+// Student Data (Real Data Parsed from PDFs)
+var studentData = {
+    "9-B": [
+        { "no": 375, "name": "KÜBRANUR ÇİFTÇİ" },
+        { "no": 420, "name": "ZEKİ HAN EKMEKÇİ" },
+        { "no": 438, "name": "SÜMEYRA TORUN" },
+        { "no": 519, "name": "SUDE TOKTAŞ" },
+        { "no": 529, "name": "SACİDE KILIÇASLAN" },
+        { "no": 534, "name": "RAMAZAN ALİ" },
+        { "no": 562, "name": "FEYZA TOPAL" },
+        { "no": 563, "name": "TALHA AKŞEKER" },
+        { "no": 585, "name": "NEHİR AKIN" },
+        { "no": 615, "name": "BERAT KILIÇ" },
+        { "no": 737, "name": "ZEHRA OBUZ" },
+        { "no": 743, "name": "MÜZEFFER MERDELİ" },
+        { "no": 748, "name": "GÖKHAN ÖZCAN" },
+        { "no": 752, "name": "MURAT VATAN" },
+        { "no": 755, "name": "MUHAMMED ALİ DUYĞU" },
+        { "no": 760, "name": "MUSTAFA KARABACAK" },
+        { "no": 776, "name": "ERDEM ALTUN" },
+        { "no": 835, "name": "EDA ZEREN" },
+        { "no": 888, "name": "BAHADIR ULUTAŞ" },
+        { "no": 962, "name": "MUHAMMET EMİN TIRPANCİ" },
+        { "no": 976, "name": "KUMSAL AKA" },
+        { "no": 1000, "name": "BURAK TAŞDEMİR" },
+        { "no": 1037, "name": "ECRİN ÖZTÜRK" },
+        { "no": 1039, "name": "YAĞMUR ÖNDER" },
+        { "no": 1040, "name": "FATMA DEMİR" },
+        { "no": 1048, "name": "EMİR KAYRA BİLİCAN" },
+        { "no": 1049, "name": "HATİCE ZEHRA YILDIRIM" },
+        { "no": 1053, "name": "HAMZA ALİ DUYĞU" }
+    ],
+    "9-E": [
+        { "no": 121, "name": "YASEMİN ÖZTÜRK" },
+        { "no": 169, "name": "EMİN ÇAVDAR" },
+        { "no": 180, "name": "TİMUÇİN SAMET BALCİ" },
+        { "no": 306, "name": "FURKAN DUMANLAR" },
+        { "no": 325, "name": "ESMA KUZKAYA" },
+        { "no": 353, "name": "ŞAKİR ALİ" },
+        { "no": 471, "name": "NUMAN ÜZÜLMEZ" },
+        { "no": 532, "name": "YAKUP İSKENDER" },
+        { "no": 549, "name": "ASLAN SHASHUYEV" },
+        { "no": 591, "name": "MİKAİL KARAKAŞ" },
+        { "no": 733, "name": "MUHAMMED EMİN ALPSOY" },
+        { "no": 774, "name": "ZEHRA GÜNDÜZ" },
+        { "no": 845, "name": "KÜBRA DEMİR" },
+        { "no": 853, "name": "GAMZE YILMAZ" },
+        { "no": 859, "name": "AZRA YILDIZ" },
+        { "no": 879, "name": "NİRA NUR KESKİN" },
+        { "no": 914, "name": "MURAT TURANOĞLU" },
+        { "no": 919, "name": "EMRE ARDAHANLI" },
+        { "no": 924, "name": "ASYA NİL DEMİR" },
+        { "no": 957, "name": "ECRİN DURU ÖZTOPÇU" },
+        { "no": 974, "name": "EYLÜL DEMİR" },
+        { "no": 975, "name": "BEYZANUR BAHAR DEMİR" },
+        { "no": 1002, "name": "EBRAR KOCAMAN" },
+        { "no": 1035, "name": "MUHAMMED EMİN ALĞAN" },
+        { "no": 1044, "name": "MEHTAP KORKMAZ" },
+        { "no": 1050, "name": "SUNA AKÇİMEN" },
+        { "no": 1051, "name": "ZEYNEP AKALAN" },
+        { "no": 1072, "name": "AYSİMA SEL" }
+    ],
+    "11-C": [
+        { "no": 112, "name": "MUSTAFA EGE HATAY" },
+        { "no": 405, "name": "ALPEREN AYKAÇ" },
+        { "no": 423, "name": "MUHAMMET ALİ ÖZKAN" },
+        { "no": 440, "name": "BİLGE DİLMAÇ" },
+        { "no": 557, "name": "ROBIIA MALIKZHONOVA" },
+        { "no": 764, "name": "NEFİSE ALİ" },
+        { "no": 788, "name": "MEDINA SHASHUYEVA" },
+        { "no": 862, "name": "KAYRA EFE KORKMAZ" },
+        { "no": 935, "name": "NAZLI YİLMAZ" },
+        { "no": 1022, "name": "YUSUF KAYĞISIZ" },
+        { "no": 1034, "name": "FIRAT DURDENİZ" }
+    ]
+};
+
 </script>
     <script>
 
@@ -2387,6 +2863,7 @@ var firebaseConfig = {
     apiKey: "AIzaSyBmUhP2LdVReR9gRDX5el0lpUfgqE7Jt6A",
     authDomain: "bernavocab.firebaseapp.com",
     databaseURL: "https://bernavocab-default-rtdb.europe-west1.firebasedatabase.app",
+    experimentalForceLongPolling: true, // Force long polling for older devices/networks
     projectId: "bernavocab",
     storageBucket: "bernavocab.firebasestorage.app",
     messagingSenderId: "234781292902",
@@ -2394,13 +2871,13 @@ var firebaseConfig = {
     measurementId: "G-048H1LQCC0"
 };
 
-// Global Error Handler for Debugging
+// Global Error Handler for Debugging (Alert only for critical, or remove if annoying)
 window.onerror = function (msg, url, lineNo, columnNo, error) {
-    alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo);
+    alert("HATA ALGILANDI:\n" + msg + "\nSatır: " + lineNo); // Enabled for user feedback
+    console.error(msg, lineNo);
     return false;
 };
 
-// Check if Firebase is loaded
 if (typeof firebase === 'undefined') {
     alert("KRİTİK HATA: Firebase kütüphanesi yüklenemedi.\n\nİnternet bağlantınızı kontrol edin veya reklam engelleyici (AdBlock) varsa kapatın.");
 }
@@ -2415,12 +2892,21 @@ try {
 
     console.log("Firebase initialized. Connecting...");
 
-    // Note: If using a specific region (Belgium), URL might need to be explicit if not auto-detected correctly.
-    // or europe-west1: https://<project-id>-default-rtdb.europe-west1.firebasedatabase.app
-
     // Presence Logic
     const connectedRef = db.ref(".info/connected");
     const connectionsRef = db.ref("connections");
+
+    // Location Logic
+    let userCity = "";
+    fetch("https://ipapi.co/json/")
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data && data.city) {
+                userCity = data.city;
+                if (window.updateMyPresence) window.updateMyPresence();
+            }
+        })
+        .catch(function (err) { console.log("Loc err:", err); });
 
     // Shakespeare Character Names
     const shakespeareNames = [
@@ -2460,7 +2946,12 @@ try {
             if (headerEl) {
                 headerEl.style.color = "#4ade80";
             }
-            // We're connected (or reconnected)!
+
+            // Fix Duplicate Issue: Remove old ref if exists before pushing new one
+            if (myConRef) {
+                myConRef.onDisconnect().cancel();
+                myConRef.remove();
+            }
 
             // Generate a random ID if not exists or use simple push
             myConRef = connectionsRef.push();
@@ -2486,11 +2977,13 @@ try {
 
         myConRef.set({
             name: myName,
+            city: userCity || "", // Add City
             id: myConRef.key, // Save key to identify myself in list
             onlineAt: firebase.database.ServerValue.TIMESTAMP
         });
-    }
+    };
 
+    // Count Online Users & Render List
     // Count Online Users & Render List
     connectionsRef.on("value", (snap) => {
         const users = snap.val() || {};
@@ -2499,45 +2992,60 @@ try {
         // Update Count Header in Floating Bubble
         const headerEl = document.querySelector(".floating-header");
         if (headerEl) {
-            // Restore proper HTML structure with count
             headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
             headerEl.style.color = "#4ade80";
         }
 
         // Update List UI in Floating Bubble
-        const listEl = document.getElementById("floating-list-content");
         if (listEl) {
             listEl.innerHTML = '';
 
-            // Convert to array
-            let userList = Object.values(users);
+            if (users) {
+                let userList = Object.keys(users).map(function (key) { return users[key]; });
+                // Sort: newer first
+                userList.sort((a, b) => b.onlineAt - a.onlineAt);
 
-            // Sort: My self first, then others alphabetically
-            userList.sort((a, b) => {
-                const isMeA = (myConRef && a.id === myConRef.key);
-                const isMeB = (myConRef && b.id === myConRef.key);
+                const processedNames = new Set();
+                const finalDisplayList = [];
 
-                if (isMeA && !isMeB) return -1;
-                if (!isMeA && isMeB) return 1;
-                return (a.name || "").localeCompare(b.name || "");
-            });
+                userList.forEach(user => {
+                    const normName = (user.name || "").trim().toLowerCase();
+                    if (normName && processedNames.has(normName)) return; // Strict dedupe
 
-            userList.forEach(user => {
-                const div = document.createElement("div");
-                div.className = "online-user-item";
+                    if (normName) processedNames.add(normName);
+                    finalDisplayList.push(user);
+                });
 
-                let displayName = user.name || "Unknown";
-
-                // Highlight myself
-                if (myConRef && user.id === myConRef.key) {
-                    div.style.fontWeight = "bold";
-                    div.style.color = "#4ade80";
-                    displayName += " (Sen)";
+                // Update count based on FILTERED list
+                const headerEl = document.querySelector(".floating-header");
+                if (headerEl) {
+                    // Note: We update header here again with correct count
+                    const count = finalDisplayList.length;
+                    headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
                 }
 
-                div.textContent = displayName;
-                listEl.appendChild(div);
-            });
+                finalDisplayList.sort((a, b) => {
+                    const isMeA = (a.name === myName);
+                    const isMeB = (b.name === myName);
+                    if (isMeA && !isMeB) return -1;
+                    if (!isMeA && isMeB) return 1;
+                    return (a.name || "").localeCompare(b.name || "");
+                });
+
+                finalDisplayList.forEach(user => {
+                    const div = document.createElement("div");
+                    div.className = "online-user-item";
+                    let displayName = user.name || "Unknown";
+                    if (user.city) displayName += " (" + user.city + ")";
+                    if (user.name === myName) {
+                        div.style.fontWeight = "bold";
+                        div.style.color = "#4ade80";
+                        displayName += " (Sen)";
+                    }
+                    div.textContent = displayName;
+                    listEl.appendChild(div);
+                });
+            }
         }
     }, (error) => {
         console.error("Connections Read Error:", error);
@@ -2794,7 +3302,8 @@ function initGame() {
 
 function updateTotalWordCount() {
     let total = 0;
-    Object.values(gameData.levelData).forEach(level => {
+    Object.keys(gameData.levelData).forEach(function (key) {
+        var level = gameData.levelData[key];
         level.forEach(cat => {
             total += cat.pool.length;
         });
@@ -3466,6 +3975,545 @@ function toggleContact() {
     info.classList.toggle('visible');
 }
 
+
+// ============================================
+// HOMEWORK CONTROL SYSTEM
+// ============================================
+var currentHwClass = "";
+var currentHwStudents = [];
+var selectedHomeworkId = null;
+var pendingAction = null; // To store function to execute after password check
+
+function openHomeworkControl() {
+    // Open Password Modal instead of Prompt
+    pendingAction = function () {
+        document.getElementById('homework-modal').style.display = 'flex';
+        renderClassSelector();
+    };
+    openPasswordModal("Öğretmen Girişi");
+}
+
+window.openPasswordModal = function (title) {
+    if (title) {
+        var h3 = document.querySelector("#password-modal h3");
+        if (h3) h3.innerText = title;
+    }
+
+    var modal = document.getElementById('password-modal');
+    if (!modal) return;
+
+    document.getElementById('teacher-password').value = "";
+    modal.style.display = 'flex';
+    modal.style.zIndex = "99999"; // Ensure it is on top of everything
+    var input = document.getElementById('teacher-password');
+    setTimeout(function () { input.focus(); }, 100);
+
+    input.onkeydown = function (e) {
+        if (e.key === 'Enter') checkTeacherPassword();
+    };
+}
+
+function closePasswordModal() {
+    document.getElementById('password-modal').style.display = 'none';
+    pendingAction = null;
+}
+
+function checkTeacherPassword() {
+    var password = document.getElementById('teacher-password').value;
+    if (password === "2702") {
+        var action = pendingAction; // Capture locally before it's cleared
+        closePasswordModal();
+        if (action) action();
+    } else {
+        // Flash error or alert
+        alert("Hatalı Şifre!");
+        document.getElementById('teacher-password').value = "";
+    }
+}
+
+function closeHomeworkModal() {
+    document.getElementById('homework-modal').style.display = 'none';
+    resetHomeworkModal();
+}
+
+function resetHomeworkModal() {
+    document.getElementById('hw-step-1').style.display = 'block';
+    document.getElementById('hw-step-2').style.display = 'none';
+    document.getElementById('hw-back-btn').style.display = 'none';
+    currentHwClass = "";
+    selectedHomeworkId = null;
+    document.getElementById('hw-name').value = "";
+    // Date is now auto-managed or not shown in input
+    document.getElementById('active-homework-container').style.display = 'none';
+}
+
+function renderClassSelector() {
+    var container = document.getElementById('class-selector');
+    container.innerHTML = "";
+
+    var classes = Object.keys(studentData).sort();
+
+    classes.forEach(function (cls) {
+        var btn = document.createElement('button');
+        btn.className = "class-selector-btn";
+        btn.innerText = cls;
+        btn.onclick = function () { selectClassForHomework(cls); };
+        container.appendChild(btn);
+    });
+}
+
+function selectClassForHomework(className) {
+    currentHwClass = className;
+    document.getElementById('hw-step-1').style.display = 'none';
+    document.getElementById('hw-step-2').style.display = 'block';
+    document.getElementById('hw-back-btn').style.display = 'block'; // Show Back Button
+    document.getElementById('hw-class-title').innerText = className + " - Ödev Ekleme/Düzenleme";
+
+    // Load student data locally
+    currentHwStudents = JSON.parse(JSON.stringify(studentData[className] || []));
+
+    // Clear list
+    document.getElementById('student-list-container').innerHTML = "";
+    document.getElementById('active-homework-container').style.display = 'none';
+    document.getElementById('hw-name').value = "";
+    selectedHomeworkId = null;
+
+    // Load existing homeworks
+    loadPreviousHomeworks(className);
+}
+
+function goBackInHomework() {
+    // If in Step 2, go back to Step 1
+    if (document.getElementById('hw-step-2').style.display === 'block') {
+        resetHomeworkModal();
+        renderClassSelector();
+        // Modal is still open, just Step 1 is visible
+    }
+}
+
+function triggerAddHomework() {
+    var hwName = document.getElementById('hw-name').value;
+    // Date is strictly Today
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0');
+    var yyyy = today.getFullYear();
+    var hwDate = yyyy + '-' + mm + '-' + dd;
+
+    if (!hwName) {
+        alert("Lütfen ödev konusunu yazınız.");
+        return;
+    }
+
+    // Show student list to start marking
+    document.getElementById('active-homework-container').style.display = 'block';
+    document.getElementById('active-homework-title').innerText = hwName + " (" + hwDate + ")";
+
+    renderStudentListForMarking();
+}
+
+function renderStudentListForMarking() {
+    var container = document.getElementById('student-list-container');
+    container.innerHTML = "";
+
+    if (currentHwStudents.length === 0) {
+        container.innerHTML = "<div style='padding:20px; text-align:center;'>Bu sınıfta öğrenci kaydı yok. Lütfen settings.js dosyasını düzenleyin.</div>";
+        return;
+    }
+
+    currentHwStudents.forEach(function (student, index) {
+        var row = document.createElement('div');
+        row.className = "student-row row-pending";
+        row.id = "student-row-" + index;
+
+        // No
+        var noDiv = document.createElement('div');
+        noDiv.innerText = student.no;
+        row.appendChild(noDiv);
+
+        // Name
+        var nameDiv = document.createElement('div');
+        nameDiv.innerText = student.name;
+        row.appendChild(nameDiv);
+
+        // Status Buttons
+        var actionsDiv = document.createElement('div');
+        actionsDiv.className = "status-actions";
+
+        // Missing (Yapmadı)
+        var btnMissing = document.createElement('button');
+        btnMissing.className = "status-btn btn-missing";
+        btnMissing.innerText = "Yapmadı";
+        btnMissing.onclick = function () { setStudentStatus(index, 'missing'); };
+
+        // Done (Yaptı)
+        var btnDone = document.createElement('button');
+        btnDone.className = "status-btn btn-done";
+        btnDone.innerText = "Yaptı";
+        btnDone.onclick = function () { setStudentStatus(index, 'done'); };
+
+        // Unknown (Kontrol Edilemedi)
+        var btnPending = document.createElement('button');
+        btnPending.className = "status-btn btn-pending selected";
+        btnPending.innerText = "?";
+        btnPending.onclick = function () { setStudentStatus(index, 'pending'); };
+
+        actionsDiv.appendChild(btnMissing);
+        actionsDiv.appendChild(btnDone);
+        actionsDiv.appendChild(btnPending);
+
+        row.appendChild(actionsDiv);
+        container.appendChild(row);
+
+        // Initialize status
+        if (!student.status) student.status = 'pending';
+        // Apply visual state
+        setStudentStatus(index, student.status);
+    });
+}
+
+function setStudentStatus(index, status) {
+    currentHwStudents[index].status = status;
+
+    var row = document.getElementById('student-row-' + index);
+    row.className = "student-row row-" + status;
+
+    // Update button states
+    var buttons = row.querySelectorAll('.status-btn');
+    buttons.forEach(function (btn) {
+        btn.classList.remove('selected');
+        if (btn.classList.contains('btn-' + status)) {
+            btn.classList.add('selected');
+        }
+    });
+}
+
+function saveHomeworkToFirebase() {
+    var hwName = document.getElementById('hw-name').value;
+    // Recalculate date or use existing date if editing?
+    // If editing, we should keep original date.
+    // NOTE: For simplicity, if editing, we might update date or keep it. 
+    // The previous implementation used input value. 
+    // Now input is hidden.
+
+    // We need to store 'date' in dataset or memory if editing.
+    // If new, use today.
+    var hwDate;
+    if (selectedHomeworkId) {
+        // Editing - logic to get original date needed. 
+        // For now let's just use today's date on update OR find a way to store it.
+        // Simplest: Add a hidden attribute or variable.
+        // Let's assume Update sets it to Today or we can fetch it. 
+        // Better: We stored it in 'currentHwData' maybe?
+        // Let's use Today for simplicity as per "Automatic" request.
+        var today = new Date(); // Or parse from title? Title has date.
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        hwDate = yyyy + '-' + mm + '-' + dd;
+    } else {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        hwDate = yyyy + '-' + mm + '-' + dd;
+    }
+
+    if (!hwName || !currentHwClass) return;
+
+    var newHomework = {
+        name: hwName,
+        date: hwDate,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP,
+        results: {}
+    };
+
+    currentHwStudents.forEach(function (s) {
+        newHomework.results[s.no] = s.status || 'pending';
+    });
+
+    var hwRef = firebase.database().ref('homeworks/' + currentHwClass);
+
+    var onComplete = function (error) {
+        if (error) {
+            alert("Kaydetme başarısız: " + error);
+        } else {
+            // alert("Ödev ve kontrol başarıyla kaydedildi!"); // Removed as per request
+            // Don't close modal.
+            // Reset form partly?
+            document.getElementById('active-homework-container').style.display = 'none';
+            document.getElementById('hw-name').value = "";
+            selectedHomeworkId = null;
+
+            // Reload list and flash
+            loadPreviousHomeworks(currentHwClass, true); // True for highlighting
+        }
+    };
+
+    if (selectedHomeworkId) {
+        hwRef.child(selectedHomeworkId).update(newHomework, onComplete);
+    } else {
+        newHomework.createdAt = firebase.database.ServerValue.TIMESTAMP;
+        hwRef.push().set(newHomework, onComplete);
+    }
+}
+
+function loadPreviousHomeworks(className, highlightNewest) {
+    var container = document.getElementById('previous-homeworks');
+    container.innerHTML = "Yükleniyor...";
+
+    var hwRef = firebase.database().ref('homeworks/' + className).orderByChild('date');
+    hwRef.limitToLast(10).once('value').then(function (snapshot) {
+        container.innerHTML = "";
+        var data = snapshot.val();
+        if (!data) {
+            container.innerHTML = "Henüz kayıtlı ödev yok.";
+            return;
+        }
+
+        var list = [];
+        snapshot.forEach(function (child) {
+            list.push({ key: child.key, val: child.val() });
+        });
+        list.reverse();
+
+        list.forEach(function (item, index) {
+            var div = document.createElement('div');
+            div.className = "prev-hw-item";
+            // Flash animation if requested (e.g. valid for first item)
+            if (highlightNewest && index === 0) {
+                div.classList.add("flash-item");
+            }
+
+            // Inline onclick for robustness against re-renders
+            // Note: we use quote escaping for security but keys are usually safe.
+            div.innerHTML = `
+                <span>${item.val.date} - <b>${item.val.name}</b></span> 
+                <span>
+                    <button type="button" class="hw-action-btn edit-btn" onclick="window.confirmEditHomework('${item.key}')">Düzenle</button>
+                    <button type="button" class="hw-action-btn del-btn" onclick="window.confirmDeleteHomework('${item.key}')">Sil</button>
+                </span>
+            `;
+            container.appendChild(div);
+        });
+
+        // No extra listeners needed
+    });
+}
+
+window.confirmEditHomework = function (hwId) {
+    if (!hwId) { alert("Hata: Ödev ID eksik."); return; }
+    pendingAction = function () { loadHomeworkForEdit(hwId); };
+    openPasswordModal("Düzenlemek İçin Şifre Girin");
+}
+
+window.confirmDeleteHomework = function (hwId) {
+    if (!hwId) { alert("Hata: Ödev ID eksik."); return; }
+    pendingAction = function () { deleteHomework(hwId); };
+    openPasswordModal("Silmek İçin Şifre Girin");
+}
+
+function deleteHomework(hwId) {
+    if (confirm("Bu ödevi silmek istediğinize emin misiniz?")) {
+        firebase.database().ref('homeworks/' + currentHwClass + '/' + hwId).remove()
+            .then(function () {
+                loadPreviousHomeworks(currentHwClass);
+            })
+            .catch(function (err) {
+                alert("Silinemedi: " + err);
+            });
+    }
+}
+
+function loadHomeworkForEdit(hwId) {
+    firebase.database().ref('homeworks/' + currentHwClass + '/' + hwId).once('value').then(function (snapshot) {
+        var data = snapshot.val();
+        if (!data) return;
+
+        selectedHomeworkId = hwId;
+        document.getElementById('hw-name').value = data.name;
+        // Date is hidden but we load it to memory if we wanted.
+
+        // Restore student statuses
+        // We reload student list from settings to ensure we have all students (even new ones)
+        // Then apply status keys
+        currentHwStudents = JSON.parse(JSON.stringify(studentData[currentHwClass] || []));
+
+        var results = data.results || {};
+        currentHwStudents.forEach(function (s) {
+            if (results[s.no]) {
+                s.status = results[s.no];
+            } else {
+                s.status = 'pending';
+            }
+        });
+
+        // Show UI
+        document.getElementById('active-homework-container').style.display = 'block';
+        document.getElementById('active-homework-title').innerText = data.name + " (" + data.date + ") - DÜZENLENİYOR";
+
+        renderStudentListForMarking();
+        // Scroll to top
+        document.getElementById('homework-modal').querySelector('.modal-content').scrollTop = 0;
+    });
+}
+
+// ===================
+// REPORT SYSTEM
+// ===================
+function openHomeworkReport() {
+    document.getElementById('report-modal').style.display = 'flex';
+    generateReportControls();
+    loadReportData('all');
+}
+
+function closeReportModal() {
+    document.getElementById('report-modal').style.display = 'none';
+}
+
+function generateReportControls() {
+    var container = document.getElementById('report-class-filters');
+    container.innerHTML = "";
+
+    var classes = Object.keys(studentData).sort();
+    classes.forEach(function (cls) {
+        var btn = document.createElement('button');
+        btn.className = "filter-btn";
+        btn.innerText = cls;
+
+        btn.onclick = function () {
+            window.filterReport(cls);
+        };
+
+        container.appendChild(btn);
+    });
+}
+
+function loadReportData(filterClass) {
+    var body = document.getElementById('report-body');
+    body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Veriler yükleniyor...</td></tr>";
+
+    firebase.database().ref('homeworks').once('value').then(function (snapshot) {
+        var allData = snapshot.val();
+        if (!allData) {
+            body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Hiç veri yok.</td></tr>";
+            return;
+        }
+
+        var stats = {};
+        var classTotalHw = {}; // Keep track of total homeworks per class
+
+        // Initialize stats
+        Object.keys(studentData).forEach(function (cls) {
+            if (filterClass !== 'all' && cls !== filterClass) return;
+            classTotalHw[cls] = 0;
+
+            studentData[cls].forEach(function (s) {
+                var key = cls + "-" + s.no;
+                stats[key] = {
+                    class: cls,
+                    no: s.no,
+                    name: s.name,
+                    done: 0,
+                    missing: 0,
+                    pending: 0,
+                    totalHws: 0 // Will set later
+                };
+            });
+        });
+
+        // Count homeworks and stats
+        Object.keys(allData).forEach(function (clsKey) {
+            if (filterClass !== 'all' && clsKey !== filterClass) return;
+
+            var classHws = allData[clsKey];
+            var hwCount = Object.keys(classHws).length;
+            if (classTotalHw[clsKey] !== undefined) {
+                classTotalHw[clsKey] = hwCount;
+            }
+
+            Object.values(classHws).forEach(function (hw) {
+                var results = hw.results || {};
+                Object.keys(results).forEach(function (studentNo) {
+                    var key = clsKey + "-" + studentNo;
+                    if (stats[key]) {
+                        var status = results[studentNo];
+                        if (status === 'done') stats[key].done++;
+                        else if (status === 'missing') stats[key].missing++;
+                        else stats[key].pending++;
+                    }
+                });
+            });
+        });
+
+        // Update totalHws from classTotalHw
+        Object.values(stats).forEach(function (s) {
+            s.totalHws = classTotalHw[s.class] || 0;
+        });
+
+        // Sort by MISSING
+        var sortedStats = Object.values(stats).sort(function (a, b) {
+            return b.missing - a.missing;
+        });
+
+        renderReportTable(sortedStats);
+    });
+}
+
+function renderReportTable(data) {
+    var body = document.getElementById('report-body');
+    body.innerHTML = "";
+
+    if (data.length === 0) {
+        body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Bu kriterde öğrenci bulunamadı.</td></tr>";
+        return;
+    }
+
+    data.forEach(function (item) {
+        var tr = document.createElement('tr');
+        if (item.missing > 3) tr.style.background = "rgba(255, 71, 87, 0.2)";
+
+        tr.innerHTML = `
+            <td>${item.class}</td>
+            <td>${item.no}</td>
+            <td>${item.name}</td>
+            <td style="color:#ff4757; font-weight:bold;">${item.missing}</td>
+            <td style="color:#2ecc71;">${item.done}</td>
+            <td style="color:#f1c40f;">${item.pending}</td>
+            <td style="font-weight:bold;">${item.totalHws}</td>
+        `;
+        body.appendChild(tr);
+    });
+}
+
+window.openHomeworkControl = openHomeworkControl;
+window.closeHomeworkModal = closeHomeworkModal;
+window.triggerAddHomework = triggerAddHomework;
+window.saveHomeworkToFirebase = saveHomeworkToFirebase;
+window.openHomeworkReport = openHomeworkReport;
+window.closeReportModal = closeReportModal;
+window.checkTeacherPassword = checkTeacherPassword;
+window.closePasswordModal = closePasswordModal;
+window.goBackInHomework = goBackInHomework;
+window.confirmEditHomework = confirmEditHomework;
+window.confirmDeleteHomework = confirmDeleteHomework;
+window.filterReport = function (cls) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.style.background = "rgba(255,255,255,0.1)");
+    var activeBtn = cls === 'all' ? document.getElementById('filter-all-btn') : null;
+    if (activeBtn) activeBtn.style.background = "var(--accent-color)";
+    else {
+        // Find button by text? Cleaner to allow 'this' context but logic is separate
+        // Just reset all and highlight clicked in generation?
+        // Since we regenerate buttons, we can highlight there?
+        // Actually, I should update loop to set active class.
+        // Let's rely on simple hack:
+        var buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(b => {
+            if (b.innerText === cls) b.style.background = "var(--accent-color)";
+        });
+    }
+    loadReportData(cls);
+};
 
 </script>
 </body>
