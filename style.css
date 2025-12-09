@@ -129,7 +129,14 @@ h1 {
     width: 100%;
     /* Remove fixed height: 100% or flex growth */
     height: auto;
-    margin-bottom: 2vh;
+    margin-bottom: 2rem;
+}
+
+.school-logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .category-header {
