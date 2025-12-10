@@ -90,29 +90,96 @@
                     <h3>Hangman</h3>
                     <p>Guess the word letter by letter</p>
                 </button>
+                <button class="game-mode-card" onclick="selectGameMode('taboo')">
+                    <div class="mode-icon">🙊</div>
+                    <h3>Taboo</h3>
+                    <p>Describe words without using forbidden ones</p>
+                </button>
             </div>
             <button class="back-to-landing-btn" onclick="backToLanding()">← Back</button>
         </div>
     </div>
 
-    <!-- Wheel of Fortune Container -->
-    <div id="wheel-container" class="wheel-game-container" style="display: none;">
-        <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
-        <div class="wheel-wrapper">
-            <canvas id="wheel-canvas"></canvas>
-            <div class="wheel-center-button" onclick="spinWheel()">
-                <div class="spin-text">SPIN</div>
+    <!-- Play Type Selection Screen (Team vs Individual) -->
+    <div id="play-type-selection" class="play-type-selection" style="display: none;">
+        <div class="play-type-content">
+            <h2 class="play-type-title">Choose Play Type</h2>
+            <div class="play-type-grid">
+                <button class="play-type-card team-card" onclick="selectPlayType('team')">
+                    <div class="play-type-icon">👥</div>
+                    <h3>Team Game</h3>
+                    <p>Compete as Team A, B, C, D</p>
+                </button>
+                <button class="play-type-card individual-card" onclick="selectPlayType('individual')">
+                    <div class="play-type-icon">👤</div>
+                    <h3>Individual</h3>
+                    <p>Play solo and collect points</p>
+                </button>
             </div>
-        </div>
-        <div class="wheel-score">
-            <div class="wheel-points">Points: <span id="wheel-points">0</span></div>
-            <div class="wheel-words-left">Words Left: <span id="wheel-words-left">0</span></div>
+            <button class="back-to-landing-btn" onclick="backToGameModes()">← Back to Game Modes</button>
         </div>
     </div>
 
+    <!-- Wheel of Fortune Container - MODERN DESIGN -->
+    <div id="wheel-container" class="wheel-game-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn wheel-back-btn" onclick="backToGameModes()">❮ Back</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <!-- Main Two-Column Layout -->
+        <div class="wheel-layout">
+            <!-- Left Panel: Game Info -->
+            <div class="wheel-info-panel">
+                <h2 class="wheel-title">🎡 Wheel of Fortune</h2>
+
+                <!-- Stats Cards -->
+                <div class="wheel-stats">
+                    <div class="wheel-stat-card points-card">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Points</span>
+                            <span class="stat-value" id="wheel-points">0</span>
+                        </div>
+                    </div>
+                    <div class="wheel-stat-card words-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Words Left</span>
+                            <span class="stat-value" id="wheel-words-left">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Scoreboard -->
+                <div class="wheel-scoreboard-wrapper">
+                    <h3 class="scoreboard-title">Team Scores</h3>
+                    <div id="wheel-scoreboard" class="wheel-scoreboard">
+                        <!-- Team scores injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: The Wheel -->
+            <div class="wheel-main">
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer">▼</div>
+                    <canvas id="wheel-canvas"></canvas>
+                    <div class="wheel-center-button" onclick="spinWheel()">
+                        <div class="spin-text">SPIN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Millionaire Quiz Container -->
     <div id="millionaire-container" class="millionaire-container" style="display: none;">
-        <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
         <div class="millionaire-ladder">
             <div class="ladder-title">Prize Ladder</div>
             <div id="prize-ladder"></div>
@@ -137,6 +204,86 @@
                 </button>
             </div>
         </div>
+
+        <!-- Game Over Overlay -->
+        <div id="millionaire-game-over" class="millionaire-game-over" style="display: none;">
+            <h2>Game Over</h2>
+            <p id="millionaire-final-score">Final Score: 0 Points</p>
+            <button class="millionaire-restart-btn" onclick="restartMillionaireMode()">Play Again</button>
+            <button class="millionaire-home-btn" onclick="goHome()">Go Home</button>
+        </div>
+    </div>
+
+    <!-- Taboo Game Container -->
+    <div id="taboo-container" class="taboo-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <div class="taboo-top-panel">
+            <div id="taboo-timer" class="taboo-timer">03:00</div>
+        </div>
+
+        <div class="taboo-main-area">
+            <!-- Center Card -->
+            <div class="taboo-card-wrapper">
+                <div id="taboo-card" class="taboo-card">
+                    <div id="taboo-main-word" class="taboo-main-word">Loading...</div>
+                    <div class="taboo-separator"></div>
+                    <div id="taboo-forbidden-list" class="taboo-forbidden-list">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="taboo-right-controls">
+                <button id="taboo-pass-btn" class="taboo-control-btn pass-btn" onclick="passTabooCard()">
+                    PASS / NEXT
+                </button>
+                <button id="taboo-correct-btn" class="taboo-control-btn correct-btn"
+                    onclick="alert('Please select a team below!')">
+                    CORRECT !
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Team Scores -->
+        <div class="taboo-bottom-panel">
+            <button class="team-score-btn team-a" onclick="handleTabooScore(0)">
+                <div class="team-label">Team A</div>
+                <div class="team-score" id="taboo-score-0">0</div>
+            </button>
+            <button class="team-score-btn team-b" onclick="handleTabooScore(1)">
+                <div class="team-label">Team B</div>
+                <div class="team-score" id="taboo-score-1">0</div>
+            </button>
+            <button class="team-score-btn team-c" onclick="handleTabooScore(2)">
+                <div class="team-label">Team C</div>
+                <div class="team-score" id="taboo-score-2">0</div>
+            </button>
+            <button class="team-score-btn team-d" onclick="handleTabooScore(3)">
+                <div class="team-label">Team D</div>
+                <div class="team-score" id="taboo-score-3">0</div>
+            </button>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="taboo-game-over" class="taboo-game-over" style="display: none;">
+            <h2>TIME'S UP!</h2>
+            <div id="taboo-final-scores"></div>
+            <button class="taboo-restart-btn" onclick="startTabooRound()">New Round</button>
+            <button class="taboo-home-btn" onclick="goHome()">Home</button>
+        </div>
+
+        <!-- Start Screen Overlay -->
+        <div id="taboo-start-screen" class="taboo-game-over" style="display: none;">
+            <h2>TABOO</h2>
+            <button class="taboo-restart-btn" style="font-size: 2rem; padding: 20px 60px;"
+                onclick="beginTabooGame()">START GAME</button>
+            <button class="taboo-home-btn" onclick="goHome()">Home</button>
+        </div>
     </div>
 
     <header>
@@ -148,8 +295,8 @@
 
             <div class="header-controls">
                 <div id="word-count" class="word-count">Words: 0</div>
-                <button id="lang-toggle" class="lang-btn" onclick="toggleLanguage()">TR</button>
                 <button id="home-btn" class="icon-btn" onclick="goHome()" title="Home">🏠</button>
+
             </div>
     </header>
 
@@ -177,7 +324,10 @@
 
     <!-- Unit Selection Screen -->
     <div id="unit-selection" class="unit-selection" style="display: none;">
-        <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
 
         <div class="unit-selection-content">
             <h2 class="unit-selection-title">Choose a Unit</h2>
@@ -189,7 +339,10 @@
 
     <!-- Hangman Container -->
     <div id="hangman-container" class="hangman-container" style="display: none;">
-        <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
 
         <div class="hangman-top-bar">
             <div class="hangman-stat">
@@ -224,57 +377,54 @@
 
     <!-- Question Modal -->
     <div id="question-modal" class="modal">
-        <div class="modal-content new-card-style">
-            <!-- Points Badge (Top Left) -->
-            <div class="modal-points-badge" id="modal-points-badge">20</div>
-
-            <!-- Close Button (Top Right) -->
+        <div class="modal-content new-flashcard">
+            <!-- Close Button -->
             <button type="button" class="close-btn" onclick="closeModal()" aria-label="Close Modal">&times;</button>
 
-            <!-- Category and Question Number -->
-            <div class="modal-header-info">
-                <h2 id="modal-category" class="modal-category-name">Category</h2>
-                <div id="modal-question-number" class="modal-question-number">1</div>
+            <!-- Header: Category + Question Number -->
+            <div class="flashcard-header">
+                <div id="modal-category" class="flashcard-category">Category</div>
+                <div id="modal-question-number" class="flashcard-number">1</div>
             </div>
 
-            <!-- Main Word Section with Audio -->
-            <div class="modal-main-word">
-                <button class="modal-audio-btn" onclick="speakAnswer(event)">🔊</button>
-                <div id="modal-word" class="modal-word-text">Word</div>
+            <!-- Main Word Section -->
+            <div class="flashcard-word-section">
+                <button class="flashcard-audio-btn" id="word-audio-btn" onclick="speakWord()">🔊</button>
+                <span id="modal-word" class="flashcard-word">Word</span>
             </div>
+            <div id="modal-pronunciation" class="flashcard-pronunciation">[pronunciation]</div>
 
-            <!-- Pronunciation -->
-            <div id="modal-pronunciation" class="modal-pronunciation-text">[ pronunciation ]</div>
-
-            <!-- Example Sentence Section (Hidden initially) -->
-            <div id="modal-example-section" class="modal-example-section" style="display:none;">
-                <div class="modal-example-line">
-                    <button class="modal-audio-btn-small" id="example-audio-btn"
-                        onclick="speakExample(event, '')">🔊</button>
-                    <div id="modal-example-en" class="modal-example-text">Example sentence goes here.</div>
-                </div>
-            </div>
+            <!-- Separator -->
+            <div class="flashcard-separator"></div>
 
             <!-- Show Answer Button -->
-            <div class="modal-actions">
-                <button id="show-answer-btn" class="show-answer-btn" onclick="showAnswer()">SHOW ANSWER</button>
-            </div>
+            <button id="show-answer-btn" class="flashcard-show-answer" onclick="showAnswer()">SHOW ANSWER</button>
 
-            <!-- Answer Section (Hidden until Show Answer is clicked) -->
-            <div id="modal-answer-section" class="modal-answer-section" style="display:none;">
-                <!-- Turkish Translation of Example -->
-                <div id="modal-example-tr" class="modal-answer-translation"></div>
+            <!-- Answer Section (Hidden initially) -->
+            <div id="answer-section" class="flashcard-answer-section" style="display:none;">
+                <!-- Turkish Translation -->
+                <div id="modal-answer" class="flashcard-answer"></div>
+                <div id="modal-answer-pronunciation" class="flashcard-answer-pronunciation"></div>
 
-                <!-- Turkish Answer (Main Translation) -->
-                <div id="modal-answer" class="modal-answer-text"></div>
+                <!-- Example Sentence Section (shown with answer) -->
+                <div id="example-section" class="flashcard-example-section">
+                    <button class="flashcard-audio-btn small" id="example-audio-btn"
+                        onclick="speakExampleSentence()">🔊</button>
+                    <div class="flashcard-example-container">
+                        <span id="modal-example" class="flashcard-example"></span>
+                        <span id="modal-example-tr" class="flashcard-example-tr"></span>
+                    </div>
+                </div>
 
-                <!-- Team Selection Buttons -->
-                <div id="modal-teams" class="modal-teams">
-                    <!-- Team buttons will be injected here -->
+                <!-- Team Buttons -->
+                <div id="modal-teams" class="flashcard-teams">
+                    <!-- Team buttons injected by JS -->
                 </div>
             </div>
+
         </div>
     </div>
+
 
     </div>
 
@@ -380,7 +530,7 @@
     </div>
     <script src="settings.js?v=team_unified_v5"></script>
     <script src="ydt_settings.js?v=team_unified_v5"></script>
-    <script src="script.js?v=team_unified_v5"></script>
+    <script src="script.js?v=team_unified_v8"></script>
 </body>
 
 </html>

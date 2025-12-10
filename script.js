@@ -241,31 +241,64 @@ function safeText(val) {
 }
 
 function goHome() {
-    // Hide all game containers
-    const wheelContainer = document.getElementById('wheel-container');
-    const millContainer = document.getElementById('millionaire-container');
-    const gameBoard = document.getElementById('game-board');
-    const levelSelector = document.getElementById('level-selector-container');
+    // Clear all intervals
+    clearInterval(globalTimerInterval);
+    clearInterval(millionaireTimer);
 
-    if (wheelContainer) wheelContainer.style.display = 'none';
-    if (millContainer) millContainer.style.display = 'none';
-    if (gameBoard) gameBoard.innerHTML = '';
-    if (levelSelector) levelSelector.style.display = 'none';
+    // Stop any audio
+    if (typeof wheelSpinSound !== 'undefined' && wheelSpinSound) { // Check if wheelSpinSound is defined and not null
+        wheelSpinSound.stop();
+        // Re-create oscillator/gain nodes if needed next time, but simple stop is enough for now
+    }
 
-    // Clear any active timers
-    if (millionaireTimer) clearInterval(millionaireTimer);
+    // Stop Millionaire Audio
+    if (typeof MillionaireSounds !== 'undefined') {
+        MillionaireSounds.stopAll();
+    }
 
-    // Reset state
+    window.speechSynthesis.cancel();
+
+    // Hide all containers
+    document.getElementById('landing-page').style.display = 'flex'; // Show landing page
+
+    const containers = [
+        'game-board', 'score-board', 'unit-selection', 'hangman-container',
+        'wheel-container', 'millionaire-container', 'millionaire-game-over',
+        'level-selector-container', 'game-mode-selection', 'play-type-selection',
+        'taboo-container'
+    ];
+
+    if (typeof tabooTimer !== 'undefined') clearInterval(tabooTimer);
+
+    // Disable Game Flag
+    isGameActive = false;
+    previousDistractors = [];
+
+    containers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && id !== 'landing-page') el.style.display = 'none'; // Don't hide landing page itself
+    });
+
+    // Reset specific mode states if needed
+    millionaireCurrentQuestion = 0;
     selectedVocabMode = null;
     selectedPlayMode = null;
+    selectedUnit = null;
+    pendingGameMode = null;
+    pendingWheelWord = null;
 
-    showLandingPage();
+    // Provide a clean slate log
+    console.log("Returned to Home - Game State Cleared");
 }
 
 // Store the selected vocabulary mode globally
 let selectedVocabMode = null;
 let selectedPlayMode = null; // 'team', 'wheel', 'millionaire', 'hangman'
 let selectedUnit = null; // Selected unit for wheel/millionaire/hangman
+let playType = 'team'; // 'team' or 'individual'
+let individualScore = 0; // Score for individual mode
+let pendingGameMode = null; // Store game mode while selecting play type
+let pendingWheelWord = null; // Track word removed from wheel to restore if modal closed without answering
 
 function setGameMode(mode) {
     selectedVocabMode = mode;
@@ -294,27 +327,53 @@ function setGameMode(mode) {
     }
 }
 
-function selectGameMode(playMode) {
-    selectedPlayMode = playMode;
-
+function selectGameMode(gameMode) {
     // Hide game mode selection
     const gameModeScreen = document.getElementById('game-mode-selection');
     if (gameModeScreen) {
         gameModeScreen.style.display = 'none';
     }
 
-    if (playMode === 'team') {
-        // Original Jeopardy-style game - no unit selection needed
+    if (gameMode === 'team') {
+        // Team Competition - always team mode
+        selectedPlayMode = 'team';
+        playType = 'team';
+
         // RESTORE UI ELEMENTS HIDDEN BY setGameMode
         document.getElementById('level-selector-container').style.display = 'flex';
         document.getElementById('game-board').style.display = 'grid';
         document.querySelector('.score-board').style.display = 'flex';
 
         initTeamMode();
-    } else if (playMode === 'wheel' || playMode === 'millionaire' || playMode === 'hangman') {
-        // These modes need unit selection first
-        showUnitSelection(playMode);
+    } else if (gameMode === 'wheel' || gameMode === 'millionaire' || gameMode === 'hangman' || gameMode === 'taboo') {
+        // These modes can be team or individual - show play type selection
+        pendingGameMode = gameMode;
+        showPlayTypeSelection();
     }
+}
+
+// Show play type selection screen
+function showPlayTypeSelection() {
+    const playTypeScreen = document.getElementById('play-type-selection');
+    if (playTypeScreen) {
+        playTypeScreen.style.display = 'flex';
+    }
+}
+
+// Handle play type selection (team or individual)
+function selectPlayType(type) {
+    playType = type;
+    individualScore = 0; // Reset individual score
+
+    // Hide play type selection
+    const playTypeScreen = document.getElementById('play-type-selection');
+    if (playTypeScreen) {
+        playTypeScreen.style.display = 'none';
+    }
+
+    // Set the selected play mode and proceed to unit selection
+    selectedPlayMode = pendingGameMode;
+    showUnitSelection(pendingGameMode);
 }
 
 function backToLanding() {
@@ -335,19 +394,38 @@ function backToGameModes() {
     const wheelContainer = document.getElementById('wheel-container');
     const millContainer = document.getElementById('millionaire-container');
     const hangmanContainer = document.getElementById('hangman-container');
+    const tabooContainer = document.getElementById('taboo-container');
     const unitSelection = document.getElementById('unit-selection');
+    const playTypeSelection = document.getElementById('play-type-selection');
 
     if (wheelContainer) wheelContainer.style.display = 'none';
     if (millContainer) millContainer.style.display = 'none';
     if (hangmanContainer) hangmanContainer.style.display = 'none';
+    if (tabooContainer) tabooContainer.style.display = 'none';
     if (unitSelection) unitSelection.style.display = 'none';
+    if (playTypeSelection) playTypeSelection.style.display = 'none';
 
     // Clear any active timers
     if (millionaireTimer) clearInterval(millionaireTimer);
+    if (typeof tabooTimer !== 'undefined') clearInterval(tabooTimer); // Clear Taboo Timer
+
+    // Stop all audio
+    if (typeof MillionaireSounds !== 'undefined') {
+        MillionaireSounds.stopAll();
+    }
+    window.speechSynthesis.cancel();
+    if (typeof wheelSpinSound !== 'undefined' && wheelSpinSound) {
+        wheelSpinSound.stop();
+    }
+
+    // Reset Game Active Flag
+    isGameActive = false;
+    previousDistractors = [];
 
     // Reset play mode and selected unit but keep vocab mode
     selectedPlayMode = null;
     selectedUnit = null;
+    pendingGameMode = null;
 
     // Show game mode selection screen again
     const gameModeScreen = document.getElementById('game-mode-selection');
@@ -408,8 +486,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // If modal is open during popstate (meaning we went back), close it
         if (modal.style.display === 'flex') {
             closeModal(true); // true = skip history.back()
+            closeModal(true); // true = skip history.back()
             return;
         }
+
+        // --- NEW SAFETY FEATURE ---
+        // If we are "in-game" (isGameActive is true), treating Back as "Quit Game" 
+        // helps ensure everything (audio, timers) stops cleanly.
+        if (typeof isGameActive !== 'undefined' && isGameActive) {
+            goHome();
+            return;
+        }
+        // --------------------------
 
         // If we have a state with 'mode', we are still in game mode. Do NOT show landing page.
         if (event.state && event.state.mode) {
@@ -792,8 +880,10 @@ function updateScore(teamIndex, amount) {
 
 function toggleLanguage() {
     currentLanguage = currentLanguage === 'TR' ? 'ENG' : 'TR';
-    document.getElementById('lang-toggle').innerText = currentLanguage;
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) langToggle.innerText = currentLanguage;
 }
+
 
 function triggerCelebration(targetElement, points) {
     const container = document.getElementById('confetti-container');
@@ -873,108 +963,98 @@ function toggleFullScreen() {
 
 // Modal Logic
 
-function openQuestion(catIndex, qIndex, cardElement) {
-    if (cardElement.classList.contains('disabled')) return;
+// ========================================
+// UNIFIED FLASHCARD SYSTEM
+// ========================================
+// This single function handles flashcard display for ALL game modes
+// (Team Competition, Wheel of Fortune, etc.)
+// Update this one place to change all flashcards!
 
-    const q = gameData.categories[catIndex].questions[qIndex];
-    currentCardElement = cardElement;
+let currentFlashcardMode = 'team'; // 'team' or 'wheel'
+let currentFlashcardCallback = null;
 
-    // Populate Points Badge
-    const pointsBadge = document.getElementById('modal-points-badge');
-    pointsBadge.innerText = safeText(q.points);
+function showFlashcard(wordData, options = {}) {
+    // wordData: { english, turkish, pronunciation, example, exampleTR }
+    // options: { category, number, mode, onTeamSelect }
 
-    // Populate Category and Question Number
-    document.getElementById('modal-category').innerText = safeText(gameData.categories[catIndex].name);
-    document.getElementById('modal-question-number').innerText = qIndex + 1;
+    const category = options.category || 'Flashcard';
+    const number = options.number || 1;
+    currentFlashcardMode = options.mode || 'team';
+    currentFlashcardCallback = options.onTeamSelect || null;
 
-    // Determine what to show based on language mode
-    let displayWord = q.answer;        // English word (default to show)
-    let displayTranslation = q.question; // Turkish translation
+    // Store current word data for audio functions
+    window.currentWordData = {
+        answer: wordData.english,
+        question: wordData.turkish,
+        example: wordData.example || '',
+        exampleTR: wordData.exampleTR || '',
+        pronunciation: wordData.pronunciation || ''
+    };
 
-    if (currentLanguage === 'ENG') {
-        displayWord = q.answer;          // Show ENG as main word
-        displayTranslation = q.question; // TR as answer
+    // Populate Header
+    document.getElementById('modal-category').textContent = category;
+    document.getElementById('modal-question-number').textContent = number;
+
+    // Populate Main Word (English)
+    document.getElementById('modal-word').textContent = wordData.english || '';
+
+    // Populate Pronunciation
+    const pronEl = document.getElementById('modal-pronunciation');
+    if (wordData.pronunciation) {
+        pronEl.textContent = `[${wordData.pronunciation}]`;
+        pronEl.style.display = 'block';
     } else {
-        displayWord = q.question;        // Show TR as main (question)
-        displayTranslation = q.answer;   // ENG as answer
+        pronEl.style.display = 'none';
     }
 
-    // Populate Main Word
-    const wordElement = document.getElementById('modal-word');
-    wordElement.innerText = safeText(displayWord);
-
-    // Populate Pronunciation (show only in ENG mode or if showing English word)
-    const pronunciationElement = document.getElementById('modal-pronunciation');
-    if (q.pronunciation && currentLanguage === 'TR') {
-        // In TR mode, we show English word details
-        pronunciationElement.innerText = `[ ${q.pronunciation} ]`;
-        pronunciationElement.style.display = 'block';
-    } else {
-        pronunciationElement.style.display = 'none';
-    }
-
-    // Populate Example Section (show only if example exists)
-    const exampleSection = document.getElementById('modal-example-section');
-    const exampleTextElement = document.getElementById('modal-example-en');
-    const exampleAudioBtn = document.getElementById('example-audio-btn');
-
-    if (q.example) {
-        exampleTextElement.innerText = safeText(q.example);
-        // Store example text in button for onclick
-        exampleAudioBtn.setAttribute('onclick', `speakExample(event, '${q.example.replace(/'/g, "\\'")}')`);
-        exampleSection.style.display = 'block';
+    // Populate Example Sentence (English + Turkish)
+    const exampleSection = document.getElementById('example-section');
+    const exampleEl = document.getElementById('modal-example');
+    const exampleTrEl = document.getElementById('modal-example-tr');
+    if (wordData.example) {
+        exampleEl.textContent = wordData.example;
+        // Show Turkish translation if available
+        if (exampleTrEl && wordData.exampleTR) {
+            exampleTrEl.textContent = wordData.exampleTR;
+            exampleTrEl.style.display = 'block';
+        } else if (exampleTrEl) {
+            exampleTrEl.style.display = 'none';
+        }
+        exampleSection.style.display = 'flex';
     } else {
         exampleSection.style.display = 'none';
     }
 
-    // Hide Answer Section initially
-    const answerSection = document.getElementById('modal-answer-section');
-    answerSection.style.display = 'none';
 
-    // Populate answer section content (but keep hidden)
-    const answerTranslationElement = document.getElementById('modal-example-tr');
-    const answerTextElement = document.getElementById('modal-answer');
+    // Prepare Answer Section (hidden initially)
+    document.getElementById('modal-answer').textContent = wordData.turkish || '';
 
-    if (q.exampleTR) {
-        answerTranslationElement.innerText = safeText(q.exampleTR);
-    } else {
-        answerTranslationElement.innerText = '';
+    const answerPronEl = document.getElementById('modal-answer-pronunciation');
+    if (answerPronEl) {
+        answerPronEl.textContent = '';
     }
 
-    answerTextElement.innerText = safeText(displayTranslation);
+    // Hide answer section initially
+    document.getElementById('answer-section').style.display = 'none';
 
     // Show the Show Answer button
-    document.getElementById('show-answer-btn').style.display = 'inline-block';
+    const showAnswerBtn = document.getElementById('show-answer-btn');
+    showAnswerBtn.style.display = 'block';
+    showAnswerBtn.onclick = showAnswer;
+
+    // Reset team buttons
+    document.getElementById('modal-teams').innerHTML = '';
 
     // Show Modal
     document.getElementById('question-modal').style.display = 'flex';
 
-    // Start Timer (if needed)
-    // startTimer();
-
-    // Reset Team Buttons
-    document.getElementById('modal-teams').innerHTML = '';
-
     // Add history state for modal
-    try {
-        history.pushState({ modal: true }, "", "?modal=true");
-    } catch (e) {
-        console.warn("History API not available", e);
-    }
+    history.pushState({ modal: true }, "", "?modal=true");
 
-    // Auto-focus "Show Answer" button for easier navigation
+    // Auto-focus "Show Answer" button
     setTimeout(() => {
         document.getElementById('show-answer-btn').focus();
     }, 100);
-}
-
-function formatContent(text) {
-    // Simple check if text looks like an image url
-    const safeT = safeText(text);
-    if (safeT.match(/\.(jpeg|jpg|gif|png)$/i)) {
-        return `<img src="${safeT}" style="max-width:100%; max-height:400px; border-radius:5px;">`;
-    }
-    return safeT;
 }
 
 function showAnswer() {
@@ -982,26 +1062,99 @@ function showAnswer() {
     document.getElementById('show-answer-btn').style.display = 'none';
 
     // Show the Answer Section
-    const answerSection = document.getElementById('modal-answer-section');
-    answerSection.style.display = 'block';
+    document.getElementById('answer-section').style.display = 'block';
 
     // Auto-speak the English word THEN the sentence
     speakAnswerSequence();
 
-    // Generate Team Scoring Buttons
+    // Generate Buttons based on play type
     const teamsContainer = document.getElementById('modal-teams');
-    teamsContainer.innerHTML = ''; // Clear previous
+    teamsContainer.innerHTML = '';
 
-    gameData.groupNames.forEach((name, index) => {
+    if (playType === 'individual') {
+        // Individual mode - single Add Points button
         const btn = document.createElement('button');
-        btn.className = 'team-select-btn';
-        btn.innerText = name;
-        btn.onclick = () => awardPointsToTeam(index);
+        btn.className = 'add-points-btn';
+        btn.textContent = '✓ Add Points (+10)';
+        btn.onclick = () => {
+            if (currentFlashcardCallback) {
+                currentFlashcardCallback(-1); // -1 indicates individual mode
+            } else {
+                addIndividualPoints(10);
+            }
+        };
         teamsContainer.appendChild(btn);
-    });
+    } else {
+        // Team mode - show Team A/B/C/D buttons
+        gameData.groupNames.forEach((name, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'team-select-btn';
+            btn.textContent = name;
+            btn.onclick = () => {
+                if (currentFlashcardCallback) {
+                    currentFlashcardCallback(index);
+                } else {
+                    awardPointsToTeam(index);
+                }
+            };
+            teamsContainer.appendChild(btn);
+        });
+    }
+}
 
-    // Stop timer if running
-    // stopTimer();
+// Add points in individual mode
+function addIndividualPoints(points) {
+    individualScore += points;
+
+    // Update scoreboard if visible
+    updateIndividualScoreboard();
+
+    closeModal();
+}
+
+// ========================================
+// TEAM COMPETITION MODE - Uses Unified Flashcard
+// ========================================
+function openQuestion(catIndex, qIndex, cardElement) {
+    if (cardElement.classList.contains('disabled')) return;
+
+    const q = gameData.categories[catIndex].questions[qIndex];
+    currentCardElement = cardElement;
+
+    // Call unified flashcard function
+    showFlashcard({
+        english: q.answer,
+        turkish: q.question,
+        pronunciation: q.pronunciation || '',
+        example: q.example || '',
+        exampleTR: q.exampleTR || ''
+    }, {
+        category: gameData.categories[catIndex].name,
+        number: qIndex + 1,
+        mode: 'team',
+        onTeamSelect: null // Uses default awardPointsToTeam
+    });
+}
+
+// Audio functions for new flashcard
+function speakWord() {
+    if (window.currentWordData && window.currentWordData.answer) {
+        speakText(window.currentWordData.answer);
+    }
+}
+
+function speakExampleSentence() {
+    if (window.currentWordData && window.currentWordData.example) {
+        speakText(window.currentWordData.example);
+    }
+}
+
+function formatContent(text) {
+    const safeT = safeText(text);
+    if (safeT.match(/\.(jpeg|jpg|gif|png)$/i)) {
+        return `<img src="${safeT}" style="max-width:100%; max-height:400px; border-radius:5px;">`;
+    }
+    return safeT;
 }
 
 function awardPointsToTeam(teamIndex) {
@@ -1010,59 +1163,22 @@ function awardPointsToTeam(teamIndex) {
     const qIndex = currentCardElement.dataset.qIndex;
     const q = gameData.categories[catIndex].questions[qIndex];
 
-    // 1. Get Coordinates
-    const teamsContainer = document.getElementById('modal-teams');
-    const pointsBadge = document.getElementById('modal-points-badge'); // Updated to new element
-    const targetScore = document.getElementById(`score-${teamIndex}`);
-
-    const startRect = pointsBadge.getBoundingClientRect();
-    const endRect = targetScore.getBoundingClientRect();
-
-    // 2. Create Flying Element (Simulate moving the actual element)
-    const flyer = document.createElement('div');
-    flyer.className = 'flying-points';
-    flyer.innerText = pointsBadge.innerText; // Use actual text from badge
-
-    // Match styles of the badge to make it look like the same element
-    const computedStyle = window.getComputedStyle(pointsBadge);
-    flyer.style.color = computedStyle.color;
-    flyer.style.fontSize = computedStyle.fontSize;
-    flyer.style.fontWeight = computedStyle.fontWeight;
-    flyer.style.textShadow = computedStyle.textShadow;
-
-    flyer.style.left = `${startRect.left}px`;
-    flyer.style.top = `${startRect.top}px`;
-    flyer.style.width = `${startRect.width}px`; // Ensure width matches for centering
-    flyer.style.textAlign = 'center';
-
-    document.body.appendChild(flyer);
-
-    // Hide the original element to create the illusion it moved
-    pointsBadge.style.visibility = 'hidden';
-
-    // 3. Animate
-    // Force reflow
-    flyer.offsetHeight;
-
-    flyer.style.left = `${endRect.left + endRect.width / 2 - startRect.width / 2}px`; // Center over target
-    flyer.style.top = `${endRect.top}px`;
-    flyer.style.opacity = '0';
-    flyer.style.transform = 'scale(0.5)';
-
-    // 4. On Finish
-    setTimeout(() => {
-        flyer.remove();
-        updateScore(teamIndex, q.points);
-        closeModal();
-    }, 1000); // Match CSS transition duration
+    // Award points directly
+    updateScore(teamIndex, q.points);
 
     // Disable buttons to prevent double scoring
+    const teamsContainer = document.getElementById('modal-teams');
     const buttons = teamsContainer.getElementsByTagName('button');
     for (let btn of buttons) {
         btn.disabled = true;
         btn.style.opacity = '0.5';
         btn.style.cursor = 'not-allowed';
     }
+
+    // Close modal after short delay
+    setTimeout(() => {
+        closeModal();
+    }, 300);
 }
 
 function getBritishVoice() {
@@ -1085,6 +1201,9 @@ function getBritishVoice() {
     // 4. Fallback: Any Female English voice (better to have female US than male GB if user wants female)
     return voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria'))) || null;
 }
+
+// Wheel of Fortune Persistence (Declared at top of file)
+window.pendingWheelWord = null;
 
 // Global voice cache to solve "first time different voice" issue
 let cachedVoice = null;
@@ -1150,19 +1269,17 @@ function speakExample(event, text) {
 }
 
 function speakAnswerSequence() {
-    if (!currentCardElement) return;
-    const catIndex = currentCardElement.dataset.catIndex;
-    const qIndex = currentCardElement.dataset.qIndex;
-    const q = gameData.categories[catIndex].questions[qIndex];
+    // Use unified word data (works for all game modes)
+    if (!window.currentWordData) return;
 
-    // 1. Speak Word
-    speakText(q.answer, () => {
+    const wordData = window.currentWordData;
+
+    // 1. Speak Word (English)
+    speakText(wordData.answer, () => {
         // 2. After word finishes, check if there is an example
-        if (q.example) {
-            // Small pause? SpeechSynthesis queues, but let's just call it.
-            // Maybe add a small delay for naturalness?
+        if (wordData.example) {
             setTimeout(() => {
-                speakText(q.example);
+                speakText(wordData.example);
             }, 500);
         }
     });
@@ -1173,10 +1290,25 @@ function closeModal(skipHistory = false) {
     document.getElementById('modal-pronunciation').style.display = 'none'; // Hide pronunciation
     stopTimer();
 
-    // If not triggered by back button (popstate), go back to clean history
+    // 1. Check if we need to restore a wheel word (CRITICAL: Do this BEFORE history.back)
+    // If closed without answering (X button or Back button), restore the word
+    if (window.pendingWheelWord) {
+        console.log("DEBUG: closeModal - Restoring word:", window.pendingWheelWord);
+        wheelWords.push(window.pendingWheelWord);
+        document.getElementById('wheel-words-left').textContent = wheelWords.length;
+        if (typeof drawWheel === 'function') {
+            drawWheel();
+        }
+        window.pendingWheelWord = null;
+    } else {
+        console.log("DEBUG: closeModal - No pending word to restore");
+    }
+
+    // 2. If not triggered by back button (popstate), go back to clean history
     if (!skipHistory) {
         history.back();
     }
+
     // Mark card as used
     if (currentCardElement) {
         currentCardElement.classList.add('disabled');
@@ -1201,10 +1333,15 @@ function startTimer() {
     }, 1000);
 }
 
+
 function stopTimer() {
     if (timerInterval) clearInterval(timerInterval);
-    document.getElementById('modal-timer').innerText = "--";
+    const timerEl = document.getElementById('modal-timer');
+    if (timerEl) {
+        timerEl.innerText = "--";
+    }
 }
+
 
 function updateTimerDisplay() {
     const timerEl = document.getElementById('modal-timer');
@@ -1369,6 +1506,16 @@ function triggerAddHomework() {
     renderStudentListForMarking();
 }
 
+// Helper function to format student names as "First Name Last Initial."
+function formatStudentDisplayName(fullName) {
+    if (!fullName) return "";
+    var parts = fullName.trim().split(/\s+/);
+    if (parts.length < 2) return fullName;
+    var firstName = parts.slice(0, -1).join(" ");
+    var lastNameInitial = parts[parts.length - 1].charAt(0) + ".";
+    return firstName + " " + lastNameInitial;
+}
+
 function renderStudentListForMarking() {
     var container = document.getElementById('student-list-container');
     container.innerHTML = "";
@@ -1390,7 +1537,7 @@ function renderStudentListForMarking() {
 
         // Name
         var nameDiv = document.createElement('div');
-        nameDiv.innerText = student.name;
+        nameDiv.innerText = formatStudentDisplayName(student.name);
         row.appendChild(nameDiv);
 
         // Status Buttons
@@ -1460,6 +1607,7 @@ function saveHomeworkToFirebase() {
         // Editing - logic to get original date needed. 
         // For now let's just use today's date on update OR find a way to store it.
         // Simplest: Add a hidden attribute or variable.
+        // For now, assume date is managed elsewhere or implicitly 'today' for new entries
         // Let's assume Update sets it to Today or we can fetch it. 
         // Better: We stored it in 'currentHwData' maybe?
         // Let's use Today for simplicity as per "Automatic" request.
@@ -1733,7 +1881,7 @@ function renderReportTable(data) {
         tr.innerHTML = `
             <td>${item.class}</td>
             <td>${item.no}</td>
-            <td>${item.name}</td>
+            <td>${formatStudentDisplayName(item.name)}</td>
             <td style="color:#ff4757; font-weight:bold;">${item.missing}</td>
             <td style="color:#2ecc71;">${item.done}</td>
             <td style="color:#f1c40f;">${item.pending}</td>
@@ -1839,6 +1987,8 @@ function selectUnit(unitId, gameMode) {
         initMillionaireMode();
     } else if (gameMode === 'hangman') {
         initHangmanMode();
+    } else if (gameMode === 'taboo') {
+        initTabooMode();
     }
 }
 
@@ -1883,9 +2033,11 @@ function getWordsForVocabMode() {
             levelData.forEach(category => {
                 category.pool.forEach(word => {
                     words.push({
-                        english: word.question,
-                        turkish: word.answer,
-                        pronunciation: word.pronunciation || ''
+                        english: word.answer,
+                        turkish: word.question,
+                        pronunciation: word.pronunciation || '',
+                        example: word.example || '',
+                        exampleTR: word.exampleTR || ''
                     });
                 });
             });
@@ -1900,7 +2052,9 @@ function getWordsForVocabMode() {
                     words.push({
                         english: word.answer,
                         turkish: word.question,
-                        pronunciation: word.pronunciation || ''
+                        pronunciation: word.pronunciation || '',
+                        example: word.example || '',
+                        exampleTR: word.exampleTR || ''
                     });
                 });
             });
@@ -1947,6 +2101,14 @@ function initWheelMode() {
 
     // Show header
     document.querySelector('header').style.display = 'flex';
+
+    // Initialize team scores for wheel mode (Always reset on entry)
+    if (playType === 'team') {
+        gameData.scores = [0, 0, 0, 0];
+    }
+
+    // Initialize team scoreboard for wheel mode
+    renderWheelScoreboard();
 }
 
 function shuffleArray(array) {
@@ -2000,8 +2162,10 @@ function drawWheel() {
         wheelCtx.shadowBlur = 3;
 
         const word = wheelWords[i];
-        const displayText = currentLanguage === 'ENG' ? word.english : (word.turkish || word.turkish_translation);
+        // Always show English word on the wheel
+        const displayText = word.english;
         wheelCtx.fillText(displayText.substring(0, 15), radius - 10, 5);
+
 
         wheelCtx.restore();
     }
@@ -2030,8 +2194,44 @@ function drawWheel() {
     wheelCtx.restore();
 }
 
+// Web Audio API Context
+let audioCtx;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+function playTickSound() {
+    if (!audioCtx) return;
+
+    // Create oscillator
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'triangle';
+    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1);
+}
+
 function spinWheel() {
     if (isSpinning || wheelWords.length === 0) return;
+
+    // Initialize audio on user interaction
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
 
     isSpinning = true;
 
@@ -2044,6 +2244,10 @@ function spinWheel() {
     const startTime = Date.now();
     const startRotation = currentWheelRotation;
 
+    // For sound tracking
+    let lastSegmentIndex = -1;
+    const segmentAngle = (2 * Math.PI) / wheelWords.length;
+
     function animate() {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
@@ -2051,7 +2255,21 @@ function spinWheel() {
         // Easing function (ease out cubic)
         const easeProgress = 1 - Math.pow(1 - progress, 3);
 
-        currentWheelRotation = startRotation + totalRotation * easeProgress;
+        const currentRot = startRotation + totalRotation * easeProgress;
+        currentWheelRotation = currentRot;
+
+        // Calculate current segment for sound
+        // Pointer is at TOP (PI/2), so we adjust rotation
+        // The wheel rotates, so the segment passing the pointer changes
+        const normalizedRot = currentRot % (2 * Math.PI);
+        const effectiveAngle = (2 * Math.PI - normalizedRot + Math.PI / 2) % (2 * Math.PI);
+        const currentSegmentIndex = Math.floor(effectiveAngle / segmentAngle);
+
+        if (lastSegmentIndex !== -1 && currentSegmentIndex !== lastSegmentIndex) {
+            playTickSound();
+        }
+        lastSegmentIndex = currentSegmentIndex;
+
         drawWheel();
 
         if (progress < 1) {
@@ -2078,6 +2296,8 @@ function selectWheelWord() {
     const segmentIndex = Math.floor(adjustedAngle / segmentAngle) % wheelWords.length;
 
     const selectedWord = wheelWords[segmentIndex];
+    window.pendingWheelWord = selectedWord; // Store to restore if needed
+    console.log("DEBUG: selectWheelWord - Set pendingWheelWord:", window.pendingWheelWord);
 
     // Remove word from array
     wheelWords.splice(segmentIndex, 1);
@@ -2101,108 +2321,25 @@ function selectWheelWord() {
 // Store current word for audio playback
 let currentModalWord = null;
 
+// ========================================
+// WHEEL OF FORTUNE - Uses Unified Flashcard
+// ========================================
 function showWheelQuestion(word) {
     currentModalWord = word;
-    const modal = document.getElementById('question-modal');
 
-    // Populate Points Badge
-    const pointsBadge = document.getElementById('modal-points-badge');
-    pointsBadge.innerText = '10';
-
-    // Populate Category and Question Number
-    document.getElementById('modal-category').textContent = 'Wheel of Fortune';
-    // Calculate question number based on remaining words
-    const totalWords = gameData.levelData[selectedUnit] ?
-        gameData.levelData[selectedUnit].reduce((sum, cat) => sum + cat.pool.length, 0) : 0;
-    const wordsLeft = parseInt(document.getElementById('wheel-words-left')?.textContent || 0);
-    document.getElementById('modal-question-number').textContent = (totalWords - wordsLeft + 1) || 1;
-
-    // Determine what to show based on language mode
-    let displayWord = word.english;        // English word (default to show)
-    let displayTranslation = word.turkish || word.turkish_translation || '';
-
-    if (currentLanguage === 'ENG') {
-        displayWord = word.english;
-        displayTranslation = word.turkish || word.turkish_translation || '';
-    } else {
-        displayWord = word.turkish || word.turkish_translation || '';
-        displayTranslation = word.english;
-    }
-
-    // Populate Main Word
-    document.getElementById('modal-word').textContent = displayWord;
-
-    // Populate Pronunciation
-    const pronunciationElement = document.getElementById('modal-pronunciation');
-    if (word.pronunciation && currentLanguage === 'TR') {
-        pronunciationElement.textContent = `[ ${word.pronunciation} ]`;
-        pronunciationElement.style.display = 'block';
-    } else {
-        pronunciationElement.style.display = 'none';
-    }
-
-    // Populate Example Section
-    const exampleSection = document.getElementById('modal-example-section');
-    const exampleTextElement = document.getElementById('modal-example-en');
-    const exampleAudioBtn = document.getElementById('example-audio-btn');
-
-    if (word.example) {
-        exampleTextElement.textContent = word.example;
-        exampleAudioBtn.setAttribute('onclick', `speakExample(event, '${word.example.replace(/'/g, "\\'")}')`);
-        exampleSection.style.display = 'block';
-    } else {
-        exampleSection.style.display = 'none';
-    }
-
-    // Populate answer section content (but keep hidden)
-    const answerSection = document.getElementById('modal-answer-section');
-    answerSection.style.display = 'none';
-
-    document.getElementById('modal-example-tr').textContent = word.exampleTR || '';
-    document.getElementById('modal-answer').textContent = displayTranslation;
-
-    // Show the Show Answer button
-    document.getElementById('show-answer-btn').style.display = 'inline-block';
-    document.getElementById('show-answer-btn').onclick = revealWheelAnswer;
-
-    // Reset team buttons
-    document.getElementById('modal-teams').innerHTML = '';
-
-    modal.style.display = 'flex';
-}
-
-function revealWheelAnswer() {
-    // Hide the Show Answer button
-    document.getElementById('show-answer-btn').style.display = 'none';
-
-    // Show the Answer Section
-    const answerSection = document.getElementById('modal-answer-section');
-    answerSection.style.display = 'block';
-
-    // Generate team buttons for Wheel mode
-    const modalTeams = document.getElementById('modal-teams');
-    modalTeams.innerHTML = '';
-    gameData.groupNames.forEach((teamName, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'team-select-btn';
-        btn.textContent = teamName;
-        btn.onclick = () => handleWheelTeamSelection(index);
-        modalTeams.appendChild(btn);
+    // Call unified flashcard function
+    showFlashcard({
+        english: word.english || '',
+        turkish: word.turkish || word.turkish_translation || '',
+        pronunciation: word.pronunciation || '',
+        example: word.example || '',
+        exampleTR: word.exampleTR || ''
+    }, {
+        category: 'Wheel of Fortune',
+        number: wheelPoints || 10,
+        mode: 'wheel',
+        onTeamSelect: handleWheelTeamSelection
     });
-
-    // Auto-read: Word (English) -> Example (English)
-    if (currentModalWord && currentModalWord.english) {
-        // Speak word first (Cancel previous sounds)
-        speakText(currentModalWord.english, () => {
-            // Callback after word finishes
-            if (currentModalWord.example) {
-                // Short pause then speak example
-                setTimeout(() => {
-                    speakText(currentModalWord.example, null, false);
-                }, 300);
-            }
-        }, true); // True = ensure we start fresh
-    }
 }
 
 // Audio playback using Web Speech API
@@ -2239,20 +2376,83 @@ function playAudio(type) {
     }
 }
 
-// Handle team selection in Wheel mode
+// Render scoreboard for Wheel mode (team or individual)
+function renderWheelScoreboard() {
+    const scoreboard = document.getElementById('wheel-scoreboard');
+    if (!scoreboard) return;
+
+    scoreboard.innerHTML = '';
+
+    if (playType === 'individual') {
+        // Individual mode - single score display
+        const scoreDiv = document.createElement('div');
+        scoreDiv.className = 'individual-score-card';
+        scoreDiv.innerHTML = `
+            <div class="individual-score-label">Your Score</div>
+            <div class="individual-score-value" id="wheel-individual-score">${individualScore}</div>
+        `;
+        scoreboard.appendChild(scoreDiv);
+    } else {
+        // Team mode - show all team scores
+        if (!gameData.groupNames) return;
+
+        gameData.groupNames.forEach((name, index) => {
+            const teamDiv = document.createElement('div');
+            teamDiv.className = 'wheel-team-score';
+            teamDiv.id = `wheel-team-${index}`;
+            teamDiv.innerHTML = `
+                <div class="wheel-team-name">${name}</div>
+                <div class="wheel-team-points">${gameData.scores[index]}</div>
+            `;
+            scoreboard.appendChild(teamDiv);
+        });
+    }
+}
+
+// Update individual scoreboard display
+function updateIndividualScoreboard() {
+    const scoreEl = document.getElementById('wheel-individual-score');
+    if (scoreEl) {
+        scoreEl.textContent = individualScore;
+    }
+}
+
+// Handle selection in Wheel mode (team or individual)
 function handleWheelTeamSelection(teamIndex) {
-    // Award points to the selected team
-    updateScore(teamIndex, 10);
+    if (teamIndex === -1 || playType === 'individual') {
+        // Individual mode - add to individual score
+        individualScore += 10;
+        wheelPoints += 10;
+        document.getElementById('wheel-points').textContent = wheelPoints;
+    } else {
+        // Team mode - award to team directly (don't use updateScore which targets Team Competition board)
+        if (gameData.scores && teamIndex >= 0 && teamIndex < gameData.scores.length) {
+            gameData.scores[teamIndex] += 10;
+        }
+        wheelPoints += 10;
+        document.getElementById('wheel-points').textContent = wheelPoints;
+    }
 
     // Update words count
     document.getElementById('wheel-words-left').textContent = wheelWords.length;
+
+    // Update wheel scoreboard
+    renderWheelScoreboard();
+
+    // Confirm word usage (so it doesn't get restored)
+    window.pendingWheelWord = null;
+    console.log("DEBUG: handleWheelTeamSelection - Cleared pendingWheelWord");
 
     closeModal();
 
     // Check if game over
     if (wheelWords.length === 0) {
         setTimeout(() => {
-            alert(`Game Over! Total Points: ${wheelPoints}`);
+            if (playType === 'individual') {
+                alert(`Game Over! Your Score: ${individualScore}`);
+            } else {
+                alert(`Game Over! Check team scores.`);
+            }
             goHome();
         }, 500);
     }
@@ -2274,7 +2474,123 @@ let millionaireLifelines = {
     'time': false
 };
 
+let isGameActive = false; // Flag to prevent audio race conditions
+let previousDistractors = []; // Track used wrong answers to prevent repeats
+let millionaireWordPool = []; // Store ALL words from unit for contextual distractors
+
 const prizeLadder = [1, 2, 3, 5, 10, 15, 25, 50, 75, 100];
+
+// Audio Handler for Millionaire Mode (Synthesized)
+const MillionaireSounds = {
+    audioCtx: null,
+    suspenseOsc: null,
+    suspenseGain: null,
+
+    init() {
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+    },
+
+    playSuspense() {
+        this.init();
+        if (this.suspenseOsc) return; // Already playing
+
+        this.suspenseOsc = this.audioCtx.createOscillator();
+        this.suspenseGain = this.audioCtx.createGain();
+
+        this.suspenseOsc.type = 'sine';
+        this.suspenseOsc.frequency.setValueAtTime(100, this.audioCtx.currentTime); // Low drone
+
+        // LFO for pulsing effect
+        const lfo = this.audioCtx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.setValueAtTime(0.5, this.audioCtx.currentTime);
+        const lfoGain = this.audioCtx.createGain();
+        lfoGain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(this.suspenseGain.gain);
+
+        this.suspenseOsc.connect(this.suspenseGain);
+        this.suspenseGain.connect(this.audioCtx.destination);
+
+        this.suspenseGain.gain.setValueAtTime(0.05, this.audioCtx.currentTime); // Low volume
+
+        this.suspenseOsc.start();
+        lfo.start();
+
+        // Store for stopping
+        this.lfo = lfo;
+    },
+
+    stopSuspense() {
+        if (this.suspenseOsc) {
+            try {
+                this.suspenseOsc.stop();
+                this.lfo.stop();
+                this.suspenseOsc.disconnect();
+                this.lfo.disconnect();
+            } catch (e) { console.log(e); }
+            this.suspenseOsc = null;
+        }
+    },
+
+    playCorrect() {
+        this.init();
+        const now = this.audioCtx.currentTime;
+
+        // Maj Chord Arpeggio
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+
+            osc.frequency.setValueAtTime(freq, now + i * 0.1);
+            osc.type = 'triangle';
+
+            gain.gain.setValueAtTime(0, now + i * 0.1);
+            gain.gain.linearRampToValueAtTime(0.2, now + i * 0.1 + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.5);
+
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.6);
+        });
+    },
+
+    playWrong() {
+        this.init();
+        const now = this.audioCtx.currentTime;
+
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.5); // Slide down
+        osc.type = 'sawtooth';
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.5);
+    },
+
+    stopAll() {
+        this.stopSuspense();
+        if (this.audioCtx) {
+            // this.audioCtx.close(); // Don't close, keep for reuse
+        }
+    }
+};
 
 function initMillionaireMode() {
     // Get and prepare questions
@@ -2291,7 +2607,15 @@ function initMillionaireMode() {
     buildPrizeLadder();
 
     // Start first question
+    // Start first question
     showMillionaireQuestion();
+
+    // Start Suspense Music
+    MillionaireSounds.playSuspense();
+
+    // Set Game Active Flag
+    isGameActive = true;
+    previousDistractors = []; // Reset distractor history on new game
 
     // Reset lifeline buttons
     document.querySelectorAll('.lifeline-btn').forEach(btn => {
@@ -2309,35 +2633,66 @@ function prepareMillionaireQuestions() {
     if (selectedVocabMode === 'standard') {
         const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
         levels.forEach(lvl => {
-            const level = categories.find(c => c.level === lvl);
-            if (level && level.words) {
-                allWords.push(...level.words.map(w => ({ ...w, difficulty: lvl })));
+            const levelData = gameData.levelData[lvl];
+            if (levelData) {
+                levelData.forEach(cat => {
+                    cat.pool.forEach(w => {
+                        allWords.push({
+                            english: w.answer,
+                            turkish: w.question,
+                            pronunciation: w.pronunciation || '',
+                            example: w.example || '',
+                            exampleTR: w.exampleTR || '',
+                            difficulty: lvl
+                        });
+                    });
+                });
             }
         });
     } else if (selectedVocabMode === 'grade9') {
         // Use multiple units for variety
         for (let i = 1; i <= 8; i++) {
             const unitKey = `Grade9_Unit${i}`;
-            if (grade9GameData && grade9GameData[unitKey]) {
-                const unit = grade9GameData[unitKey];
-                Object.keys(unit).forEach(cat => {
-                    allWords.push(...unit[cat].map(w => ({ ...w, difficulty: `U${i}` })));
+            if (gameData.levelData[unitKey]) {
+                gameData.levelData[unitKey].forEach(cat => {
+                    cat.pool.forEach(w => {
+                        allWords.push({
+                            english: w.answer,
+                            turkish: w.question,
+                            pronunciation: w.pronunciation || '',
+                            example: w.example || '',
+                            exampleTR: w.exampleTR || '',
+                            difficulty: `U${i}`
+                        });
+                    });
                 });
             }
         }
     } else if (selectedVocabMode === 'ydt') {
         for (let i = 1; i <= 10; i++) {
             const unitKey = `YDT_Unit${i}`;
-            if (ydtGameData && ydtGameData[unitKey]) {
-                const unit = ydtGameData[unitKey];
-                Object.keys(unit).forEach(cat => {
-                    allWords.push(...unit[cat].map(w => ({ ...w, difficulty: `U${i}` })));
+            if (gameData.levelData[unitKey]) {
+                gameData.levelData[unitKey].forEach(category => {
+                    category.pool.forEach(w => {
+                        allWords.push({
+                            english: w.answer,
+                            turkish: w.question,
+                            pronunciation: w.pronunciation || '',
+                            example: w.example || '',
+                            exampleTR: w.exampleTR || '',
+                            difficulty: `U${i}`
+                        });
+                    });
                 });
             }
         }
     }
 
     // Shuffle and select 10 questions
+    // Store FULL pool for distractor generation
+    millionaireWordPool = allWords;
+
+    // Now slice for the game questions
     allWords = shuffleArray(allWords);
     return allWords.slice(0, 10);
 }
@@ -2346,7 +2701,13 @@ function buildPrizeLadder() {
     const ladder = document.getElementById('prize-ladder');
     ladder.innerHTML = '';
 
-    for (let i = prizeLadder.length - 1; i >= 0; i--) {
+    // Reverse order: Start from lowest point (Index 0) at the top/start of list?
+    // User asked "puan kısmı da en yüksek puandan değil en düşük puandan başlasın"
+    // Usually standard Millionaire has lowest at bottom, climbing up. 
+    // If they want "start from lowest", it likely means 1 Point at top? Or just rendered 0..N?
+    // Let's assume standard list order: 1, 2, 3 ... 10 (Ascending visual order)
+
+    for (let i = 0; i < prizeLadder.length; i++) {
         const step = document.createElement('div');
         step.className = 'prize-step';
         step.textContent = `${prizeLadder[i]} Points`;
@@ -2415,21 +2776,104 @@ function showMillionaireQuestion() {
             gameOverMillionaire();
         }
     }, 1000);
+
+    // Play sequential audio
+    playMillionaireAudioSequence(word.english, allAnswers);
+}
+
+function playMillionaireAudioSequence(questionWord, options) {
+    // Cancel any existing speech
+    window.speechSynthesis.cancel();
+
+    // Part 1: "What is the meaning of..."
+    const questionUtterance = new SpeechSynthesisUtterance(`What is the meaning of ${questionWord}?`);
+    questionUtterance.lang = 'en-US';
+    questionUtterance.rate = 0.9;
+
+    questionUtterance.onend = () => {
+        // Part 2: Read options sequentially
+        let index = 0;
+
+        function speakNextOption() {
+            if (index >= options.length || !isGameActive) return; // Stop if game exited
+
+            // Check if game is still active logic could go here, but cancel() handles most cases
+
+            const letters = ['A', 'B', 'C', 'D'];
+            const optionText = options[index];
+            const optionUtterance = new SpeechSynthesisUtterance(`${letters[index]}. ${optionText}`);
+
+            // Guess language for option (usually Turkish in this game)
+            optionUtterance.lang = 'tr-TR';
+            optionUtterance.rate = 1.0;
+
+            optionUtterance.onend = () => {
+                index++;
+                setTimeout(speakNextOption, 300); // Small pause between options
+            };
+
+            window.speechSynthesis.speak(optionUtterance);
+        }
+
+        speakNextOption();
+    };
+
+    window.speechSynthesis.speak(questionUtterance);
 }
 
 function generateWrongAnswers(correctAnswer) {
-    // This is a simple implementation - in a real app, you'd want better wrong answers
-    const dummyAnswers = [
-        'Kitap', 'Masa', 'Sandalye', 'Araba', 'Ev', 'Okul', 'Öğretmen', 'Öğrenci',
-        'Kalem', 'Defter', 'Su', 'Yemek', 'Telefon', 'Bilgisayar', 'Pencere', 'Kapı'
-    ];
+    // 1. Get raw words from the CURRENT UNIT's pool (millionaireWordPool)
+    // 2. Map them to their 'Turkish' answer string (since that's what we display on buttons)
+    // 3. Filter out the correct answer and previously used distractors
 
-    const wrongAnswers = dummyAnswers.filter(a => a !== correctAnswer);
-    return shuffleArray(wrongAnswers).slice(0, 3);
+    let potentialDistractors = [];
+
+    if (millionaireWordPool && millionaireWordPool.length > 0) {
+        // Map to Turkish answers or translations
+        potentialDistractors = millionaireWordPool.map(w => w.turkish || w.turkish_translation);
+    } else {
+        // Fallback if pool is empty for some reason
+        potentialDistractors = [
+            'Kitap', 'Masa', 'Sandalye', 'Araba', 'Ev', 'Okul', 'Öğretmen', 'Öğrenci',
+            'Kalem', 'Defter', 'Su', 'Yemek', 'Telefon', 'Bilgisayar', 'Pencere', 'Kapı'
+        ];
+    }
+
+    // Filter out:
+    // a) The correct answer itself
+    // b) Any distractors we just used in the last round (to prevent repeats)
+    const candidates = potentialDistractors.filter(ans =>
+        ans !== correctAnswer && !previousDistractors.includes(ans)
+    );
+
+    // If we have less than 3 candidates (very small units?), fallback to allowing standard distractors
+    // or just drop the "unique check" constraint
+    let finalPool = candidates;
+    if (candidates.length < 3) {
+        finalPool = potentialDistractors.filter(ans => ans !== correctAnswer);
+    }
+
+    // Still empty? Use hardcoded fallback
+    if (finalPool.length < 3) {
+        finalPool = [
+            'Kitap', 'Masa', 'Sandalye', 'Araba', 'Ev', 'Okul', 'Öğretmen', 'Öğrenci'
+        ].filter(ans => ans !== correctAnswer);
+    }
+
+    const wrongAnswers = shuffleArray(finalPool).slice(0, 3);
+
+    // Update history
+    previousDistractors = wrongAnswers;
+
+    return wrongAnswers;
 }
 
 function checkMillionaireAnswer(selected, correct, btnElement) {
     clearInterval(millionaireTimer);
+    window.speechSynthesis.cancel(); // Stop audio immediately
+    MillionaireSounds.stopSuspense(); // Stop music
+
+
 
     // Disable all buttons
     document.querySelectorAll('.mill-answer-btn').forEach(btn => {
@@ -2440,14 +2884,17 @@ function checkMillionaireAnswer(selected, correct, btnElement) {
         // Correct!
         btnElement.classList.add('correct');
         millionaireTotalPoints += prizeLadder[millionaireCurrentQuestion];
+        MillionaireSounds.playCorrect();
 
         setTimeout(() => {
             millionaireCurrentQuestion++;
             showMillionaireQuestion();
+            MillionaireSounds.playSuspense(); // Restart music for next question
         }, 2000);
     } else {
         // Wrong - game over
         btnElement.classList.add('wrong');
+        MillionaireSounds.playWrong();
 
         setTimeout(() => {
             alert(`Wrong answer! Final score: ${millionaireTotalPoints} points`);
@@ -2457,7 +2904,29 @@ function checkMillionaireAnswer(selected, correct, btnElement) {
 }
 
 function gameOverMillionaire() {
-    goHome();
+    // Show custom overlay instead of goHome
+    const overlay = document.getElementById('millionaire-game-over');
+    const scoreText = document.getElementById('millionaire-final-score');
+    scoreText.textContent = `Final Score: ${millionaireTotalPoints} Points`;
+    overlay.style.display = 'flex';
+}
+
+function restartMillionaireMode() {
+    // Hide overlay
+    document.getElementById('millionaire-game-over').style.display = 'none';
+
+    // Reset game state
+    millionaireCurrentQuestion = 0;
+    millionaireTotalPoints = 0;
+
+    // Reset lifelines
+    millionaireLifelines = { '5050': false, 'teacher': false, 'time': false };
+    document.querySelectorAll('.lifeline-btn').forEach(btn => btn.classList.remove('used'));
+
+    // Re-init
+    // Re-init
+    initMillionaireMode();
+    // initMillionaireMode starts suspense
 }
 
 function useLifeline(type) {
@@ -2481,10 +2950,11 @@ function useLifeline(type) {
             btn.classList.add('hidden');
         });
     } else if (type === 'teacher') {
-        // Show a hint (pronunciation or first letter)
+        // Show a hint (first letter)
         const word = millionaireQuestions[millionaireCurrentQuestion];
-        const hint = word.pronunciation || `Hint: starts with "${word.turkish[0]}"`;
-        alert(`Teacher's Hint: ${hint}`);
+        // Determine correct answer
+        const correctAnswer = word.turkish || word.turkish_translation;
+        alert(`Teacher's Hint: The answer starts with "${correctAnswer.charAt(0)}"`);
     } else if (type === 'time') {
         // Add 15 seconds
         millionaireTimeLeft += 15;
@@ -2727,4 +3197,172 @@ function drawHangman(wrongCount) {
         ctx.lineTo(240, 320);
         ctx.stroke();
     }
+}
+
+// ========================================
+// TABOO GAME MODE
+// ========================================
+let tabooTimer;
+let tabooTimeLeft = 180;
+let tabooCards = [];
+let tabooCurrentCardIndex = 0;
+let tabooScores = [0, 0, 0, 0];
+
+function initTabooMode() {
+    // Reset Scores
+    tabooScores = [0, 0, 0, 0];
+    updateTabooScoreDisplay();
+
+    // Prepare Cards
+    tabooCards = prepareTabooCards();
+    tabooCurrentCardIndex = 0;
+
+    // Show UI
+    document.getElementById('taboo-container').style.display = 'flex';
+    document.getElementById('taboo-game-over').style.display = 'none';
+    document.getElementById('taboo-start-screen').style.display = 'flex'; // Show start screen
+
+    // Do NOT start round yet. Wait for user to click "Start Game"
+}
+
+function beginTabooGame() {
+    document.getElementById('taboo-start-screen').style.display = 'none';
+    startTabooRound();
+}
+
+function prepareTabooCards() {
+    const rawWords = getWordsForVocabMode();
+    const cards = [];
+
+    rawWords.forEach(word => {
+        // Generate forbidden words from Example Sentence + fill with randoms
+        let forbidden = [];
+
+        // 1. Extract from Example (if exists)
+        if (word.example) {
+            // Remove punctuation and split
+            const wordsInExample = word.example.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/);
+            // Filter out the answer itself and common keywords
+            const stopWords = ['a', 'an', 'the', 'in', 'on', 'at', 'to', 'for', 'of', 'is', 'are', 'was', 'were', 'be', 'have', 'has', 'it', 'this', 'that', 'my', 'your', 'his', 'her', 'we', 'they'];
+
+            wordsInExample.forEach(w => {
+                if (w.toLowerCase() !== word.english.toLowerCase() && !stopWords.includes(w.toLowerCase()) && w.length > 2) {
+                    if (!forbidden.includes(w)) forbidden.push(w);
+                }
+            });
+        }
+
+        // 2. Fill with random words from same unit if less than 5
+        // Safety for small units
+        let safeCount = 0;
+        while (forbidden.length < 5 && safeCount < 50) {
+            safeCount++;
+            const randomWord = rawWords[Math.floor(Math.random() * rawWords.length)];
+            const candidate = randomWord.english;
+            if (candidate !== word.english && !forbidden.includes(candidate)) {
+                forbidden.push(candidate);
+            }
+        }
+
+        cards.push({
+            main: word.english,
+            forbidden: forbidden.slice(0, 5)
+        });
+    });
+
+    return shuffleArray(cards);
+}
+
+function startTabooRound() {
+    document.getElementById('taboo-game-over').style.display = 'none';
+    tabooCurrentCardIndex = 0;
+
+    if (tabooCards.length === 0) {
+        tabooCards = prepareTabooCards();
+    }
+
+    // Timer
+    tabooTimeLeft = 180;
+    updateTabooTimerDisplay();
+    if (tabooTimer) clearInterval(tabooTimer);
+
+    tabooTimer = setInterval(() => {
+        tabooTimeLeft--;
+        updateTabooTimerDisplay();
+        if (tabooTimeLeft <= 0) {
+            endTabooRound();
+        }
+    }, 1000);
+
+    showTabooCard();
+}
+
+function updateTabooTimerDisplay() {
+    const m = Math.floor(tabooTimeLeft / 60).toString().padStart(2, '0');
+    const s = (tabooTimeLeft % 60).toString().padStart(2, '0');
+    const el = document.getElementById('taboo-timer');
+    if (el) el.innerText = `${m}:${s}`;
+}
+
+function showTabooCard() {
+    if (tabooCurrentCardIndex >= tabooCards.length) {
+        // Deck finished, reshuffle
+        tabooCards = shuffleArray(tabooCards);
+        tabooCurrentCardIndex = 0;
+    }
+
+    const cardData = tabooCards[tabooCurrentCardIndex];
+    document.getElementById('taboo-main-word').innerText = cardData.main;
+
+    const list = document.getElementById('taboo-forbidden-list');
+    list.innerHTML = '';
+
+    cardData.forbidden.forEach(w => {
+        const div = document.createElement('div');
+        div.className = 'taboo-forbidden-item';
+        div.innerText = w;
+        list.appendChild(div);
+    });
+}
+
+function passTabooCard() {
+    tabooCurrentCardIndex++;
+    showTabooCard();
+}
+
+function handleTabooScore(teamIndex) {
+    // Add Points
+    tabooScores[teamIndex] += 10;
+    updateTabooScoreDisplay();
+
+    // Play Sound?
+    if (typeof MillionaireSounds !== 'undefined' && MillionaireSounds.playCorrect) {
+        MillionaireSounds.playCorrect();
+    }
+
+    // Next Card
+    passTabooCard();
+}
+
+function updateTabooScoreDisplay() {
+    for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`taboo-score-${i}`);
+        if (el) el.innerText = tabooScores[i];
+    }
+}
+
+function endTabooRound() {
+    clearInterval(tabooTimer);
+    document.getElementById('taboo-game-over').style.display = 'flex';
+
+    // Show Final Scores
+    const container = document.getElementById('taboo-final-scores');
+    container.innerHTML = '';
+    const teams = ['A', 'B', 'C', 'D'];
+    teams.forEach((t, i) => {
+        const box = document.createElement('div');
+        box.className = 'final-score-box';
+        box.innerHTML = `<div>Team ${t}</div><div>${tabooScores[i]}</div>`;
+        container.appendChild(box);
+    });
 }
