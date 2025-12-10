@@ -1677,6 +1677,14 @@ header {
     background: rgba(255, 255, 255, 0.05);
 }
 
+.student-row.row-done {
+    background: rgba(46, 204, 113, 0.15);
+}
+
+.student-row.row-half {
+    background: rgba(245, 158, 11, 0.15);
+}
+
 .status-actions {
     display: flex;
     gap: 5px;
@@ -1709,6 +1717,22 @@ header {
     background: #ff4757;
 }
 
+.status-btn.btn-done.selected {
+    background: #26de81;
+    transform: scale(1.05);
+}
+
+.status-btn.btn-half {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.status-btn.btn-half.selected {
+    background: #f59e0b;
+    color: white;
+    transform: scale(1.05);
+}
+
 .status-btn.btn-pending.selected {
     background: #f1c40f;
     color: black;
@@ -1716,6 +1740,10 @@ header {
 
 .student-row.row-done {
     border-left: 4px solid #2ecc71;
+}
+
+.student-row.row-half {
+    border-left: 4px solid #f59e0b;
 }
 
 .student-row.row-missing {

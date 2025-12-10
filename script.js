@@ -1583,6 +1583,12 @@ function renderStudentListForMarking() {
         btnDone.innerText = "Yaptı";
         btnDone.onclick = function () { setStudentStatus(index, 'done'); };
 
+        // Half (Yarım Yaptı)
+        var btnHalf = document.createElement('button');
+        btnHalf.className = "status-btn btn-half";
+        btnHalf.innerText = "Yarım";
+        btnHalf.onclick = function () { setStudentStatus(index, 'half'); };
+
         // Unknown (Kontrol Edilemedi)
         var btnPending = document.createElement('button');
         btnPending.className = "status-btn btn-pending selected";
@@ -1591,6 +1597,7 @@ function renderStudentListForMarking() {
 
         actionsDiv.appendChild(btnMissing);
         actionsDiv.appendChild(btnDone);
+        actionsDiv.appendChild(btnHalf);
         actionsDiv.appendChild(btnPending);
 
         row.appendChild(actionsDiv);
@@ -1823,12 +1830,12 @@ function generateReportControls() {
 
 function loadReportData(filterClass) {
     var body = document.getElementById('report-body');
-    body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Veriler yükleniyor...</td></tr>";
+    body.innerHTML = "<tr><td colspan='8' style='text-align:center'>Veriler yükleniyor...</td></tr>";
 
     firebase.database().ref('homeworks').once('value').then(function (snapshot) {
         var allData = snapshot.val();
         if (!allData) {
-            body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Hiç veri yok.</td></tr>";
+            body.innerHTML = "<tr><td colspan='8' style='text-align:center'>Hiç veri yok.</td></tr>";
             return;
         }
 
@@ -1848,6 +1855,7 @@ function loadReportData(filterClass) {
                     name: s.name,
                     done: 0,
                     missing: 0,
+                    half: 0,
                     pending: 0,
                     totalHws: 0 // Will set later
                 };
@@ -1872,6 +1880,7 @@ function loadReportData(filterClass) {
                         var status = results[studentNo];
                         if (status === 'done') stats[key].done++;
                         else if (status === 'missing') stats[key].missing++;
+                        else if (status === 'half') stats[key].half++;
                         else stats[key].pending++;
                     }
                 });
@@ -1897,7 +1906,7 @@ function renderReportTable(data) {
     body.innerHTML = "";
 
     if (data.length === 0) {
-        body.innerHTML = "<tr><td colspan='7' style='text-align:center'>Bu kriterde öğrenci bulunamadı.</td></tr>";
+        body.innerHTML = "<tr><td colspan='8' style='text-align:center'>Bu kriterde öğrenci bulunamadı.</td></tr>";
         return;
     }
 
@@ -1911,6 +1920,7 @@ function renderReportTable(data) {
             <td>${formatStudentDisplayName(item.name)}</td>
             <td style="color:#ff4757; font-weight:bold;">${item.missing}</td>
             <td style="color:#2ecc71;">${item.done}</td>
+            <td style="color:#f59e0b; font-weight:bold;">${item.half}</td>
             <td style="color:#f1c40f;">${item.pending}</td>
             <td style="font-weight:bold;">${item.totalHws}</td>
         `;
