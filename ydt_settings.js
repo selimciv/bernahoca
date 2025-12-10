@@ -3,7 +3,7 @@
 // Appending to the existing gameData object
 
 if (typeof gameData !== 'undefined' && gameData.levelData) {
-
+    console.log("YDT Data Injection Started");
     // Unit 1
     gameData.levelData['YDT_Unit1'] = [
         {

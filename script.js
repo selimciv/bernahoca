@@ -241,63 +241,160 @@ function safeText(val) {
 }
 
 function goHome() {
+    // Hide all game containers
+    const wheelContainer = document.getElementById('wheel-container');
+    const millContainer = document.getElementById('millionaire-container');
+    const gameBoard = document.getElementById('game-board');
+    const levelSelector = document.getElementById('level-selector-container');
+
+    if (wheelContainer) wheelContainer.style.display = 'none';
+    if (millContainer) millContainer.style.display = 'none';
+    if (gameBoard) gameBoard.innerHTML = '';
+    if (levelSelector) levelSelector.style.display = 'none';
+
+    // Clear any active timers
+    if (millionaireTimer) clearInterval(millionaireTimer);
+
+    // Reset state
+    selectedVocabMode = null;
+    selectedPlayMode = null;
+
     showLandingPage();
 }
 
+// Store the selected vocabulary mode globally
+let selectedVocabMode = null;
+let selectedPlayMode = null; // 'team', 'wheel', 'millionaire', 'hangman'
+let selectedUnit = null; // Selected unit for wheel/millionaire/hangman
+
 function setGameMode(mode) {
-    currentGameMode = mode;
+    selectedVocabMode = mode;
     hideLandingPage();
+
+    // Hide old game elements
+    const levelSelector = document.getElementById('level-selector-container');
+    const gameBoard = document.getElementById('game-board');
+    const scoreboard = document.getElementById('score-board');
+
+    if (levelSelector) levelSelector.style.display = 'none';
+    if (gameBoard) gameBoard.style.display = 'none';
+    if (scoreboard) scoreboard.style.display = 'none';
+
+    // Show game mode selection screen
+    const gameModeScreen = document.getElementById('game-mode-selection');
+    if (gameModeScreen) {
+        gameModeScreen.style.display = 'flex';
+    }
+
+    // History API for TV Back Button
+    try {
+        history.pushState({ vocabMode: mode }, "", `?mode=${mode}`);
+    } catch (e) {
+        console.warn("History API not supported (likely running locally via file://)", e);
+    }
+}
+
+function selectGameMode(playMode) {
+    selectedPlayMode = playMode;
+
+    // Hide game mode selection
+    const gameModeScreen = document.getElementById('game-mode-selection');
+    if (gameModeScreen) {
+        gameModeScreen.style.display = 'none';
+    }
+
+    if (playMode === 'team') {
+        // Original Jeopardy-style game - no unit selection needed
+        // RESTORE UI ELEMENTS HIDDEN BY setGameMode
+        document.getElementById('level-selector-container').style.display = 'flex';
+        document.getElementById('game-board').style.display = 'grid';
+        document.querySelector('.score-board').style.display = 'flex';
+
+        initTeamMode();
+    } else if (playMode === 'wheel' || playMode === 'millionaire' || playMode === 'hangman') {
+        // These modes need unit selection first
+        showUnitSelection(playMode);
+    }
+}
+
+function backToLanding() {
+    // Hide game mode selection
+    const gameModeScreen = document.getElementById('game-mode-selection');
+    if (gameModeScreen) {
+        gameModeScreen.style.display = 'none';
+    }
+
+    // Show landing page
+    showLandingPage();
+    selectedVocabMode = null;
+    selectedPlayMode = null;
+}
+
+function backToGameModes() {
+    // Hide all game containers
+    const wheelContainer = document.getElementById('wheel-container');
+    const millContainer = document.getElementById('millionaire-container');
+    const hangmanContainer = document.getElementById('hangman-container');
+    const unitSelection = document.getElementById('unit-selection');
+
+    if (wheelContainer) wheelContainer.style.display = 'none';
+    if (millContainer) millContainer.style.display = 'none';
+    if (hangmanContainer) hangmanContainer.style.display = 'none';
+    if (unitSelection) unitSelection.style.display = 'none';
+
+    // Clear any active timers
+    if (millionaireTimer) clearInterval(millionaireTimer);
+
+    // Reset play mode and selected unit but keep vocab mode
+    selectedPlayMode = null;
+    selectedUnit = null;
+
+    // Show game mode selection screen again
+    const gameModeScreen = document.getElementById('game-mode-selection');
+    if (gameModeScreen) {
+        gameModeScreen.style.display = 'flex';
+    }
+}
+
+function initTeamMode() {
+    currentGameMode = selectedVocabMode;
 
     const container = document.querySelector('.level-container');
     container.innerHTML = ''; // Clear existing buttons
 
-    if (mode === 'standard') {
+    if (selectedVocabMode === 'standard') {
         const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
         levels.forEach(lvl => {
             const btn = document.createElement('button');
             btn.className = 'level-btn';
             btn.innerText = lvl;
-            btn.dataset.level = lvl; // Store level ID
+            btn.dataset.level = lvl;
             btn.onclick = () => changeLevel(lvl);
             container.appendChild(btn);
         });
-        changeLevel('A1'); // Load first level
-    } else if (mode === 'grade9') {
-        // Create buttons for Units 1-8
+        changeLevel('A1');
+    } else if (selectedVocabMode === 'grade9') {
         for (let i = 1; i <= 8; i++) {
             const btn = document.createElement('button');
             btn.className = 'level-btn';
             btn.innerText = `Unit ${i}`;
-            // Store specific level ID
             const lvlId = `Grade9_Unit${i}`;
             btn.dataset.level = lvlId;
             btn.onclick = () => changeLevel(lvlId);
             container.appendChild(btn);
         }
-        changeLevel('Grade9_Unit1'); // Load first unit
-
-        // Ensure Unit 1 is active
-        const btns = container.querySelectorAll('.level-btn');
-        // changeLevel handles active class, but let's be safe
-    } else if (mode === 'ydt') {
-        // Create buttons for Units 1-10
+        changeLevel('Grade9_Unit1');
+    } else if (selectedVocabMode === 'ydt') {
         for (let i = 1; i <= 10; i++) {
             const btn = document.createElement('button');
             btn.className = 'level-btn';
             btn.innerText = `Unit ${i}`;
-            // Store specific level ID
             const lvlId = `YDT_Unit${i}`;
             btn.dataset.level = lvlId;
             btn.onclick = () => changeLevel(lvlId);
             container.appendChild(btn);
         }
-        changeLevel('YDT_Unit1'); // Load first unit
-    }
-    // History API for TV Back Button
-    try {
-        history.pushState({ mode: mode }, "", `?mode=${mode}`);
-    } catch (e) {
-        console.warn("History API not supported (likely running locally via file://)", e);
+        changeLevel('YDT_Unit1');
     }
 }
 
@@ -1015,9 +1112,11 @@ if (window.speechSynthesis) {
     window.speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function speakText(text, onEndCallback) {
-    // Cancel any current speech
-    // window.speechSynthesis.cancel(); 
+function speakText(text, onEndCallback, shouldCancel = false) {
+    // Cancel any current speech if requested
+    if (shouldCancel && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
 
     const utterance = new SpeechSynthesisUtterance(text);
 
@@ -1708,3 +1807,932 @@ function updateVersionDisplay() {
 
 // Update version on load
 window.addEventListener('load', updateVersionDisplay);
+
+// ========================================
+// UNIT SELECTION SYSTEM
+// ========================================
+function showUnitSelection(gameMode) {
+    const unitScreen = document.getElementById('unit-selection');
+    const unitGrid = document.getElementById('unit-grid');
+
+    if (!unitScreen || !unitGrid) return;
+
+    // Clear previous units
+    unitGrid.innerHTML = '';
+
+    // Get units for current vocab mode
+    const units = getUnitsForVocabMode();
+
+    // Create unit cards
+    units.forEach(unit => {
+        const card = document.createElement('button');
+        card.className = 'unit-card';
+        card.textContent = unit.name;
+        card.onclick = () => selectUnit(unit.id, gameMode);
+        unitGrid.appendChild(card);
+    });
+
+    // Show unit selection screen
+    unitScreen.style.display = 'flex';
+}
+
+function selectUnit(unitId, gameMode) {
+    selectedUnit = unitId;
+
+    // Hide unit selection
+    const unitScreen = document.getElementById('unit-selection');
+    if (unitScreen) unitScreen.style.display = 'none';
+
+    // Start the selected game mode
+    if (gameMode === 'wheel') {
+        initWheelMode();
+    } else if (gameMode === 'millionaire') {
+        initMillionaireMode();
+    } else if (gameMode === 'hangman') {
+        initHangmanMode();
+    }
+}
+
+function getUnitsForVocabMode() {
+    const units = [];
+
+    if (selectedVocabMode === 'standard') {
+        // Standard English levels
+        units.push(
+            { id: 'A1', name: 'A1' },
+            { id: 'A2', name: 'A2' },
+            { id: 'B1', name: 'B1' },
+            { id: 'B2', name: 'B2' },
+            { id: 'C1', name: 'C1' },
+            { id: 'C2', name: 'C2' }
+        );
+    } else if (selectedVocabMode === 'grade9') {
+        // 9th grade units
+        for (let i = 1; i <= 8; i++) {
+            units.push({ id: `Grade9_Unit${i}`, name: `Unit ${i}` });
+        }
+    } else if (selectedVocabMode === 'ydt') {
+        // YDT units
+        for (let i = 1; i <= 10; i++) {
+            units.push({ id: `YDT_Unit${i}`, name: `Unit ${i}` });
+        }
+    }
+
+    return units;
+}
+
+function getWordsForVocabMode() {
+    if (!selectedUnit) return [];
+
+    let words = [];
+
+    if (selectedVocabMode === 'standard') {
+        // Get words from selected level in standard mode
+        // Format: { question: "English", answer: "Turkish", pronunciation: "..." }
+        const levelData = gameData.levelData[selectedUnit];
+        if (levelData) {
+            levelData.forEach(category => {
+                category.pool.forEach(word => {
+                    words.push({
+                        english: word.question,
+                        turkish: word.answer,
+                        pronunciation: word.pronunciation || ''
+                    });
+                });
+            });
+        }
+    } else if (selectedVocabMode === 'grade9' || selectedVocabMode === 'ydt') {
+        // Get words from selected 9th grade or YDT unit
+        // Format: { answer: "English", question: "Turkish", pronunciation: "..." }
+        const unitData = gameData.levelData[selectedUnit];
+        if (unitData) {
+            unitData.forEach(category => {
+                category.pool.forEach(word => {
+                    words.push({
+                        english: word.answer,
+                        turkish: word.question,
+                        pronunciation: word.pronunciation || ''
+                    });
+                });
+            });
+        }
+    }
+
+    // Shuffle words
+    return shuffleArray(words);
+}
+
+// ========================================
+// WHEEL OF FORTUNE MODE
+// ========================================
+let wheelWords = [];
+let wheelPoints = 0;
+let wheelCanvas, wheelCtx;
+let currentWheelRotation = 0;
+let isSpinning = false;
+
+function initWheelMode() {
+    // Get words based on vocabulary mode
+    wheelWords = getWordsForVocabMode();
+    wheelPoints = 0;
+
+    // Show wheel container
+    const wheelContainer = document.getElementById('wheel-container');
+    wheelContainer.style.display = 'flex';
+
+    // Update score display
+    document.getElementById('wheel-points').textContent = wheelPoints;
+    document.getElementById('wheel-words-left').textContent = wheelWords.length;
+
+    // Initialize canvas
+    wheelCanvas = document.getElementById('wheel-canvas');
+    wheelCtx = wheelCanvas.getContext('2d');
+
+    // Set canvas size
+    const size = Math.min(window.innerWidth * 0.8, 600);
+    wheelCanvas.width = size;
+    wheelCanvas.height = size;
+
+    // Draw initial wheel
+    drawWheel();
+
+    // Show header
+    document.querySelector('header').style.display = 'flex';
+}
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function drawWheel() {
+    const centerX = wheelCanvas.width / 2;
+    const centerY = wheelCanvas.height / 2;
+    const radius = wheelCanvas.width / 2 - 10;
+    const segmentAngle = (2 * Math.PI) / wheelWords.length;
+
+    // Clear canvas
+    wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+    // Save context
+    wheelCtx.save();
+    wheelCtx.translate(centerX, centerY);
+    wheelCtx.rotate(currentWheelRotation);
+
+    // Draw segments
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#fd79a8',
+        '#a29bfe', '#00b894', '#e17055', '#0984e3', '#fdcb6e', '#d63031'];
+
+    for (let i = 0; i < wheelWords.length; i++) {
+        const startAngle = i * segmentAngle;
+        const endAngle = startAngle + segmentAngle;
+
+        // Draw segment
+        wheelCtx.beginPath();
+        wheelCtx.arc(0, 0, radius, startAngle, endAngle);
+        wheelCtx.lineTo(0, 0);
+        wheelCtx.fillStyle = colors[i % colors.length];
+        wheelCtx.fill();
+        wheelCtx.strokeStyle = '#fff';
+        wheelCtx.lineWidth = 2;
+        wheelCtx.stroke();
+
+        // Draw text (word)
+        wheelCtx.save();
+        wheelCtx.rotate(startAngle + segmentAngle / 2);
+        wheelCtx.textAlign = 'right';
+        wheelCtx.fillStyle = '#fff';
+        wheelCtx.font = 'bold 16px Poppins';
+        wheelCtx.shadowColor = 'rgba(0,0,0,0.5)';
+        wheelCtx.shadowBlur = 3;
+
+        const word = wheelWords[i];
+        const displayText = currentLanguage === 'ENG' ? word.english : (word.turkish || word.turkish_translation);
+        wheelCtx.fillText(displayText.substring(0, 15), radius - 10, 5);
+
+        wheelCtx.restore();
+    }
+
+    // Draw center circle
+    wheelCtx.beginPath();
+    wheelCtx.arc(0, 0, 30, 0, 2 * Math.PI);
+    wheelCtx.fillStyle = '#ffd700';
+    wheelCtx.fill();
+
+    wheelCtx.restore();
+
+    // Draw pointer at top
+    wheelCtx.save();
+    wheelCtx.translate(centerX, 0);
+    wheelCtx.beginPath();
+    wheelCtx.moveTo(0, 20);
+    wheelCtx.lineTo(-15, 0);
+    wheelCtx.lineTo(15, 0);
+    wheelCtx.closePath();
+    wheelCtx.fillStyle = '#ff4757';
+    wheelCtx.fill();
+    wheelCtx.strokeStyle = '#fff';
+    wheelCtx.lineWidth = 2;
+    wheelCtx.stroke();
+    wheelCtx.restore();
+}
+
+function spinWheel() {
+    if (isSpinning || wheelWords.length === 0) return;
+
+    isSpinning = true;
+
+    // Random spin (5-8 full rotations + random position)
+    const spins = 5 + Math.random() * 3;
+    const extraDegrees = Math.random() * 360;
+    const totalRotation = (spins * 360 + extraDegrees) * Math.PI / 180;
+
+    const duration = 4000; // 4 seconds
+    const startTime = Date.now();
+    const startRotation = currentWheelRotation;
+
+    function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function (ease out cubic)
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+        currentWheelRotation = startRotation + totalRotation * easeProgress;
+        drawWheel();
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            // Spin complete - determine winner
+            isSpinning = false;
+            selectWheelWord();
+        }
+    }
+
+    animate();
+}
+
+function selectWheelWord() {
+    // Normalize rotation to 0-2π
+    const normalizedRotation = currentWheelRotation % (2 * Math.PI);
+
+    // Pointer is at top (π/2), calculate which segment it points to
+    const pointerAngle = Math.PI / 2;
+    const adjustedAngle = (2 * Math.PI - normalizedRotation + pointerAngle) % (2 * Math.PI);
+
+    const segmentAngle = (2 * Math.PI) / wheelWords.length;
+    const segmentIndex = Math.floor(adjustedAngle / segmentAngle) % wheelWords.length;
+
+    const selectedWord = wheelWords[segmentIndex];
+
+    // Remove word from array
+    wheelWords.splice(segmentIndex, 1);
+    document.getElementById('wheel-words-left').textContent = wheelWords.length;
+
+    // Show question modal
+    showWheelQuestion(selectedWord);
+
+    // Redraw wheel with fewer segments
+    drawWheel();
+
+    // Check if game over
+    if (wheelWords.length === 0) {
+        setTimeout(() => {
+            alert(`Game Over! Total Points: ${wheelPoints}`);
+            goHome();
+        }, 500);
+    }
+}
+
+// Store current word for audio playback
+let currentModalWord = null;
+
+function showWheelQuestion(word) {
+    currentModalWord = word;
+    const modal = document.getElementById('question-modal');
+    const question = document.getElementById('modal-question');
+    const answer = document.getElementById('modal-answer');
+    const pronunciation = document.getElementById('modal-pronunciation');
+    const showAnswerBtn = document.getElementById('show-answer-btn');
+    const correctBtn = document.getElementById('correct-btn');
+    const wrongBtn = document.getElementById('wrong-btn');
+    const modalTeams = document.getElementById('modal-teams');
+    const exampleSection = document.getElementById('modal-example-section');
+    const exampleEn = document.getElementById('modal-example-en');
+    const exampleTr = document.getElementById('modal-example-tr');
+
+    // Set question
+    if (currentLanguage === 'ENG') {
+        question.textContent = word.english;
+        answer.textContent = word.turkish || word.turkish_translation || '';
+    } else {
+        question.textContent = word.turkish || word.turkish_translation || '';
+        answer.textContent = word.english;
+    }
+
+    pronunciation.textContent = word.pronunciation ? `[${word.pronunciation}]` : '';
+    pronunciation.style.display = 'none'; // Hide initially
+    answer.style.display = 'none'; // Hide initially
+
+    // Prepare example sentences (but keep hidden)
+    exampleEn.textContent = word.example || '';
+    exampleTr.textContent = word.exampleTR || '';
+
+    exampleSection.style.display = 'none'; // Hide initially
+
+    // Update modal header
+    document.getElementById('modal-category').textContent = 'Wheel of Fortune';
+    document.getElementById('modal-points').textContent = '+10 Points';
+
+    // Hide timer and teams
+    document.getElementById('modal-timer').style.display = 'none';
+    modalTeams.style.display = 'none';
+
+    // Reset button states: Show "Show Answer", Hide others
+    showAnswerBtn.style.display = 'inline-block';
+    correctBtn.style.display = 'none';
+    wrongBtn.style.display = 'none';
+
+    // Set Show Answer button click handler for Wheel mode
+    showAnswerBtn.onclick = revealWheelAnswer;
+
+
+
+    modal.style.display = 'flex';
+}
+
+function revealWheelAnswer() {
+    const answer = document.getElementById('modal-answer');
+    const pronunciation = document.getElementById('modal-pronunciation');
+    const exampleSection = document.getElementById('modal-example-section');
+    const showAnswerBtn = document.getElementById('show-answer-btn');
+    const correctBtn = document.getElementById('correct-btn');
+    const wrongBtn = document.getElementById('wrong-btn');
+    // Reveal content
+    answer.style.display = 'block';
+    pronunciation.style.display = 'block';
+
+    // Force reveal example section to ensure visibility
+    exampleSection.style.display = 'block';
+
+    // Switch buttons: Hide individual action buttons, show team selection
+    showAnswerBtn.style.display = 'none';
+    correctBtn.style.display = 'none';
+    wrongBtn.style.display = 'none';
+
+    // Generate team buttons for Wheel mode
+    const modalTeams = document.getElementById('modal-teams');
+    modalTeams.innerHTML = '';
+    gameData.groupNames.forEach((teamName, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'team-btn';
+        btn.textContent = teamName;
+        btn.onclick = () => handleWheelTeamSelection(index);
+        modalTeams.appendChild(btn);
+    });
+    modalTeams.style.display = 'flex';
+
+    // Auto-read: Word (English) -> Example (English)
+    if (currentModalWord && currentModalWord.english) {
+        // Speak word first (Cancel previous sounds)
+        speakText(currentModalWord.english, () => {
+            // Callback after word finishes
+            if (currentModalWord.example) {
+                // Short pause then speak example (Do NOT cancel previous, though it's finished by callback time anyway)
+                // We use setTimeout for natural pause
+                setTimeout(() => {
+                    speakText(currentModalWord.example, null, false);
+                }, 300);
+            }
+        }, true); // True = ensure we start fresh
+    }
+}
+
+// Audio playback using Web Speech API
+function playAudio(type) {
+    if (!currentModalWord) return;
+
+    let textToSpeak = '';
+    let lang = 'en-US';
+
+    if (type === 'question') {
+        textToSpeak = currentModalWord.english || '';
+        lang = 'en-US';
+    } else if (type === 'answer') {
+        textToSpeak = currentModalWord.turkish || currentModalWord.turkish_translation || '';
+        lang = 'tr-TR';
+    } else if (type === 'example') {
+        textToSpeak = currentModalWord.example || '';
+        lang = 'en-US';
+    }
+
+    if (!textToSpeak) return;
+
+    // Cancel any ongoing speech
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = lang;
+        utterance.rate = 0.9; // Slightly slower for clarity
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+// Handle team selection in Wheel mode
+function handleWheelTeamSelection(teamIndex) {
+    // Award points to the selected team
+    updateScore(teamIndex, 10);
+
+    // Update words count
+    document.getElementById('wheel-words-left').textContent = wheelWords.length;
+
+    closeModal();
+
+    // Check if game over
+    if (wheelWords.length === 0) {
+        setTimeout(() => {
+            alert(`Game Over! Total Points: ${wheelPoints}`);
+            goHome();
+        }, 500);
+    }
+}
+
+
+
+// ========================================
+// MILLIONAIRE QUIZ MODE
+// ========================================
+let millionaireQuestions = [];
+let millionaireCurrentQuestion = 0;
+let millionaireTotalPoints = 0;
+let millionaireTimer;
+let millionaireTimeLeft = 30;
+let millionaireLifelines = {
+    '5050': false,
+    'teacher': false,
+    'time': false
+};
+
+const prizeLadder = [1, 2, 3, 5, 10, 15, 25, 50, 75, 100];
+
+function initMillionaireMode() {
+    // Get and prepare questions
+    millionaireQuestions = prepareMillionaireQuestions();
+    millionaireCurrentQuestion = 0;
+    millionaireTotalPoints = 0;
+    millionaireLifelines = { '5050': false, 'teacher': false, 'time': false };
+
+    // Show millionaire container
+    const millContainer = document.getElementById('millionaire-container');
+    millContainer.style.display = 'flex';
+
+    // Build prize ladder
+    buildPrizeLadder();
+
+    // Start first question
+    showMillionaireQuestion();
+
+    // Reset lifeline buttons
+    document.querySelectorAll('.lifeline-btn').forEach(btn => {
+        btn.classList.remove('used');
+    });
+
+    // Show header
+    document.querySelector('header').style.display = 'flex';
+}
+
+function prepareMillionaireQuestions() {
+    let allWords = [];
+
+    // Get words from all levels for progressive difficulty
+    if (selectedVocabMode === 'standard') {
+        const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+        levels.forEach(lvl => {
+            const level = categories.find(c => c.level === lvl);
+            if (level && level.words) {
+                allWords.push(...level.words.map(w => ({ ...w, difficulty: lvl })));
+            }
+        });
+    } else if (selectedVocabMode === 'grade9') {
+        // Use multiple units for variety
+        for (let i = 1; i <= 8; i++) {
+            const unitKey = `Grade9_Unit${i}`;
+            if (grade9GameData && grade9GameData[unitKey]) {
+                const unit = grade9GameData[unitKey];
+                Object.keys(unit).forEach(cat => {
+                    allWords.push(...unit[cat].map(w => ({ ...w, difficulty: `U${i}` })));
+                });
+            }
+        }
+    } else if (selectedVocabMode === 'ydt') {
+        for (let i = 1; i <= 10; i++) {
+            const unitKey = `YDT_Unit${i}`;
+            if (ydtGameData && ydtGameData[unitKey]) {
+                const unit = ydtGameData[unitKey];
+                Object.keys(unit).forEach(cat => {
+                    allWords.push(...unit[cat].map(w => ({ ...w, difficulty: `U${i}` })));
+                });
+            }
+        }
+    }
+
+    // Shuffle and select 10 questions
+    allWords = shuffleArray(allWords);
+    return allWords.slice(0, 10);
+}
+
+function buildPrizeLadder() {
+    const ladder = document.getElementById('prize-ladder');
+    ladder.innerHTML = '';
+
+    for (let i = prizeLadder.length - 1; i >= 0; i--) {
+        const step = document.createElement('div');
+        step.className = 'prize-step';
+        step.textContent = `${prizeLadder[i]} Points`;
+        step.dataset.index = i;
+        ladder.appendChild(step);
+    }
+}
+
+function showMillionaireQuestion() {
+    if (millionaireCurrentQuestion >= millionaireQuestions.length) {
+        // Game complete!
+        setTimeout(() => {
+            alert(`Congratulations! You won ${millionaireTotalPoints} points!`);
+            goHome();
+        }, 500);
+        return;
+    }
+
+    const word = millionaireQuestions[millionaireCurrentQuestion];
+
+    // Update ladder highlighting
+    document.querySelectorAll('.prize-step').forEach((step, idx) => {
+        step.classList.remove('current', 'completed');
+        if (idx === millionaireCurrentQuestion) {
+            step.classList.add('current');
+        } else if (idx < millionaireCurrentQuestion) {
+            step.classList.add('completed');
+        }
+    });
+
+    // Set question
+    const questionEl = document.getElementById('millionaire-question');
+    questionEl.textContent = word.english;
+
+    // Generate 4 answer options (1 correct + 3 wrong)
+    const correctAnswer = word.turkish || word.turkish_translation;
+    const wrongAnswers = generateWrongAnswers(correctAnswer);
+    const allAnswers = shuffleArray([correctAnswer, ...wrongAnswers]);
+
+    // Display answers
+    const answersContainer = document.getElementById('millionaire-answers');
+    answersContainer.innerHTML = '';
+
+    const letters = ['A', 'B', 'C', 'D'];
+    allAnswers.forEach((ans, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'mill-answer-btn';
+        btn.dataset.letter = letters[idx];
+        btn.innerHTML = `<span class="answer-text">${ans}</span>`;
+        btn.onclick = () => checkMillionaireAnswer(ans, correctAnswer, btn);
+        answersContainer.appendChild(btn);
+    });
+
+    // Start timer
+    millionaireTimeLeft = 30;
+    document.getElementById('millionaire-timer').textContent = millionaireTimeLeft;
+    clearInterval(millionaireTimer);
+    millionaireTimer = setInterval(() => {
+        millionaireTimeLeft--;
+        document.getElementById('millionaire-timer').textContent = millionaireTimeLeft;
+
+        if (millionaireTimeLeft <= 0) {
+            clearInterval(millionaireTimer);
+            // Time's up - wrong answer
+            alert("Time's up!");
+            gameOverMillionaire();
+        }
+    }, 1000);
+}
+
+function generateWrongAnswers(correctAnswer) {
+    // This is a simple implementation - in a real app, you'd want better wrong answers
+    const dummyAnswers = [
+        'Kitap', 'Masa', 'Sandalye', 'Araba', 'Ev', 'Okul', 'Öğretmen', 'Öğrenci',
+        'Kalem', 'Defter', 'Su', 'Yemek', 'Telefon', 'Bilgisayar', 'Pencere', 'Kapı'
+    ];
+
+    const wrongAnswers = dummyAnswers.filter(a => a !== correctAnswer);
+    return shuffleArray(wrongAnswers).slice(0, 3);
+}
+
+function checkMillionaireAnswer(selected, correct, btnElement) {
+    clearInterval(millionaireTimer);
+
+    // Disable all buttons
+    document.querySelectorAll('.mill-answer-btn').forEach(btn => {
+        btn.style.pointerEvents = 'none';
+    });
+
+    if (selected === correct) {
+        // Correct!
+        btnElement.classList.add('correct');
+        millionaireTotalPoints += prizeLadder[millionaireCurrentQuestion];
+
+        setTimeout(() => {
+            millionaireCurrentQuestion++;
+            showMillionaireQuestion();
+        }, 2000);
+    } else {
+        // Wrong - game over
+        btnElement.classList.add('wrong');
+
+        setTimeout(() => {
+            alert(`Wrong answer! Final score: ${millionaireTotalPoints} points`);
+            gameOverMillionaire();
+        }, 2000);
+    }
+}
+
+function gameOverMillionaire() {
+    goHome();
+}
+
+function useLifeline(type) {
+    if (millionaireLifelines[type]) return; // Already used
+
+    millionaireLifelines[type] = true;
+    document.getElementById(`lifeline-${type}`).classList.add('used');
+
+    if (type === '5050') {
+        // Remove 2 wrong answers
+        const buttons = Array.from(document.querySelectorAll('.mill-answer-btn'));
+        const correctAnswer = millionaireQuestions[millionaireCurrentQuestion].turkish ||
+            millionaireQuestions[millionaireCurrentQuestion].turkish_translation;
+
+        const wrongButtons = buttons.filter(btn =>
+            btn.querySelector('.answer-text').textContent !== correctAnswer
+        );
+
+        // Hide 2 wrong answers
+        shuffleArray(wrongButtons).slice(0, 2).forEach(btn => {
+            btn.classList.add('hidden');
+        });
+    } else if (type === 'teacher') {
+        // Show a hint (pronunciation or first letter)
+        const word = millionaireQuestions[millionaireCurrentQuestion];
+        const hint = word.pronunciation || `Hint: starts with "${word.turkish[0]}"`;
+        alert(`Teacher's Hint: ${hint}`);
+    } else if (type === 'time') {
+        // Add 15 seconds
+        millionaireTimeLeft += 15;
+        document.getElementById('millionaire-timer').textContent = millionaireTimeLeft;
+    }
+}
+
+// ========================================
+// HANGMAN GAME MODE
+// ========================================
+let hangmanWords = [];
+let hangmanCurrentWord = null;
+let hangmanGuessedLetters = [];
+let hangmanWrongGuesses = 0;
+let hangmanPoints = 0;
+const MAX_WRONG_GUESSES = 6;
+let hangmanCanvas, hangmanCtx;
+
+function initHangmanMode() {
+    // Get words based on vocabulary mode
+    hangmanWords = getWordsForVocabMode();
+    hangmanPoints = 0;
+
+    if (hangmanWords.length === 0) {
+        alert('No words available for this unit!');
+        backToGameModes();
+        return;
+    }
+
+    // Show hangman container
+    const hangmanContainer = document.getElementById('hangman-container');
+    hangmanContainer.style.display = 'flex';
+
+    // Initialize canvas
+    hangmanCanvas = document.getElementById('hangman-canvas');
+    hangmanCtx = hangmanCanvas.getContext('2d');
+
+    // Create keyboard
+    createHangmanKeyboard();
+
+    // Start first word
+    startHangmanGame();
+}
+
+function createHangmanKeyboard() {
+    const keyboard = document.getElementById('hangman-keyboard');
+    keyboard.innerHTML = '';
+
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+    letters.forEach(letter => {
+        const key = document.createElement('button');
+        key.className = 'hangman-key';
+        key.textContent = letter;
+        key.dataset.letter = letter;
+        key.onclick = () => guessLetter(letter);
+        keyboard.appendChild(key);
+    });
+}
+
+function startHangmanGame() {
+    if (hangmanWords.length === 0) {
+        alert(`Game Over! Final Score: ${hangmanPoints} points`);
+        backToGameModes();
+        return;
+    }
+
+    // Get random word
+    const randomIndex = Math.floor(Math.random() * hangmanWords.length);
+    hangmanCurrentWord = hangmanWords.splice(randomIndex, 1)[0];
+
+    // Reset game state
+    hangmanGuessedLetters = [];
+    hangmanWrongGuesses = 0;
+
+    // Reset keyboard
+    document.querySelectorAll('.hangman-key').forEach(key => {
+        key.classList.remove('used', 'correct', 'wrong');
+    });
+
+    // Update displays
+    updateHangmanDisplay();
+    drawHangman(0);
+    document.getElementById('hangman-points').textContent = hangmanPoints;
+    document.getElementById('hangman-words-left').textContent = hangmanWords.length;
+    document.getElementById('hangman-lives').textContent = MAX_WRONG_GUESSES;
+}
+
+function guessLetter(letter) {
+    if (hangmanGuessedLetters.includes(letter)) return;
+
+    hangmanGuessedLetters.push(letter);
+
+    const key = document.querySelector(`[data-letter="${letter}"]`);
+    key.classList.add('used');
+
+    // Check if letter is in word
+    const word = hangmanCurrentWord.english.toUpperCase();
+    if (word.includes(letter)) {
+        // Correct guess
+        key.classList.add('correct');
+        updateHangmanDisplay();
+
+        // Check for win
+        if (checkHangmanWin()) {
+            setTimeout(() => {
+                hangmanPoints += 10;
+                alert(`Correct! +10 points\nWord: ${hangmanCurrentWord.english}\nTurkish: ${hangmanCurrentWord.turkish}`);
+                startHangmanGame();
+            }, 500);
+        }
+    } else {
+        // Wrong guess
+        key.classList.add('wrong');
+        hangmanWrongGuesses++;
+        document.getElementById('hangman-lives').textContent = MAX_WRONG_GUESSES - hangmanWrongGuesses;
+        drawHangman(hangmanWrongGuesses);
+
+        // Check for loss
+        if (hangmanWrongGuesses >= MAX_WRONG_GUESSES) {
+            setTimeout(() => {
+                alert(`Game Over!\nWord was: ${hangmanCurrentWord.english}\nTurkish: ${hangmanCurrentWord.turkish}`);
+                startHangmanGame();
+            }, 500);
+        }
+    }
+}
+
+function updateHangmanDisplay() {
+    const wordDisplay = document.getElementById('hangman-word');
+    const hintDisplay = document.getElementById('hangman-hint');
+
+    const word = hangmanCurrentWord.english.toUpperCase();
+    let display = '';
+
+    for (let letter of word) {
+        if (letter === ' ') {
+            display += '  '; // Space
+        } else if (hangmanGuessedLetters.includes(letter)) {
+            display += letter + ' ';
+        } else {
+            display += '_ ';
+        }
+    }
+
+    wordDisplay.textContent = display;
+    hintDisplay.textContent = `(${hangmanCurrentWord.turkish})`;
+}
+
+function checkHangmanWin() {
+    const word = hangmanCurrentWord.english.toUpperCase();
+    for (let letter of word) {
+        if (letter !== ' ' && !hangmanGuessedLetters.includes(letter)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function drawHangman(wrongCount) {
+    const ctx = hangmanCtx;
+    const canvas = hangmanCanvas;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+    ctx.lineCap = 'round';
+
+    // Base
+    if (wrongCount >= 0) {
+        ctx.beginPath();
+        ctx.moveTo(20, 380);
+        ctx.lineTo(280, 380);
+        ctx.stroke();
+    }
+
+    // Pole
+    if (wrongCount >= 1) {
+        ctx.beginPath();
+        ctx.moveTo(50, 380);
+        ctx.lineTo(50, 50);
+        ctx.stroke();
+    }
+
+    // Top bar
+    if (wrongCount >= 2) {
+        ctx.beginPath();
+        ctx.moveTo(50, 50);
+        ctx.lineTo(200, 50);
+        ctx.stroke();
+    }
+
+    // Rope
+    if (wrongCount >= 3) {
+        ctx.beginPath();
+        ctx.moveTo(200, 50);
+        ctx.lineTo(200, 100);
+        ctx.stroke();
+    }
+
+    // Head
+    if (wrongCount >= 4) {
+        ctx.beginPath();
+        ctx.arc(200, 130, 30, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    // Body
+    if (wrongCount >= 5) {
+        ctx.beginPath();
+        ctx.moveTo(200, 160);
+        ctx.lineTo(200, 260);
+        ctx.stroke();
+    }
+
+    // Left arm
+    if (wrongCount >= 6) {
+        ctx.beginPath();
+        ctx.moveTo(200, 180);
+        ctx.lineTo(160, 220);
+        ctx.stroke();
+
+        // Right arm
+        ctx.beginPath();
+        ctx.moveTo(200, 180);
+        ctx.lineTo(240, 220);
+        ctx.stroke();
+
+        // Left leg
+        ctx.beginPath();
+        ctx.moveTo(200, 260);
+        ctx.lineTo(160, 320);
+        ctx.stroke();
+
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(200, 260);
+        ctx.lineTo(240, 320);
+        ctx.stroke();
+    }
+}
