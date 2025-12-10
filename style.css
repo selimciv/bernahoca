@@ -606,7 +606,8 @@ header {
     align-items: center;
     z-index: 1000;
     overflow-y: auto;
-    /* Allow scroll if needed on short screens */
+    padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
+    box-sizing: border-box;
 }
 
 .landing-page::before {

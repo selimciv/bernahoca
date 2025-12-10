@@ -529,8 +529,14 @@ function loadLevel(level) {
 
         const questions = safePool.map((q, index) => {
             // New Single Digit Logic: Just 1, 2, 3, 4, 5...
-            // If it's a split column, it continues: 6, 7...
-            let pts = index + 1;
+            // For YDT and Grade9 modes: Reset to 1-5 for each column
+            let pts;
+            if (currentGameMode === 'ydt' || currentGameMode === 'grade9') {
+                // Each column has 5 rows, so points should be 1-5 per column
+                pts = (index % 5) + 1;
+            } else {
+                pts = index + 1;
+            }
 
             // Exception: COUNTRIES & LANGUAGES should always be 1 point
             if (cat.name === 'COUNTRIES & LANGUAGES') {
@@ -610,8 +616,17 @@ function renderBoard() {
                 card.className = 'card';
 
                 if (q) {
-                    const pointValue = q.points || 0;
+                    // For YDT and Grade9: use row index (r + 1) for points 1-5
+                    // For standard: use the pre-calculated q.points
+                    let pointValue;
+                    if (currentGameMode === 'ydt' || currentGameMode === 'grade9') {
+                        pointValue = r + 1; // Row 0 = 1 point, Row 4 = 5 points
+                    } else {
+                        pointValue = q.points || 0;
+                    }
                     card.innerText = safeText(pointValue);
+                    // Store the actual point value for scoring
+                    card.dataset.points = pointValue;
 
                     // Indices logic needs to be careful:
                     // openQuestion uses catIndex and qIndex.
