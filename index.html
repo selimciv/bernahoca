@@ -56,9 +56,10 @@
 
     <!-- Floating Online User Bubble -->
     <div id="floating-user-list" class="floating-user-list">
-        <div class="floating-header">
+        <div class="floating-header" onclick="toggleUserList()">
             <span class="online-dot">●</span>
             <span id="floating-count">0</span> Online
+            <span class="toggle-arrow" id="user-list-arrow">▼</span>
         </div>
         <div id="floating-list-content" class="floating-list-content">
             <!-- Users injected here -->

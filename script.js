@@ -111,6 +111,17 @@ try {
         }
     });
 
+    // Toggle User List Visibility
+    window.toggleUserList = function () {
+        const listContent = document.getElementById('floating-list-content');
+        const arrow = document.getElementById('user-list-arrow');
+
+        if (listContent && arrow) {
+            listContent.classList.toggle('collapsed');
+            arrow.classList.toggle('collapsed');
+        }
+    };
+
     // Function to update my presence data
     window.updateMyPresence = function () {
         if (!myConRef) return;
@@ -132,8 +143,10 @@ try {
         // Update Count Header in Floating Bubble
         const headerEl = document.querySelector(".floating-header");
         if (headerEl) {
-            headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
+            headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online<span class="toggle-arrow" id="user-list-arrow">▼</span>`;
             headerEl.style.color = "#4ade80";
+            // Re-attach click handler after innerHTML update
+            headerEl.onclick = toggleUserList;
         }
 
         // Update List UI in Floating Bubble

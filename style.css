@@ -1507,6 +1507,26 @@ header {
     /* Green text */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 5px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+}
+
+.floating-header:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 3px 5px;
+    margin: -3px -5px 5px -5px;
+}
+
+.toggle-arrow {
+    margin-left: auto;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+.toggle-arrow.collapsed {
+    transform: rotate(-90deg);
 }
 
 .floating-list-content {
@@ -1517,6 +1537,14 @@ header {
     flex-direction: column;
     gap: 4px;
     padding-right: 2px;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.floating-list-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
 }
 
 /* Scrollbar styling */
