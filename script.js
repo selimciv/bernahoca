@@ -116,9 +116,21 @@ try {
         const listContent = document.getElementById('floating-list-content');
         const arrow = document.getElementById('user-list-arrow');
 
+        console.log('toggleUserList called');
+        console.log('listContent:', listContent);
+        console.log('arrow:', arrow);
+
         if (listContent && arrow) {
+            console.log('Before toggle - listContent classes:', listContent.className);
+            console.log('Before toggle - arrow classes:', arrow.className);
+
             listContent.classList.toggle('collapsed');
             arrow.classList.toggle('collapsed');
+
+            console.log('After toggle - listContent classes:', listContent.className);
+            console.log('After toggle - arrow classes:', arrow.className);
+        } else {
+            console.error('Missing elements! listContent:', listContent, 'arrow:', arrow);
         }
     };
 
@@ -175,7 +187,9 @@ try {
                 if (headerEl) {
                     // Note: We update header here again with correct count
                     const count = finalDisplayList.length;
-                    headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online`;
+                    headerEl.innerHTML = `<span class="online-dot">●</span> <span id="floating-count">${count}</span> Online<span class="toggle-arrow" id="user-list-arrow">▼</span>`;
+                    // Re-attach click handler after innerHTML update
+                    headerEl.onclick = toggleUserList;
                 }
 
                 finalDisplayList.sort((a, b) => {
