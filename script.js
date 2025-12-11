@@ -1957,30 +1957,7 @@ window.filterReport = function (cls) {
     loadReportData(cls);
 };
 
-// Auto-Version Logic
-function updateVersionDisplay() {
-    try {
-        const lastMod = new Date(document.lastModified);
-        const day = String(lastMod.getDate()).padStart(2, '0');
-        const month = String(lastMod.getMonth() + 1).padStart(2, '0');
-        const year = lastMod.getFullYear();
-        const hour = String(lastMod.getHours()).padStart(2, '0');
-        const minute = String(lastMod.getMinutes()).padStart(2, '0');
-
-        // Format: V.DD.MM.YYYY.HH.MM
-        const versionString = `V${day}.${month}.${year}.${hour}.${minute} &copy; ${year}`;
-
-        const versionElement = document.getElementById('app-version');
-        if (versionElement) {
-            versionElement.innerHTML = versionString;
-        }
-    } catch (e) {
-        console.warn("Error updating version:", e);
-    }
-}
-
-// Update version on load
-window.addEventListener('load', updateVersionDisplay);
+// Version is now statically defined in HTML (updated manually before each deployment)
 
 // ========================================
 // UNIT SELECTION SYSTEM
