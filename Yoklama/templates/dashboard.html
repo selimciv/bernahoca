@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Okul Yoklama Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Driver.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 25px;
+            padding: 8px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin-top: 30px;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 12px;
+            padding: 12px 25px;
+            margin-right: 10px;
+            color: #666;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-pills .nav-link:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: var(--primary-color);
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            padding: 10px 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+
+        .table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .student-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .student-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .status-radio {
+            display: flex;
+            gap: 15px;
+        }
+
+        .status-radio label {
+            cursor: pointer;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border: 2px solid #e0e0e0;
+        }
+
+        .status-radio input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .status-radio input[type="radio"]:checked+span {
+            font-weight: 700;
+        }
+
+        .radio-geldi:has(input:checked) {
+            background: #d4edda;
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .radio-gelmedi:has(input:checked) {
+            background: #f8d7da;
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .radio-gec:has(input:checked) {
+            background: #fff3cd;
+            border-color: var(--warning-color);
+            color: #856404;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .stats-card h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stats-card p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .stats-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .stats-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        .stats-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .absence-item {
+            background: white;
+            border-left: 4px solid var(--danger-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .absence-item.late {
+            border-left-color: var(--warning-color);
+        }
+
+        .absence-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .absence-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .toast-notification {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid;
+        }
+
+        .toast-notification.success {
+            border-left-color: #28a745;
+        }
+
+        .toast-notification.error {
+            border-left-color: #dc3545;
+        }
+
+        .toast-notification.warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast-notification.info {
+            border-left-color: #17a2b8;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex-grow: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand">📚 Okul Yoklama Sistemi</span>
+            <a href="./login.html" class="btn btn-logout">Çıkış Yap</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="add-student-tab" data-bs-toggle="pill" data-bs-target="#add-student"
+                    type="button">
+                    ➕ Öğrenci Ekle
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="student-list-tab" data-bs-toggle="pill" data-bs-target="#student-list"
+                    type="button">
+                    📋 Kayıtlı Öğrenciler
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="attendance-tab" data-bs-toggle="pill" data-bs-target="#attendance"
+                    type="button">
+                    ✅ Yoklama Al
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="report-tab" data-bs-toggle="pill" data-bs-target="#report" type="button">
+                    📊 Rapor ve WhatsApp
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mainTabContent">
+            <!-- Öğrenci Ekle -->
+            <div class="tab-pane fade show active" id="add-student" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">➕ Manuel Öğrenci Ekle</div>
+                            <div class="card-body">
+                                <form id="addStudentForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ad Soyad</label>
+                                        <input type="text" class="form-control" name="ad_soyad" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Okul No</label>
+                                        <input type="text" class="form-control" name="okul_no" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Sınıf</label>
+                                        <input type="text" class="form-control" name="sinif" placeholder="Örn: 9-A"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Veli Telefon</label>
+                                        <input type="text" class="form-control" name="veli_tel" placeholder="5551234567"
+                                            required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Öğrenci Ekle</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">📁 Excel ile Toplu Yükle</div>
+                            <div class="card-body">
+                                <div class="alert alert-light border mb-3">
+                                    <h6 class="alert-heading fw-bold mb-2">ℹ️ Toplu Öğrenci Yükleme</h6>
+                                    <p class="mb-0 text-muted small">
+                                        Tüm okul mevcudunu sisteme tek seferde, eksiksiz ve hızlı bir şekilde
+                                        aktarabilmek için hazırladığımız özel Excel şablonunu kullanabilirsiniz. Şablonu
+                                        indirip ilgili alanları doldurduktan sonra aşağıdan yükleme yapmanız yeterlidir.
+                                    </p>
+                                </div>
+
+                                <div class="mb-3">
+                                    <a href="/download_template" class="btn btn-outline-primary w-100 mb-3">
+                                        📥 Boş Şablonu İndir
+                                    </a>
+                                </div>
+
+                                <form id="uploadExcelForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Doldurulan Excel Dosyası (.xlsx)</label>
+                                        <input type="file" class="form-control" name="file" accept=".xlsx" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">Dosyayı Yükle</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kayıtlı Öğrenciler -->
+            <div class="tab-pane fade" id="student-list" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                📋 Kayıtlı Öğrenciler
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button class="btn btn-sm btn-primary" onclick="loadStudentList()">
+                                    🔄 Yenile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Arama Kutusu -->
+                        <div class="mb-3">
+                            <input type="text" class="form-control" id="studentSearchInput" onkeyup="searchStudents()"
+                                placeholder="🔍 Öğrenci ara (Ad, Soyad, Okul No, Sınıf...)">
+                            <div id="studentCount" class="text-muted small ms-1 mb-2"></div>
+                        </div>
+
+                        <div id="studentListLoading" class="loading">
+                            <div class="spinner-border" role="status"></div>
+                            <p class="mt-2">Yükleniyor...</p>
+                        </div>
+                        <div id="studentListContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yoklama Al -->
+            <div class="tab-pane fade" id="attendance" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">✅ Yoklama Al</div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label">Tarih</label>
+                                <input type="date" class="form-control" id="attendanceDate" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Sınıf</label>
+                                <select class="form-select" id="attendanceClass">
+                                    <option value="">Sınıf Seçin</option>
+                                    <option value="TUMU">📚 Tüm Sınıflar</option>
+                                    <option value="9-A">9-A</option>
+                                    <option value="9-B">9-B</option>
+                                    <option value="10-A">10-A</option>
+                                    <option value="10-B">10-B</option>
+                                    <option value="11-A">11-A</option>
+                                    <option value="11-B">11-B</option>
+                                    <option value="12-A">12-A</option>
+                                    <option value="12-B">12-B</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" onclick="loadAttendance()">
+                                    📋 Listele
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="attendanceLoading" class="loading">
+                            <div class="spinner-border" role="status"></div>
+                            <p class="mt-2">Yükleniyor...</p>
+                        </div>
+
+                        <!-- Arama Kutusu -->
+                        <div id="attendanceSearchBox" style="display: none;" class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text">🔍</span>
+                                <input type="text" class="form-control" id="attendanceSearch"
+                                    placeholder="Öğrenci adı, okul no veya sınıf ile ara...">
+                                <button class="btn btn-outline-secondary" onclick="clearAttendanceSearch()">
+                                    ✕ Temizle
+                                </button>
+                            </div>
+                            <small class="text-muted" id="searchResultCount"></small>
+                        </div>
+
+                        <div id="attendanceList"></div>
+
+                        <div id="attendanceSaveBtn" style="display: none;">
+                            <button class="btn btn-success btn-lg w-100 mt-3" onclick="saveAttendance()">
+                                💾 Yoklamayı Kaydet
+                            </button>
+                        </div>
+
+                        <div id="attendanceDeleteBtn" style="display: none;">
+                            <button class="btn btn-danger w-100 mt-2" onclick="deleteAttendance()">
+                                🗑️ Bu Yoklamayı Sil
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tarih Bazlı Genel Özet Tablosu -->
+                    <!-- Tarih Bazlı Genel Özet Tablosu -->
+                    <div id="generalSummarySection" class="mt-4 border-top pt-4" style="display: none;">
+                        <div class="d-flex align-items-center mb-4 p-3 bg-white rounded shadow-sm border">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle gradient-icon me-3"
+                                style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 10px rgba(118, 75, 162, 0.3);">
+                                <span class="fs-5">📅</span>
+                            </div>
+                            <div>
+                                <h5 class="mb-0 fw-bold"
+                                    style="background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                                    Kayıtlı Yoklama Geçmişi</h5>
+                                <small class="text-muted">Geçmişe dönük tüm yoklama kayıtlarınız</small>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm border-0 overflow-hidden">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                                        <tr>
+                                            <th class="py-3 px-4 text-secondary">Tarih</th>
+                                            <th class="py-3 text-success">Geldi</th>
+                                            <th class="py-3 text-danger">Gelmedi</th>
+                                            <th class="py-3 text-warning">Geç</th>
+                                            <th class="py-3 text-primary">Toplam Mevcut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="generalSummaryBody" class="bg-white"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Rapor ve WhatsApp -->
+            <div class="tab-pane fade" id="report" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">📊 Rapor ve WhatsApp Gönderimi</div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Tarih</label>
+                                <input type="date" class="form-control" id="reportDate" list="reportDateList" required>
+                                <datalist id="reportDateList"></datalist>
+                                <small class="text-muted">💡 Sadece yoklama alınan tarihler gösterilir</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">&nbsp;</label>
+                                <button class="btn btn-primary w-100" onclick="loadReport()">Raporu Getir</button>
+                            </div>
+                        </div>
+
+                        <div id="reportStats" class="row mb-4" style="display: none;">
+                            <div class="col-md-4">
+                                <div class="stats-card stats-success">
+                                    <h3 id="statGeldi">0</h3>
+                                    <p>Gelen Öğrenci</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stats-card stats-danger">
+                                    <h3 id="statGelmedi">0</h3>
+                                    <p>Gelmeyen Öğrenci</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stats-card stats-warning">
+                                    <h3 id="statGec">0</h3>
+                                    <p>Geç Kalan Öğrenci</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="reportAbsences" style="display: none;">
+                            <h5 class="mb-3">🚫 Gelmeyenler ve Geç Kalanlar</h5>
+
+                            <!-- Sıralı Gönderim Sistemi -->
+                            <div id="whatsappQueue" class="card mb-4" style="display: none;">
+                                <div class="card-body text-center">
+                                    <h4 class="mb-3">📱 WhatsApp Sıralı Gönderim</h4>
+                                    <div class="mb-3">
+                                        <h2 id="queueCounter" class="text-primary">0 / 0</h2>
+                                        <small class="text-muted">Gönderilecek Mesaj</small>
+                                    </div>
+                                    <button class="btn btn-success btn-lg" id="nextWhatsAppBtn"
+                                        onclick="sendNextWhatsApp()">
+                                        ▶️ SIRADAKİ VELİYİ AÇ
+                                    </button>
+                                    <div id="queueComplete" class="alert alert-success mt-3" style="display: none;">
+                                        ✅ Tüm Mesajlar Gönderildi!
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="absenceList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Öğrenci Düzenleme Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">✏️ Öğrenci Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm">
+                        <input type="hidden" id="edit_id" name="id">
+                        <div class="mb-3">
+                            <label class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" id="edit_ad_soyad" name="ad_soyad" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Okul No</label>
+                            <input type="text" class="form-control" id="edit_okul_no" name="okul_no" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sınıf</label>
+                            <input type="text" class="form-control" id="edit_sinif" name="sinif" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Veli Telefon</label>
+                            <input type="text" class="form-control" id="edit_veli_tel" name="veli_tel" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudentEdit()">💾 Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Welcome Modal -->
+    <div class="modal fade" id="tutorialWelcomeModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <span style="font-size: 48px;">👋</span>
+                    </div>
+                    <h3 class="mb-3 fw-bold text-primary">Okul Yoklama Sistemine Hoş Geldiniz!</h3>
+                    <p class="text-muted mb-4">
+                        Sistemi en verimli şekilde kullanabilmeniz için size özel kısa bir tanıtım turu hazırladık.
+                        Özellikleri keşfetmek ister misiniz?
+                    </p>
+
+                    <div class="d-grid gap-2 col-10 mx-auto mb-4">
+                        <button class="btn btn-primary btn-lg" onclick="startTutorial()">
+                            🚀 Turu Başlat
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="skipTutorial()">
+                            Şimdilik Atla
+                        </button>
+                    </div>
+
+                    <div class="form-check d-inline-block">
+                        <input class="form-check-input" type="checkbox" id="dontShowTutorialAgain">
+                        <label class="form-check-label text-muted small" for="dontShowTutorialAgain">
+                            Bir daha gösterme
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Yoklama Silme Onay Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🗑️ Yoklama Silme Onayı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteConfirmText" class="fw-bold"></p>
+                    <div class="alert alert-danger">
+                        ⚠️ Bu işlem geri alınamaz! Kayıtlı tüm yoklama verileri silinecektir.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteAttendance()">🗑️ Evet,
+                        Sil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Driver.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+
+    <script>
+        // ==========================================
+        // LOCAL STORAGE DATABASE SYSTEM
+        // ==========================================
+
+        const DB = {
+            // Keys
+            KEYS: {
+                STUDENTS: 'yoklama_students',
+                ATTENDANCE: 'yoklama_attendance'
+            },
+
+            // Initialize
+            init() {
+                if (!localStorage.getItem(this.KEYS.STUDENTS)) {
+                    // Add some sample data if empty
+                    const samples = [
+                        { id: 1, ad_soyad: "Ahmet Yılmaz", okul_no: "101", sinif: "9-A", veli_tel: "5551112233" },
+                        { id: 2, ad_soyad: "Ayşe Kaya", okul_no: "102", sinif: "9-A", veli_tel: "5552223344" },
+                        { id: 3, ad_soyad: "Mehmet Demir", okul_no: "103", sinif: "9-A", veli_tel: "5553334455" },
+                        { id: 4, ad_soyad: "Fatma Çelik", okul_no: "104", sinif: "9-A", veli_tel: "5554445566" },
+                        { id: 5, ad_soyad: "Ali Veli", okul_no: "105", sinif: "9-B", veli_tel: "5555556677" }
+                    ];
+                    localStorage.setItem(this.KEYS.STUDENTS, JSON.stringify(samples));
+                }
+                if (!localStorage.getItem(this.KEYS.ATTENDANCE)) {
+                    localStorage.setItem(this.KEYS.ATTENDANCE, JSON.stringify([]));
+                }
+            },
+
+            // Students
+            getStudents() {
+                return JSON.parse(localStorage.getItem(this.KEYS.STUDENTS) || '[]');
+            },
+
+            addStudent(student) {
+                const students = this.getStudents();
+                student.id = Date.now(); // Simple ID
+                students.push(student);
+                localStorage.setItem(this.KEYS.STUDENTS, JSON.stringify(students));
+                return student;
+            },
+
+            updateStudent(id, data) {
+                let students = this.getStudents();
+                const index = students.findIndex(s => s.id == id);
+                if (index !== -1) {
+                    students[index] = { ...students[index], ...data };
+                    localStorage.setItem(this.KEYS.STUDENTS, JSON.stringify(students));
+                    return true;
+                }
+                return false;
+            },
+
+            deleteStudent(id) {
+                let students = this.getStudents();
+                students = students.filter(s => s.id != id);
+                localStorage.setItem(this.KEYS.STUDENTS, JSON.stringify(students));
+            },
+
+            // Attendance
+            saveAttendance(date, records) {
+                let attendance = JSON.parse(localStorage.getItem(this.KEYS.ATTENDANCE) || '[]');
+                // Remove existing records for this date to avoid duplicates (or update)
+                // Filter out records for the students involved in this update? 
+                // Simplified: We store by date. If we save for a date, we merge or replace?
+                // Best approach: Store flat records: { date, okul_no, durum }
+
+                // First, remove old records for this date ONLY for the students being updated?
+                // Or easier: Delete all for this date? No, multiple classes.
+                // Answer: Delete records for this date AND these students.
+
+                const okulNos = records.map(r => r.okul_no);
+                attendance = attendance.filter(r => !(r.tarih === date && okulNos.includes(r.okul_no)));
+
+                records.forEach(r => {
+                    attendance.push({
+                        tarih: date,
+                        okul_no: r.okul_no,
+                        durum: r.durum
+                    });
+                });
+
+                localStorage.setItem(this.KEYS.ATTENDANCE, JSON.stringify(attendance));
+            },
+
+            deleteAttendance(date, sinif) {
+                let attendance = JSON.parse(localStorage.getItem(this.KEYS.ATTENDANCE) || '[]');
+                const students = this.getStudents().filter(s => s.sinif === sinif);
+                const okulNos = students.map(s => s.okul_no);
+
+                // Remove records matching date and student list
+                attendance = attendance.filter(r => !(r.tarih === date && okulNos.includes(r.okul_no)));
+                localStorage.setItem(this.KEYS.ATTENDANCE, JSON.stringify(attendance));
+            },
+
+            getAttendance(date) {
+                return JSON.parse(localStorage.getItem(this.KEYS.ATTENDANCE) || '[]').filter(r => r.tarih === date);
+            }
+        };
+
+        // Initialize DB
+        DB.init();
+
+
+        // MOCK FETCH REPLACEMENT
+        window.fetch = function (url, options) {
+            console.log("Local DB Call:", url);
+            return new Promise((resolve) => {
+                let response = {};
+
+                setTimeout(() => {
+                    try {
+                        // 1. GET ALL STUDENTS
+                        if (url.includes('/get_all_students')) {
+                            response = { success: true, students: DB.getStudents() };
+
+                            // 2. GET ATTENDANCE LIST (Load class list with status)
+                        } else if (url.includes('/students?')) {
+                            const params = new URLSearchParams(url.split('?')[1]);
+                            const sinif = params.get('sinif');
+                            const tarih = params.get('tarih');
+
+                            const allStudents = DB.getStudents();
+                            const classStudents = sinif === 'TUMU' ? allStudents : allStudents.filter(s => s.sinif === sinif);
+                            const attendanceRecords = DB.getAttendance(tarih);
+
+                            // Merge status
+                            const result = classStudents.map(s => {
+                                const record = attendanceRecords.find(r => r.okul_no == s.okul_no);
+                                return {
+                                    ...s,
+                                    durum: record ? record.durum : null
+                                };
+                            });
+
+                            response = {
+                                success: true,
+                                students: result,
+                                attendance_exists: result.some(s => s.durum) // Check if any status exists
+                            };
+
+                            // 3. SAVE ATTENDANCE
+                        } else if (url.includes('/save_attendance')) {
+                            const body = JSON.parse(options.body);
+                            DB.saveAttendance(body.tarih, body.records);
+                            response = { success: true, message: "Yoklama bu cihaza kaydedildi." };
+
+                            // 4. DELETE ATTENDANCE
+                        } else if (url.includes('/delete_attendance')) {
+                            const formData = options.body; // It's FormData
+                            // Need to parse FormData to get date and sinif
+                            // Simplified: We can't robustly parse FormData in mock easily without helper, 
+                            // BUT our client code sends FormData. 
+                            // Hack: We can pull values from DOM since we are on client :)
+                            const date = document.getElementById('attendanceDate').value;
+                            const sinif = document.getElementById('attendanceClass').value;
+                            DB.deleteAttendance(date, sinif);
+                            response = { success: true, message: "Yoklama silindi." };
+
+                            // 5. REPORT
+                        } else if (url.includes('/report')) {
+                            const params = new URLSearchParams(url.split('?')[1]);
+                            const tarih = params.get('tarih');
+                            const records = DB.getAttendance(tarih);
+                            const students = DB.getStudents();
+
+                            let geldi = 0, gelmedi = 0, gec = 0;
+                            const absences = [];
+
+                            records.forEach(r => {
+                                if (r.durum === 'GELDİ') geldi++;
+                                else if (r.durum === 'GELMEDİ') {
+                                    gelmedi++;
+                                    const s = students.find(stud => stud.okul_no == r.okul_no);
+                                    if (s) absences.push({ ...s, durum: 'GELMEDİ' });
+                                } else if (r.durum === 'GEÇ') {
+                                    gec++;
+                                    const s = students.find(stud => stud.okul_no == r.okul_no);
+                                    if (s) absences.push({ ...s, durum: 'GEÇ' });
+                                }
+                            });
+
+                            response = {
+                                success: true,
+                                stats: { geldi, gelmedi, gec },
+                                absences: absences
+                            };
+
+                            // 6. GENERAL SUMMARY
+                        } else if (url.includes('/get_general_summary')) {
+                            const allRecords = JSON.parse(localStorage.getItem(DB.KEYS.ATTENDANCE) || '[]');
+                            const summaryMap = {};
+
+                            allRecords.forEach(r => {
+                                if (!summaryMap[r.tarih]) summaryMap[r.tarih] = { tarih: r.tarih, geldi: 0, gelmedi: 0, gec: 0, toplam: 0 };
+                                if (r.durum === 'GELDİ') summaryMap[r.tarih].geldi++;
+                                else if (r.durum === 'GELMEDİ') summaryMap[r.tarih].gelmedi++;
+                                else if (r.durum === 'GEÇ') summaryMap[r.tarih].gec++;
+                                summaryMap[r.tarih].toplam++;
+                            });
+
+                            response = {
+                                success: true,
+                                summary: Object.values(summaryMap).sort((a, b) => b.tarih.localeCompare(a.tarih))
+                            };
+
+                            // 7. GET DATES
+                        } else if (url.includes('/get_attendance_dates')) {
+                            const allRecords = JSON.parse(localStorage.getItem(DB.KEYS.ATTENDANCE) || '[]');
+                            const dates = [...new Set(allRecords.map(r => r.tarih))].sort().reverse();
+                            response = { success: true, dates: dates };
+
+                            // 8. ADD/UPDATE/DELETE STUDENT
+                        } else if (url.includes('/add_student')) {
+                            // Parse FormData via DOM inputs again for simplicity
+                            const form = document.getElementById('addStudentForm');
+                            const data = {
+                                ad_soyad: form.querySelector('[name="ad_soyad"]').value,
+                                okul_no: form.querySelector('[name="okul_no"]').value,
+                                sinif: form.querySelector('[name="sinif"]').value,
+                                veli_tel: form.querySelector('[name="veli_tel"]').value
+                            };
+                            DB.addStudent(data);
+                            response = { success: true, message: "Öğrenci eklendi." };
+
+                        } else if (url.includes('/update_student')) {
+                            const id = document.getElementById('edit_id').value;
+                            const data = {
+                                ad_soyad: document.getElementById('edit_ad_soyad').value,
+                                okul_no: document.getElementById('edit_okul_no').value,
+                                sinif: document.getElementById('edit_sinif').value,
+                                veli_tel: document.getElementById('edit_veli_tel').value
+                            };
+                            DB.updateStudent(id, data);
+                            response = { success: true, message: "Öğrenci güncellendi." };
+
+                        } else if (url.includes('/delete_student')) {
+                            const body = JSON.parse(options.body);
+                            DB.deleteStudent(body.id);
+                            response = { success: true, message: "Öğrenci silindi." };
+                        } else if (url.includes('/dashbaord')) {
+                            resolve({ text: () => Promise.resolve('') });
+                            return;
+                        }
+
+                    } catch (e) {
+                        console.error("Local DB Error:", e);
+                        response = { success: false, message: "Bir hata oluştu: " + e.message };
+                    }
+
+                    resolve({
+                        json: () => Promise.resolve(response),
+                        text: () => Promise.resolve(JSON.stringify(response))
+                    });
+                }, 100); // Fast local response
+            });
+        };
+
+        // Static Demo Alert - REPLACED WITH INFO
+        setTimeout(() => {
+            alert('ℹ️ BİLGİ: Bu sistem "Yerel Depolama" modunda çalışmaktadır.\n\n- Verileriniz BU TARAYICIYA kaydedilir.\n- Başka cihazdan erişilemez.\n- Tarayıcı geçmişini temizlerseniz veriler silinebilir.');
+        }, 500);
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+
+        // Bugünün tarihini ayarla
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('attendanceDate').value = today;
+        document.getElementById('reportDate').value = today;
+
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type]}</span>
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+
+        // Genel Özeti Yükle (Tarih Bazlı)
+        function loadGeneralSummary() {
+            fetch('/get_general_summary')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('generalSummarySection');
+                    const tbody = document.getElementById('generalSummaryBody');
+
+                    if (data.success && data.summary.length > 0) {
+                        container.style.display = 'block';
+                        let html = '';
+                        data.summary.forEach(row => {
+                            html += `
+                                <tr style="cursor: pointer; transition: all 0.2s;" onclick="selectDateAndLoad('${row.tarih}')" onmouseover="this.style.backgroundColor='#f1f3f5'" onmouseout="this.style.backgroundColor=''">
+                                    <td class="fw-bold px-4 py-3 text-secondary">
+                                        <span class="d-inline-block bg-light rounded px-2 py-1 border">${row.tarih}</span>
+                                    </td>
+                                    <td class="fw-bold text-success">${row.geldi}</td>
+                                    <td class="fw-bold text-danger">${row.gelmedi}</td>
+                                    <td class="fw-bold text-warning" style="color: #bfa117 !important;">${row.gec}</td>
+                                    <td class="fw-bold text-primary">${row.toplam}</td>
+                                </tr>
+                            `;
+                        });
+                        tbody.innerHTML = html;
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Henüz kayıt yok</td></tr>';
+                        container.style.display = 'block';
+                    }
+                })
+                .catch(console.error);
+        }
+
+        // Tarihi seçip detay yükleme yardımcısı
+        function selectDateAndLoad(date) {
+            document.getElementById('attendanceDate').value = date;
+            // Listele butonunu tetikle veya direkt temizle (kullanıcı Listele'ye basmalı)
+            showToast(date + ' tarihi seçildi. Listele butonuna basınız.', 'info');
+        }
+
+        // Sınıf listesini yenile
+        function refreshClassList() {
+            fetch('/dashboard')
+                .then(r => r.text())
+                .then(html => {
+                    // HTML'den sınıf seçeneklerini çıkar
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newOptions = doc.querySelectorAll('#attendanceClass option');
+
+                    const select = document.getElementById('attendanceClass');
+                    const currentValue = select.value;
+
+                    // Mevcut seçenekleri temizle (ilk "Sınıf Seçin" hariç)
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+
+                    // Yeni seçenekleri ekle
+                    for (let i = 1; i < newOptions.length; i++) {
+                        select.add(newOptions[i].cloneNode(true));
+                    }
+
+                    // Önceki seçimi geri yükle
+                    select.value = currentValue;
+                })
+                .catch(err => console.error('Sınıf listesi yenilenemedi:', err));
+        }
+
+        // Öğrenci listesini yükle
+        function loadStudentList() {
+            document.getElementById('studentListLoading').style.display = 'block';
+            document.getElementById('studentListContainer').innerHTML = '';
+
+            fetch('/get_all_students')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('studentListLoading').style.display = 'none';
+
+                    if (data.success && data.students.length > 0) {
+                        let html = `
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Sınıf</th>
+                                            <th>Okul No</th>
+                                            <th>Ad Soyad</th>
+                                            <th>Veli Tel</th>
+                                            <th style="width: 100px;">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                        `;
+
+                        data.students.forEach(student => {
+                            html += `
+                                <tr>
+                                    <td>${student.sinif}</td>
+                                    <td>${student.okul_no}</td>
+                                    <td>${student.ad_soyad}</td>
+                                    <td>${student.veli_tel}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-outline-warning btn-sm" style="padding: 2px 8px; font-size: 1.1em; border-color: #ffc107; color: #856404;" onclick='editStudent(${JSON.stringify(student)})'>
+                                                ✏️
+                                            </button>
+                                            <button class="btn btn-outline-danger btn-sm" style="padding: 2px 8px; font-size: 1.1em;" onclick="deleteStudent(${student.id}, '${student.ad_soyad}')">
+                                                🗑️
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+
+                        document.getElementById('studentListContainer').innerHTML = html;
+                        document.getElementById('studentCount').textContent = `Toplam ${data.students.length} öğrenci`;
+                    } else {
+                        document.getElementById('studentListContainer').innerHTML =
+                            '<div class="alert alert-info">Henüz öğrenci eklenmemiş.</div>';
+                        document.getElementById('studentCount').textContent = '';
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('studentListLoading').style.display = 'none';
+                    console.error('Öğrenci listesi yüklenemedi:', err);
+                });
+        }
+
+        // Öğrenciyi düzenle (modal aç)
+        function editStudent(student) {
+            document.getElementById('edit_id').value = student.id;
+            document.getElementById('edit_ad_soyad').value = student.ad_soyad;
+            document.getElementById('edit_okul_no').value = student.okul_no;
+            document.getElementById('edit_sinif').value = student.sinif;
+            document.getElementById('edit_veli_tel').value = student.veli_tel;
+
+            const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+            modal.show();
+        }
+
+        // Düzenlemeyi kaydet
+        function saveStudentEdit() {
+            const formData = new FormData(document.getElementById('editStudentForm'));
+
+            fetch('/update_student', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('editStudentModal')).hide();
+                        loadStudentList();
+                        refreshClassList();
+                    } else {
+                        showToast('Hata: ' + data.message, 'error');
+                    }
+                });
+        }
+
+        // Öğrenciyi sil
+        function deleteStudent(id, name) {
+            if (!confirm(name + ' isimli öğrenciyi silmek istediğinize emin misiniz?')) {
+                return;
+            }
+
+            fetch('/delete_student', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        loadStudentList();
+                        refreshClassList();
+                    } else {
+                        showToast('Hata: ' + data.message, 'error');
+                    }
+                });
+        }
+
+        // Öğrenci arama fonksiyonu
+        function searchStudents() {
+            const input = document.getElementById('studentSearchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.querySelector('#studentListContainer table tbody');
+
+            if (!table) return;
+
+            const rows = table.getElementsByTagName('tr');
+            let visibleCount = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.textContent.toLowerCase();
+
+                if (text.includes(filter)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+
+            const countEl = document.getElementById('studentCount');
+            if (filter) {
+                countEl.textContent = `${visibleCount} / ${rows.length} öğrenci gösteriliyor`;
+            } else {
+                countEl.textContent = `Toplam ${rows.length} öğrenci`;
+            }
+        }
+
+        // Sayfa yüklenince öğrenci listesini göster
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStudentList();
+            loadReportDates();
+            loadGeneralSummary(); // Sayfa açılışında genel özeti yükle
+            // Load stats chart if exists
+            // ...
+
+            // Tab değişimlerini dinle
+            const tabEls = document.querySelectorAll('button[data-bs-toggle="pill"]');
+            tabEls.forEach(tabEl => {
+                tabEl.addEventListener('show.bs.tab', event => {
+                    const targetId = event.target.getAttribute('data-bs-target');
+
+                    // Eğer "Yoklama Al" sekmesinden çıkılıyorsa listeyi temizle (İsteğe bağlı)
+                    // Veya "Yoklama Al" sekmesine girildiğinde temizle
+                    if (targetId === '#attendance') {
+                        // Kullanıcı her girdiğinde temiz liste görsün istiyorsa:
+                        document.getElementById('attendanceList').innerHTML = '';
+                        document.getElementById('attendanceSaveBtn').style.display = 'none';
+                        document.getElementById('attendanceDeleteBtn').style.display = 'none';
+                        document.getElementById('attendanceSearchBox').style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Rapor tarihleri yükle (sadece yoklama alınan tarihler)
+        function loadReportDates() {
+            fetch('/get_attendance_dates')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.dates.length > 0) {
+                        const datalist = document.getElementById('reportDateList');
+                        datalist.innerHTML = '';
+
+                        data.dates.forEach(date => {
+                            const option = document.createElement('option');
+                            option.value = date;
+                            datalist.appendChild(option);
+                        });
+                    }
+                })
+                .catch(err => console.error('Rapor tarihleri yüklenemedi:', err));
+        }
+
+        // Manuel öğrenci ekleme
+        document.getElementById('addStudentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/add_student', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        this.reset();
+                        // Sınıf listesini yenile
+                        refreshClassList();
+                    } else {
+                        alert('❌ Hata: ' + data.message);
+                    }
+                });
+        });
+
+        // Excel yükleme
+        document.getElementById('uploadExcelForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/upload_excel', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                        this.reset();
+                        // Sınıf listesini yenile
+                        refreshClassList();
+                    } else {
+                        alert('❌ Hata: ' + data.message);
+                    }
+                });
+        });
+
+        // Yoklama listesini yükle
+        function loadAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const sinif = document.getElementById('attendanceClass').value;
+
+            if (!date || !sinif) {
+                showToast('Lütfen tarih ve sınıf seçin!', 'warning');
+                return;
+            }
+
+            document.getElementById('attendanceLoading').style.display = 'block';
+            document.getElementById('attendanceList').innerHTML = '';
+            document.getElementById('attendanceSaveBtn').style.display = 'none';
+            document.getElementById('attendanceDeleteBtn').style.display = 'none';
+
+            fetch(`/students?sinif=${sinif}&tarih=${date}&t=${new Date().getTime()}`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('attendanceLoading').style.display = 'none';
+
+                    if (data.success && data.students.length > 0) {
+                        document.getElementById('attendanceSearchBox').style.display = 'block';
+                        document.getElementById('attendanceSaveBtn').style.display = 'block';
+
+                        // Yoklama varsa silme butonunu göster
+                        if (data.attendance_exists) {
+                            document.getElementById('attendanceDeleteBtn').style.display = 'block';
+                            document.querySelector('#attendanceSaveBtn button').textContent = '💾 Yoklamayı Güncelle';
+                            document.querySelector('#attendanceSaveBtn button').classList.replace('btn-success', 'btn-primary');
+                        } else {
+                            document.getElementById('attendanceDeleteBtn').style.display = 'none';
+                            document.querySelector('#attendanceSaveBtn button').textContent = '💾 Yoklamayı Kaydet';
+                            document.querySelector('#attendanceSaveBtn button').classList.replace('btn-primary', 'btn-success');
+                        }
+
+                        let html = '';
+                        data.students.forEach(student => {
+                            html += `
+                            <div class="student-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4">
+                                        <div class="student-name">${student.ad_soyad}</div>
+                                        <small class="text-muted">
+                                            🎓 Okul No: ${student.okul_no} |
+                                            📚 Sınıf: ${student.sinif} |
+                                            📱 Veli: ${student.veli_tel}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="status-radio">
+                                            <label class="radio-geldi">
+                                                <input type="radio" name="status_${student.okul_no}" value="GELDİ"
+                                                    ${student.durum === 'GELDİ' ? 'checked' : ''}>
+                                                    <span>✅ Geldi</span>
+                                            </label>
+                                            <label class="radio-gelmedi">
+                                                <input type="radio" name="status_${student.okul_no}" value="GELMEDİ"
+                                                    ${student.durum === 'GELMEDİ' ? 'checked' : ''}>
+                                                    <span>❌ Gelmedi</span>
+                                            </label>
+                                            <label class="radio-gec">
+                                                <input type="radio" name="status_${student.okul_no}" value="GEÇ"
+                                                    ${student.durum === 'GEÇ' ? 'checked' : ''}>
+                                                    <span>⏰ Geç Kaldı</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        });
+
+                        document.getElementById('attendanceList').innerHTML = html;
+                        document.getElementById('attendanceSaveBtn').style.display = 'block';
+
+                        // Arama kutusunu göster
+                        document.getElementById('attendanceSearchBox').style.display = 'block';
+                        updateSearchCount();
+                    } else {
+                        document.getElementById('attendanceList').innerHTML =
+                            '<div class="alert alert-warning">Bu sınıfta öğrenci bulunamadı!</div>';
+                        document.getElementById('attendanceSearchBox').style.display = 'none';
+                    }
+                });
+        }
+
+        // Yoklamayı Sil
+        // Yoklamayı Sil (Modal Aç)
+        function deleteAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const sinif = document.getElementById('attendanceClass').value;
+
+            const modalText = `${date} tarihindeki ${sinif} sınıfı için alınan yoklamayı silmek üzeresiniz.`;
+            document.getElementById('deleteConfirmText').textContent = modalText;
+
+            const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            modal.show();
+        }
+
+        // Silme İşlemini Onayla
+        function confirmDeleteAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const sinif = document.getElementById('attendanceClass').value;
+            const formData = new FormData();
+            formData.append('tarih', date);
+            formData.append('sinif', sinif);
+
+            // Modalı kapat
+            const modalEl = document.getElementById('deleteConfirmModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+
+            fetch('/delete_attendance', {
+                method: 'POST',
+                body: formData
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ ' + data.message); // Kullanıcı görsün diye alert kullanıyoruz
+
+                        // WhatsApp gönderim durumunu sıfırla
+                        localStorage.removeItem(`whatsapp_completed_${date}`);
+
+                        loadAttendance(); // Listeyi yenile
+                        loadReportDates(); // Rapor tarihlerini güncelle
+
+                        // Eğer silinen tarih şu an raporda açık olan tarihse, raporu da yenile
+                        const reportDate = document.getElementById('reportDate').value;
+                        if (reportDate === date) {
+                            loadReport();
+                        }
+
+                        // Genel Özeti güncelle
+                        loadGeneralSummary();
+                    } else {
+                        alert('❌ Hata: ' + data.message);
+                    }
+                })
+                .catch(err => {
+                    alert('❌ Hata oluştu: ' + err);
+                });
+        }
+
+        // Öğrenci arama
+        document.getElementById('attendanceSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            const studentItems = document.querySelectorAll('.student-item');
+
+            studentItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            updateSearchCount();
+        });
+
+        // Arama sayacını güncelle
+        function updateSearchCount() {
+            const total = document.querySelectorAll('.student-item').length;
+            const visible = document.querySelectorAll('.student-item[style="display: block;"], .student-item:not([style])').length;
+
+            const countEl = document.getElementById('searchResultCount');
+            if (document.getElementById('attendanceSearch').value) {
+                countEl.textContent = `${visible} / ${total} öğrenci gösteriliyor`;
+            } else {
+                countEl.textContent = `Toplam ${total} öğrenci`;
+            }
+        }
+
+        // Aramayı temizle
+        function clearAttendanceSearch() {
+            document.getElementById('attendanceSearch').value = '';
+            const studentItems = document.querySelectorAll('.student-item');
+            studentItems.forEach(item => item.style.display = 'block');
+            updateSearchCount();
+        }
+
+        // Yoklamayı kaydet
+        function saveAttendance() {
+            const date = document.getElementById('attendanceDate').value;
+            const sinif = document.getElementById('attendanceClass').value;
+
+            const records = [];
+            document.querySelectorAll('.student-item').forEach(item => {
+                const radio = item.querySelector('input[type="radio"]:checked');
+                if (radio) {
+                    const okul_no = radio.name.replace('status_', '');
+                    records.push({
+                        okul_no: okul_no,
+                        durum: radio.value
+                    });
+                }
+            });
+
+            fetch('/save_attendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tarih: date,
+                    records: records
+                })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+
+                        // WhatsApp gönderim durumunu sıfırla (listenin güncellendiği varsayılarak)
+                        localStorage.removeItem(`whatsapp_completed_${date}`);
+
+                        loadGeneralSummary(); // Kaydettikten sonra özeti güncelle
+                        loadReportDates(); // Tarih listesini güncelle
+
+                        // Rapor sekmesine geç
+                        const reportTab = document.getElementById('report-tab');
+                        const tab = new bootstrap.Tab(reportTab);
+                        tab.show();
+
+                        // Rapor tarihini kaydedilen tarihe ayarla ve raporu yükle
+                        const savedDate = document.getElementById('attendanceDate').value;
+                        document.getElementById('reportDate').value = savedDate;
+
+                        // Sekme geçişi tamamlandıktan sonra raporu yükle
+                        setTimeout(() => {
+                            loadReport();
+                        }, 800);
+                    } else {
+                        showToast('Hata: ' + data.message, 'error');
+                    }
+                });
+        }
+
+        // Rapor yükle
+        function loadReport() {
+            const date = document.getElementById('reportDate').value;
+
+            if (!date) {
+                showToast('Lütfen tarih seçin!', 'warning');
+                return;
+            }
+
+            fetch(`/report?tarih=${date}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        // İstatistikleri göster
+                        document.getElementById('statGeldi').textContent = data.stats.geldi;
+                        document.getElementById('statGelmedi').textContent = data.stats.gelmedi;
+                        document.getElementById('statGec').textContent = data.stats.gec;
+                        document.getElementById('reportStats').style.display = 'flex';
+
+                        // Devamsızlık listesi
+                        if (data.absences.length > 0) {
+                            let html = '';
+                            whatsappQueue = []; // Queue'yu sıfırla
+
+
+                            data.absences.forEach((abs, index) => {
+                                const cssClass = abs.durum === 'GEÇ' ? 'late' : '';
+                                const icon = abs.durum === 'GEÇ' ? '⏰' : '❌';
+
+                                // Queue'ya ekle
+                                whatsappQueue.push({
+                                    veli_tel: abs.veli_tel,
+                                    ad_soyad: abs.ad_soyad,
+                                    durum: abs.durum
+                                });
+
+                                html += `
+                                <div class="absence-item ${cssClass}">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <div class="absence-name">${icon} ${abs.ad_soyad}</div>
+                                            <div class="absence-info">
+                                                Sınıf: ${abs.sinif} | Veli Tel: ${abs.veli_tel} | Durum: ${abs.durum}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            <button class="btn btn-success btn-sm" onclick="sendIndividualWhatsApp(${index})">
+                                                📱 WhatsApp Gönder
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            });
+
+                            document.getElementById('absenceList').innerHTML = html;
+                            document.getElementById('reportAbsences').style.display = 'block';
+
+                            // Queue sistemini başlat
+                            if (whatsappQueue.length > 0) {
+                                currentQueueIndex = 0;
+                                const reportDate = document.getElementById('reportDate').value;
+
+                                document.getElementById('whatsappQueue').style.display = 'block';
+
+                                // Bu tarih için tamamlanmış mı kontrol et
+                                if (checkQueueCompletion(reportDate)) {
+                                    queueCompleted = true;
+                                    document.getElementById('nextWhatsAppBtn').disabled = true;
+                                    showQueueMessage('⚠️ Bu tarih için WhatsApp gönderimi zaten tamamlanmış!', 'warning');
+                                } else {
+                                    document.getElementById('nextWhatsAppBtn').disabled = false;
+                                    document.getElementById('queueCounter').textContent = `1 / ${whatsappQueue.length}`;
+                                    document.getElementById('queueComplete').style.display = 'none';
+                                }
+                            }
+                        } else {
+                            document.getElementById('reportAbsences').style.display = 'none';
+                        }
+                    } else {
+                        document.getElementById('reportStats').style.display = 'none';
+                        document.getElementById('reportAbsences').style.display = 'none';
+                        showToast('Hata: ' + data.message, 'error');
+                    }
+                })
+                .catch(err => {
+                    showToast('Rapor yüklenemedi: ' + err.message, 'error');
+                });
+        }
+
+        // WhatsApp Sıralı Gönderim Sistemi
+        let whatsappQueue = [];
+        let currentQueueIndex = 0;
+        let queueCompleted = false;
+
+        // LocalStorage'dan tamamlanma durumunu kontrol et
+        function checkQueueCompletion(date) {
+            const completed = localStorage.getItem(`whatsapp_completed_${date}`);
+            return completed === 'true';
+        }
+
+        // Tamamlanma durumunu kaydet
+        function markQueueAsCompleted(date) {
+            localStorage.setItem(`whatsapp_completed_${date}`, 'true');
+        }
+
+        // UI mesajı göster
+        function showQueueMessage(message, type = 'info') {
+            const messageBox = document.getElementById('queueComplete');
+            messageBox.className = `alert alert-${type} mt-3`;
+            messageBox.innerHTML = message;
+            messageBox.style.display = 'block';
+        }
+
+        function sendNextWhatsApp() {
+            const date = document.getElementById('reportDate').value;
+
+            // Eğer bu tarih için daha önce tamamlandıysa izin verme
+            if (checkQueueCompletion(date)) {
+                showQueueMessage('⚠️ Bu yoklama için WhatsApp gönderimi zaten tamamlanmış! Tekrar gönderilemez.', 'warning');
+                document.getElementById('nextWhatsAppBtn').disabled = true;
+                return;
+            }
+
+            if (currentQueueIndex >= whatsappQueue.length) {
+                // Liste bitti - kalıcı olarak kaydet
+                queueCompleted = true;
+                markQueueAsCompleted(date);
+                document.getElementById('nextWhatsAppBtn').disabled = true;
+                showQueueMessage('✅ Tüm mesajlar gönderildi! Bu yoklama için WhatsApp gönderimi tamamlandı.', 'success');
+                return;
+            }
+
+            const current = whatsappQueue[currentQueueIndex];
+
+            // Mesaj oluştur
+            let mesaj;
+            if (current.durum === 'GELMEDİ') {
+                mesaj = `Sayın Veli,\n\n${date} tarihinde ${current.ad_soyad} isimli öğrenciniz okula gelmemiştir.\n\nSaygılarımızla,\nOkul Yönetimi`;
+            } else if (current.durum === 'GEÇ') {
+                mesaj = `Sayın Veli,\n\n${date} tarihinde ${current.ad_soyad} isimli öğrenciniz okula geç gelmiştir.\n\nSaygılarımızla,\nOkul Yönetimi`;
+            }
+
+            // WhatsApp URL
+            const url = `https://web.whatsapp.com/send?phone=90${current.veli_tel}&text=${encodeURIComponent(mesaj)}`;
+
+            // Aynı pencerede aç
+            window.open(url, 'WPSender', 'width=1000,height=700');
+
+            // Index artır ve sayacı güncelle
+            currentQueueIndex++;
+
+            if (currentQueueIndex < whatsappQueue.length) {
+                document.getElementById('queueCounter').textContent = `${currentQueueIndex + 1} / ${whatsappQueue.length}`;
+            } else {
+                document.getElementById('queueCounter').textContent = `${whatsappQueue.length} / ${whatsappQueue.length}`;
+            }
+        }
+
+        // Tek bir öğrenciye WhatsApp gönder
+        function sendIndividualWhatsApp(index) {
+            const date = document.getElementById('reportDate').value;
+            const current = whatsappQueue[index];
+
+            // Mesaj oluştur
+            let mesaj;
+            if (current.durum === 'GELMEDİ') {
+                mesaj = `Sayın Veli,\n\n${date} tarihinde ${current.ad_soyad} isimli öğrenciniz okula gelmemiştir.\n\nSaygılarımızla,\nOkul Yönetimi`;
+            } else if (current.durum === 'GEÇ') {
+                mesaj = `Sayın Veli,\n\n${date} tarihinde ${current.ad_soyad} isimli öğrenciniz okula geç gelmiştir.\n\nSaygılarımızla,\nOkul Yönetimi`;
+            }
+
+            // WhatsApp URL
+            const url = `https://web.whatsapp.com/send?phone=90${current.veli_tel}&text=${encodeURIComponent(mesaj)}`;
+
+            // Aynı pencerede aç
+            window.open(url, 'WPSender', 'width=1000,height=700');
+        }
+
+        // Tutorial (Rehber) Sistemi
+        let driverObj;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Tutorial durumunu kontrol et
+            checkTutorialStatus();
+        });
+
+        function checkTutorialStatus() {
+            const tutorialSeen = localStorage.getItem('tutorial_seen');
+            if (!tutorialSeen) {
+                const modal = new bootstrap.Modal(document.getElementById('tutorialWelcomeModal'));
+                modal.show();
+            }
+        }
+
+        function skipTutorial() {
+            if (document.getElementById('dontShowTutorialAgain').checked) {
+                localStorage.setItem('tutorial_seen', 'true');
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tutorialWelcomeModal'));
+            modal.hide();
+        }
+
+        function startTutorial() {
+            // Modalı kapat
+            if (document.getElementById('dontShowTutorialAgain').checked) {
+                localStorage.setItem('tutorial_seen', 'true');
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('tutorialWelcomeModal'));
+            modal.hide();
+
+            // Driver.js nesnesini oluştur
+            driverObj = window.driver.js.driver({
+                showProgress: true,
+                animate: true,
+                doneBtnText: 'Tamamla',
+                nextBtnText: 'Sonraki',
+                prevBtnText: 'Önceki',
+                steps: [
+                    {
+                        element: '#mainTabs',
+                        popover: {
+                            title: 'Ana Menü 🧭',
+                            description: 'Buradan öğrenci ekleme, listeleme, yoklama alma ve rapor işlemlerine geçiş yapabilirsiniz.'
+                        }
+                    },
+                    {
+                        element: '#add-student-tab',
+                        popover: {
+                            title: 'Öğrenci Ekleme ➕',
+                            description: 'Yeni öğrencileri tek tek veya Excel ile toplu olarak buradan sisteme ekleyebilirsiniz.'
+                        }
+                    },
+                    {
+                        element: '#attendance-tab',
+                        popover: {
+                            title: 'Yoklama Alma ✅',
+                            description: 'Hızlıca sınıf yoklaması almak için bu sekmeyi kullanın. Geçmiş yoklamaları silebilir veya güncelleyebilirsiniz.'
+                        }
+                    },
+                    {
+                        element: '#report-tab',
+                        popover: {
+                            title: 'Rapor ve WhatsApp 📊',
+                            description: 'Günlük devamsızlık özetini görün ve tek tıkla velilere WhatsApp mesajı gönderin.'
+                        }
+                    },
+                    {
+                        element: '.navbar-brand',
+                        popover: {
+                            title: 'Hazırsınız! 🚀',
+                            description: 'Artık sistemi kullanmaya başlayabilirsiniz. İyi çalışmalar!'
+                        }
+                    }
+                ]
+            });
+
+            driverObj.drive();
+        }
+    </script>
+</body>
+
+</html>
