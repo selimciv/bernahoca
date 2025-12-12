@@ -1,7 +1,0 @@
-.DS_Store
-dist/
-__pycache__/
-*.pyc
-.gemini/
-.venv/
-*.db
