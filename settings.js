@@ -698,7 +698,15 @@ var gameData = {
                     { answer: "Germany", pronunciation: "Cörmıny", question: "Almanya", example: "Berlin is the capital of Germany.", exampleTR: "Berlin Almanya'nın başkentidir." },
                     { answer: "Turkish", pronunciation: "Törkiş", question: "Türk/Türkçe", example: "He speaks Turkish fluently.", exampleTR: "O akıcı bir şekilde Türkçe konuşur." },
                     { answer: "German", pronunciation: "Cörmın", question: "Alman/Almanca", example: "German is a difficult language.", exampleTR: "Almanca zor bir dildir." },
-                    { answer: "Spanish", pronunciation: "Speniş", question: "İspanyol/İspanyolca", example: "She is learning Spanish.", exampleTR: "O İspanyolca öğreniyor." }
+                    { answer: "Spanish", pronunciation: "Speniş", question: "İspanyol/İspanyolca", example: "She is learning Spanish.", exampleTR: "O İspanyolca öğreniyor." },
+                    { answer: "Country", pronunciation: "Kantri", question: "Ülke", example: "Which country are you from?", exampleTR: "Hangi ülkedensin?" },
+                    { answer: "Capital", pronunciation: "Kepitıl", question: "Başkent", example: "Ankara is the capital of Türkiye.", exampleTR: "Ankara Türkiye'nin başkentidir." },
+                    { answer: "Language", pronunciation: "Lengwıc", question: "Dil", example: "English is a global language.", exampleTR: "İngilizce küresel bir dildir." },
+                    { answer: "Native language", pronunciation: "Neytiv lengwıc", question: "Ana dil", example: "My native language is Turkish.", exampleTR: "Ana dilim Türkçe." },
+                    { answer: "Official language", pronunciation: "Ofişıl lengwıc", question: "Resmi dil", example: "The official language of Brazil is Portuguese.", exampleTR: "Brezilya'nın resmi dili Portekizcedir." },
+                    { answer: "Nationality", pronunciation: "Neşıneliti", question: "Milliyet", example: "What is your nationality?", exampleTR: "Milliyetin nedir?" },
+                    { answer: "Citizen", pronunciation: "Sitizın", question: "Vatandaş", example: "He is a Turkish citizen.", exampleTR: "O bir Türk vatandaşı." },
+                    { answer: "Turkic states", pronunciation: "Törkik steyts", question: "Türkî devletler", example: "The Turkic states share similar cultures.", exampleTR: "Türkî devletler benzer kültürleri paylaşır." }
                 ]
             },
             {
@@ -718,17 +726,43 @@ var gameData = {
                     { answer: "Explore", pronunciation: "Eksplor", question: "Keşfetmek", example: "Let's explore the city.", exampleTR: "Şehri keşfedelim." },
                     { answer: "Boat ride", pronunciation: "Bot rayd", question: "Tekne gezisi", example: "We went on a boat ride.", exampleTR: "Tekne gezisine çıktık." },
                     { answer: "Take a trip", pronunciation: "Teyk e trip", question: "Geziye çıkmak", example: "We took a trip to Spain.", exampleTR: "İspanya'ya geziye çıktık." },
-                    { answer: "Stroll through", pronunciation: "Strol thru", question: "Dolaşmak", example: "We strolled through the park.", exampleTR: "Parkta dolaştık." }
+                    { answer: "Stroll through", pronunciation: "Strol thru", question: "Dolaşmak", example: "We strolled through the park.", exampleTR: "Parkta dolaştık." },
+                    { answer: "Museum", pronunciation: "Myuziyım", question: "Müze", example: "The museum has ancient artifacts.", exampleTR: "Müzede antik eserler var." },
+                    { answer: "Art museum", pronunciation: "Art myuziyım", question: "Sanat müzesi", example: "The art museum displays famous paintings.", exampleTR: "Sanat müzesi ünlü tabloları sergiliyor." },
+                    { answer: "Historical site", pronunciation: "Histörikıl sayt", question: "Tarihi yer", example: "Ephesus is a famous historical site.", exampleTR: "Efes ünlü bir tarihi yerdir." },
+                    { answer: "Tourist attraction", pronunciation: "Turist ıtrekşın", question: "Turistik cazibe", example: "The Blue Mosque is a popular tourist attraction.", exampleTR: "Sultanahmet Camii popüler bir turistik cazibedir." },
+                    { answer: "Tourist spots", pronunciation: "Turist spots", question: "Turistik yerler", example: "Istanbul has many tourist spots.", exampleTR: "İstanbul'da birçok turistik yer var." },
+                    { answer: "Destination", pronunciation: "Destıneyşın", question: "Gidilecek yer", example: "Paris is a popular destination.", exampleTR: "Paris popüler bir gidilecek yerdir." },
+                    { answer: "Day trip", pronunciation: "Dey trip", question: "Günlük gezi", example: "We took a day trip to the countryside.", exampleTR: "Kırsal bölgeye günlük bir gezi yaptık." },
+                    { answer: "Go sightseeing", pronunciation: "Go saytsiiing", question: "Geziye çıkmak", example: "We want to go sightseeing tomorrow.", exampleTR: "Yarın geziye çıkmak istiyoruz." },
+                    { answer: "Go for a hike", pronunciation: "Go for e hayk", question: "Yürüyüşe çıkmak", example: "Let's go for a hike in the mountains.", exampleTR: "Dağlarda yürüyüşe çıkalım." },
+                    { answer: "Bike around", pronunciation: "Bayk ıraund", question: "Bisikletle dolaşmak", example: "We biked around the island.", exampleTR: "Adanın etrafında bisikletle dolaştık." },
+                    { answer: "Take photos", pronunciation: "Teyk fotos", question: "Fotoğraf çekmek", example: "I love to take photos of nature.", exampleTR: "Doğa fotoğrafı çekmeyi severim." },
+                    { answer: "Thermal bath", pronunciation: "Thörmıl bath", question: "Kaplıca", example: "We relaxed in the thermal bath.", exampleTR: "Kaplıcada dinlendik." },
+                    { answer: "Entrance", pronunciation: "Entrıns", question: "Giriş", example: "The entrance to the museum is free.", exampleTR: "Müze girişi ücretsiz." },
+                    { answer: "Location", pronunciation: "Lokeyşın", question: "Konum", example: "The location of the hotel is perfect.", exampleTR: "Otelin konumu mükemmel." },
+                    { answer: "Close to", pronunciation: "Klos tu", question: "Yakınında", example: "The hotel is close to the beach.", exampleTR: "Otel plaja yakındır." },
+                    { answer: "Skyscraper", pronunciation: "Skayskraypır", question: "Gökdelen", example: "Dubai has many skyscrapers.", exampleTR: "Dubai'de birçok gökdelen var." },
+                    { answer: "Silk Road", pronunciation: "Silk Rod", question: "İpek Yolu", example: "The Silk Road connected Asia and Europe.", exampleTR: "İpek Yolu Asya ve Avrupa'yı birbirine bağladı." }
                 ]
             },
             {
-                name: "Geography",
+                name: "Geography & Nature",
                 pool: [
-                    { answer: "Forest", pronunciation: "Forıst", question: "Orman", example: "The forest is green.", exampleTR: "Orman yeşildir." },
-                    { answer: "River", pronunciation: "Rivır", question: "Nehir", example: "The river is long.", exampleTR: "Nehir uzundur." },
-                    { answer: "Lake", pronunciation: "Leyk", question: "Göl", example: "There is a boat on the lake.", exampleTR: "Gölde bir tekne var." },
-                    { answer: "Mountain", pronunciation: "Mauntın", question: "Dağ", example: "The mountain is high.", exampleTR: "Dağ yüksektir." },
-                    { answer: "Desert", pronunciation: "Dezırt", question: "Çöl", example: "Deserts are hot.", exampleTR: "Çöller sıcaktır." }
+                    { answer: "Forest", pronunciation: "Forıst", question: "Orman", example: "The forest is green and beautiful.", exampleTR: "Orman yeşil ve güzeldir." },
+                    { answer: "River", pronunciation: "Rivır", question: "Nehir", example: "The river flows through the city.", exampleTR: "Nehir şehrin içinden akıyor." },
+                    { answer: "Lake", pronunciation: "Leyk", question: "Göl", example: "The lake is calm and peaceful.", exampleTR: "Göl sakin ve huzurlu." },
+                    { answer: "Mountain", pronunciation: "Mauntın", question: "Dağ", example: "The mountain is covered with snow.", exampleTR: "Dağ karla kaplı." },
+                    { answer: "Desert", pronunciation: "Dezırt", question: "Çöl", example: "The Sahara is the largest desert.", exampleTR: "Sahra en büyük çöldür." },
+                    { answer: "Valley", pronunciation: "Veli", question: "Vadi", example: "The valley is surrounded by mountains.", exampleTR: "Vadi dağlarla çevrili." },
+                    { answer: "Climate", pronunciation: "Klaymıt", question: "İklim", example: "The climate here is mild.", exampleTR: "Buranın iklimi ılıman." },
+                    { answer: "Temperature", pronunciation: "Temprıçır", question: "Sıcaklık", example: "The temperature is 25 degrees today.", exampleTR: "Bugün sıcaklık 25 derece." },
+                    { answer: "Landscape", pronunciation: "Lendskeip", question: "Manzara", example: "The landscape of Cappadocia is unique.", exampleTR: "Kapadokya'nın manzarası eşsiz." },
+                    { answer: "Natural beauty", pronunciation: "Neçırıl byuti", question: "Doğal güzellik", example: "This area is known for its natural beauty.", exampleTR: "Bu bölge doğal güzelliğiyle tanınır." },
+                    { answer: "Natural wonder", pronunciation: "Neçırıl wandır", question: "Doğal harika", example: "Pamukkale is a natural wonder.", exampleTR: "Pamukkale doğal bir harikadır." },
+                    { answer: "National park", pronunciation: "Neşınıl park", question: "Milli park", example: "We visited a national park last weekend.", exampleTR: "Geçen hafta sonu milli park ziyaret ettik." },
+                    { answer: "Sunset view", pronunciation: "Sanset vyu", question: "Gün batımı manzarası", example: "The sunset view from here is amazing.", exampleTR: "Buradan gün batımı manzarası harika." },
+                    { answer: "Paradise", pronunciation: "Perıdays", question: "Cennet", example: "This beach is like a paradise.", exampleTR: "Bu plaj cennet gibi." }
                 ]
             },
             {
@@ -736,29 +770,97 @@ var gameData = {
                 pool: [
                     { answer: "Ancient", pronunciation: "Eynşınt", question: "Antik/Eski", example: "This is an ancient city.", exampleTR: "Bu antik bir şehirdir." },
                     { answer: "History", pronunciation: "Histıri", question: "Tarih", example: "I like learning history.", exampleTR: "Tarih öğrenmeyi severim." },
-                    { answer: "Carpet art", pronunciation: "Karpıt art", question: "Halı sanatı", example: "Carpet art is traditional.", exampleTR: "Halı sanatı gelenekseldir." },
+                    { answer: "Rich history", pronunciation: "Riç histıri", question: "Zengin tarih", example: "İzmir has a rich history.", exampleTR: "İzmir'in zengin bir tarihi var." },
+                    { answer: "Carpet art", pronunciation: "Karpıt art", question: "Halı sanatı", example: "Carpet art is traditional in Türkiye.", exampleTR: "Halı sanatı Türkiye'de gelenekseldir." },
+                    { answer: "Rock art", pronunciation: "Rok art", question: "Kaya sanatı", example: "Rock art shows ancient life.", exampleTR: "Kaya sanatı eski yaşamı gösterir." },
                     { answer: "Cultural heritage", pronunciation: "Kalçırıl herıtıc", question: "Kültürel miras", example: "Protect our cultural heritage.", exampleTR: "Kültürel mirasımızı koruyalım." },
-                    { answer: "Traditional", pronunciation: "Trıdişınıl", question: "Geleneksel", example: "It is a traditional dance.", exampleTR: "Bu geleneksel bir danstır." }
+                    { answer: "Traditional", pronunciation: "Trıdişınıl", question: "Geleneksel", example: "It is a traditional dance.", exampleTR: "Bu geleneksel bir danstır." },
+                    { answer: "Culture", pronunciation: "Kalçır", question: "Kültür", example: "Every country has its own culture.", exampleTR: "Her ülkenin kendi kültürü vardır." },
+                    { answer: "Architecture", pronunciation: "Arkitekçır", question: "Mimari", example: "Ottoman architecture is beautiful.", exampleTR: "Osmanlı mimarisi güzeldir." },
+                    { answer: "Ancestor", pronunciation: "Ensestır", question: "Ata", example: "Our ancestors lived here.", exampleTR: "Atalarımız burada yaşadı." },
+                    { answer: "Indigenous", pronunciation: "Indicınıs", question: "Yerli", example: "The indigenous people have rich traditions.", exampleTR: "Yerli halkın zengin gelenekleri var." },
+                    { answer: "Modern era", pronunciation: "Madırn erı", question: "Modern çağ", example: "We live in the modern era.", exampleTR: "Modern çağda yaşıyoruz." },
+                    { answer: "Chopsticks", pronunciation: "Çapstiks", question: "Yemek çubukları", example: "People in Japan use chopsticks.", exampleTR: "Japonya'da insanlar yemek çubuğu kullanır." }
                 ]
             },
             {
-                name: "Opinions",
+                name: "Adjectives & Opinions",
                 pool: [
                     { answer: "Amazing", pronunciation: "Imeyzing", question: "Şaşırtıcı/Harika", example: "The view is amazing.", exampleTR: "Manzara harika." },
                     { answer: "Unique", pronunciation: "Yunik", question: "Eşsiz", example: "This place is unique.", exampleTR: "Burası eşsiz." },
                     { answer: "Worth seeing", pronunciation: "Wörth siing", question: "Görülmeye değer", example: "The museum is worth seeing.", exampleTR: "Müze görülmeye değer." },
                     { answer: "Unexplored", pronunciation: "Aneksplord", question: "Keşfedilmemiş", example: "It is an unexplored island.", exampleTR: "Bu keşfedilmemiş bir ada." },
-                    { answer: "Peaceful", pronunciation: "Piisful", question: "Huzurlu", example: "The village is very peaceful.", exampleTR: "Köy çok huzurlu." }
+                    { answer: "Peaceful", pronunciation: "Piisful", question: "Huzurlu", example: "The village is very peaceful.", exampleTR: "Köy çok huzurlu." },
+                    { answer: "Fascinating", pronunciation: "Fesıneyting", question: "Büyüleyici", example: "The old town is fascinating.", exampleTR: "Eski şehir büyüleyici." },
+                    { answer: "Incredible", pronunciation: "İnkredibıl", question: "İnanılmaz", example: "The scenery is incredible.", exampleTR: "Manzara inanılmaz." },
+                    { answer: "Magnificent", pronunciation: "Megnifisınt", question: "Muhteşem", example: "The palace is magnificent.", exampleTR: "Saray muhteşem." },
+                    { answer: "Enormous", pronunciation: "İnormıs", question: "Devasa", example: "The castle is enormous.", exampleTR: "Kale devasa." },
+                    { answer: "Delicious", pronunciation: "Dilişıs", question: "Lezzetli", example: "Turkish food is delicious.", exampleTR: "Türk yemekleri lezzetli." },
+                    { answer: "Memorable", pronunciation: "Memırıbıl", question: "Unutulmaz", example: "It was a memorable trip.", exampleTR: "Unutulmaz bir geziydi." },
+                    { answer: "Unusual", pronunciation: "Anyujuıl", question: "Alışılmadık", example: "This is an unusual building.", exampleTR: "Bu alışılmadık bir bina." },
+                    { answer: "Friendly", pronunciation: "Frendli", question: "Arkadaş canlısı", example: "The local people are very friendly.", exampleTR: "Yerel halk çok arkadaş canlısı." },
+                    { answer: "Welcoming", pronunciation: "Welkaming", question: "Misafirperver", example: "Turkish people are welcoming.", exampleTR: "Türk insanları misafirperver." },
+                    { answer: "Kind", pronunciation: "Kaynd", question: "Nazik", example: "The guide was very kind.", exampleTR: "Rehber çok nazikti." },
+                    { answer: "Famous for", pronunciation: "Feymıs for", question: "... ile ünlü", example: "Italy is famous for pizza.", exampleTR: "İtalya pizza ile ünlü." },
+                    { answer: "Curious about", pronunciation: "Kyuriıs ıbaut", question: "Meraklı", example: "I am curious about Japanese culture.", exampleTR: "Japon kültürü hakkında meraklıyım." },
+                    { answer: "Interested in", pronunciation: "İntrestid in", question: "İlgilenmek", example: "She is interested in history.", exampleTR: "O tarihle ilgileniyor." }
                 ]
             },
             {
-                name: "Digital Life",
+                name: "Digital Life & Technology",
                 pool: [
                     { answer: "Prevent", pronunciation: "Privent", question: "Önlemek", example: "We must prevent data theft.", exampleTR: "Veri hırsızlığını önlemeliyiz." },
-                    { answer: "Cybersecurity", pronunciation: "Saybırsıkyurıti", question: "Siber güvenlik", example: "Cybersecurity is important.", exampleTR: "Siber güvenlik önemlidir." },
-                    { answer: "Data theft", pronunciation: "Deyta theft", question: "Veri hırsızlığı", example: "Watch out for data theft.", exampleTR: "Veri hırsızlığına dikkat et." },
-                    { answer: "Cyberattack", pronunciation: "Saybıratek", question: "Siber saldırı", example: "There was a cyberattack.", exampleTR: "Bir siber saldırı oldu." },
-                    { answer: "Personal information", pronunciation: "Pörsınıl informeyşın", question: "Kişisel bilgi", example: "Protect your personal information.", exampleTR: "Kişisel bilgilerini koru." }
+                    { answer: "Cybersecurity", pronunciation: "Saybırsıkyurıti", question: "Siber güvenlik", example: "Cybersecurity is important for everyone.", exampleTR: "Siber güvenlik herkes için önemlidir." },
+                    { answer: "Data theft", pronunciation: "Deyta theft", question: "Veri hırsızlığı", example: "Watch out for data theft online.", exampleTR: "İnternette veri hırsızlığına dikkat et." },
+                    { answer: "Cyberattack", pronunciation: "Saybıratek", question: "Siber saldırı", example: "The company faced a cyberattack.", exampleTR: "Şirket bir siber saldırıyla karşılaştı." },
+                    { answer: "Personal information", pronunciation: "Pörsınıl informeyşın", question: "Kişisel bilgi", example: "Never share your personal information.", exampleTR: "Asla kişisel bilgilerini paylaşma." },
+                    { answer: "Damage", pronunciation: "Demıc", question: "Zarar vermek", example: "Viruses can damage your computer.", exampleTR: "Virüsler bilgisayarına zarar verebilir." },
+                    { answer: "Steal", pronunciation: "Stiil", question: "Çalmak", example: "Hackers try to steal passwords.", exampleTR: "Hackerlar şifre çalmaya çalışır." },
+                    { answer: "Save time", pronunciation: "Seyv taym", question: "Zaman kazanmak", example: "Technology helps us save time.", exampleTR: "Teknoloji zaman kazanmamıza yardımcı olur." },
+                    { answer: "Pay bill", pronunciation: "Pey bil", question: "Fatura ödemek", example: "You can pay bills online.", exampleTR: "Faturaları çevrimiçi ödeyebilirsin." },
+                    { answer: "Work from home", pronunciation: "Wörk from hom", question: "Evden çalışmak", example: "Many people work from home now.", exampleTR: "Artık birçok insan evden çalışıyor." }
+                ]
+            },
+            {
+                name: "Food & Local Life",
+                pool: [
+                    { answer: "Local food", pronunciation: "Lokıl fud", question: "Yerel yemek", example: "Try the local food when you travel.", exampleTR: "Seyahat ettiğinde yerel yemekleri dene." },
+                    { answer: "Local market", pronunciation: "Lokıl markıt", question: "Yerel pazar", example: "We bought souvenirs from the local market.", exampleTR: "Yerel pazardan hediyelik eşya aldık." },
+                    { answer: "Taste", pronunciation: "Teyst", question: "Tatmak", example: "I want to taste traditional food.", exampleTR: "Geleneksel yemekleri tatmak istiyorum." },
+                    { answer: "Enjoy", pronunciation: "Encoy", question: "Keyif almak", example: "I enjoy traveling to new places.", exampleTR: "Yeni yerler gezmeye keyif alıyorum." },
+                    { answer: "Experience", pronunciation: "İkspiıriyıns", question: "Deneyim", example: "It was a great experience.", exampleTR: "Harika bir deneyimdi." },
+                    { answer: "Order", pronunciation: "Ordır", question: "Sipariş vermek", example: "I ordered coffee at the café.", exampleTR: "Kafede kahve sipariş ettim." }
+                ]
+            },
+            {
+                name: "Work & Business",
+                pool: [
+                    { answer: "Ability", pronunciation: "Ibiliti", question: "Yetenek", example: "She has the ability to speak five languages.", exampleTR: "O beş dil konuşma yeteneğine sahip." },
+                    { answer: "Firm", pronunciation: "Förm", question: "Firma", example: "He works for a big firm.", exampleTR: "O büyük bir firmada çalışıyor." },
+                    { answer: "Private company", pronunciation: "Prayvıt kampıni", question: "Özel şirket", example: "She founded a private company.", exampleTR: "O bir özel şirket kurdu." },
+                    { answer: "Government office", pronunciation: "Gavırnmınt ofis", question: "Devlet dairesi", example: "He works at a government office.", exampleTR: "O bir devlet dairesinde çalışıyor." },
+                    { answer: "Get a promotion", pronunciation: "Get e promoşın", question: "Terfi almak", example: "She got a promotion at work.", exampleTR: "İşte terfi aldı." },
+                    { answer: "Run business", pronunciation: "Ran biznıs", question: "İş yürütmek", example: "My father runs his own business.", exampleTR: "Babam kendi işini yürütüyor." },
+                    { answer: "Task", pronunciation: "Task", question: "Görev", example: "I have many tasks to complete.", exampleTR: "Tamamlamam gereken birçok görev var." },
+                    { answer: "Responsible", pronunciation: "Rispansıbıl", question: "Sorumlu", example: "He is responsible for the project.", exampleTR: "O projeden sorumlu." },
+                    { answer: "Provide", pronunciation: "Provayd", question: "Sağlamak", example: "The hotel provides free breakfast.", exampleTR: "Otel ücretsiz kahvaltı sağlıyor." },
+                    { answer: "Vocational schools", pronunciation: "Vokeyşınıl skulz", question: "Meslek okulları", example: "Vocational schools teach practical skills.", exampleTR: "Meslek okulları pratik beceriler öğretir." }
+                ]
+            },
+            {
+                name: "People & Society",
+                pool: [
+                    { answer: "Meet", pronunciation: "Miit", question: "Tanışmak/Buluşmak", example: "I met new friends on the trip.", exampleTR: "Gezide yeni arkadaşlarla tanıştım." },
+                    { answer: "Attend", pronunciation: "Itend", question: "Katılmak", example: "I will attend the meeting tomorrow.", exampleTR: "Yarın toplantıya katılacağım." },
+                    { answer: "Join", pronunciation: "Coyn", question: "Katılmak", example: "Would you like to join us?", exampleTR: "Bize katılmak ister misin?" },
+                    { answer: "Visit", pronunciation: "Vizit", question: "Ziyaret etmek", example: "I want to visit my grandparents.", exampleTR: "Büyükannemi ve büyükbabamı ziyaret etmek istiyorum." },
+                    { answer: "Create", pronunciation: "Kriyet", question: "Yaratmak", example: "Artists create beautiful things.", exampleTR: "Sanatçılar güzel şeyler yaratır." },
+                    { answer: "Newcomer", pronunciation: "Nyukamır", question: "Yeni gelen", example: "The newcomer joined our class.", exampleTR: "Yeni gelen sınıfımıza katıldı." },
+                    { answer: "Importance", pronunciation: "İmportıns", question: "Önem", example: "Education has great importance.", exampleTR: "Eğitim büyük öneme sahiptir." },
+                    { answer: "Opportunity", pronunciation: "Opırtuniti", question: "Fırsat", example: "This is a great opportunity.", exampleTR: "Bu harika bir fırsat." },
+                    { answer: "Necessity", pronunciation: "Nesisiti", question: "Gereklilik", example: "Water is a necessity for life.", exampleTR: "Su yaşam için bir gerekliliktir." },
+                    { answer: "Obligation", pronunciation: "Obligeyşın", question: "Zorunluluk", example: "We have an obligation to help.", exampleTR: "Yardım etme zorunluluğumuz var." },
+                    { answer: "Possibility", pronunciation: "Pasibiliti", question: "Olasılık", example: "There is a possibility of rain.", exampleTR: "Yağmur olasılığı var." }
                 ]
             }
         ],

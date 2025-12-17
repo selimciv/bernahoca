@@ -1204,7 +1204,7 @@ function awardPointsToTeam(teamIndex) {
 
     // Close modal after short delay
     setTimeout(() => {
-        closeModal(true); // Skip history.back() to prevent navigation to homepage
+        closeModal(true, true); // Skip history.back() and disable the card
     }, 300);
 }
 
@@ -1312,7 +1312,7 @@ function speakAnswerSequence() {
     });
 }
 
-function closeModal(skipHistory = false) {
+function closeModal(skipHistory = false, disableCard = false) {
     document.getElementById('question-modal').style.display = 'none';
     document.getElementById('modal-pronunciation').style.display = 'none'; // Hide pronunciation
     stopTimer();
@@ -1336,12 +1336,14 @@ function closeModal(skipHistory = false) {
         history.back();
     }
 
-    // Mark card as used
-    if (currentCardElement) {
+    // Only disable card if explicitly requested (when points are awarded)
+    if (disableCard && currentCardElement) {
         currentCardElement.classList.add('disabled');
         currentCardElement.innerText = ''; // Clear points
-        currentCardElement = null;
     }
+
+    // Reset current card element
+    currentCardElement = null;
 }
 
 // Timer Logic
@@ -1533,14 +1535,16 @@ function triggerAddHomework() {
     renderStudentListForMarking();
 }
 
-// Helper function to format student names as "First Name Last Initial."
+// Helper function to format student names as initials (e.g., "S. C.")
 function formatStudentDisplayName(fullName) {
     if (!fullName) return "";
     var parts = fullName.trim().split(/\s+/);
-    if (parts.length < 2) return fullName;
-    var firstName = parts.slice(0, -1).join(" ");
-    var lastNameInitial = parts[parts.length - 1].charAt(0) + ".";
-    return firstName + " " + lastNameInitial;
+    if (parts.length < 1) return fullName;
+    // Abbreviate all parts to initials
+    var initials = parts.map(function (part) {
+        return part.charAt(0).toUpperCase() + ".";
+    });
+    return initials.join(" ");
 }
 
 function renderStudentListForMarking() {

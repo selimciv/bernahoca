@@ -8,23 +8,282 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VocabChall">
     <title>English Vocabulary Challenge</title>
+    <!-- Firebase SDK (v8.10.1 Legacy for better iPhone 7 support) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- Google Analytics (kept getting errors, removing for now to isolate issues) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;600;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="school_icon.png">
+    <link rel="apple-touch-icon" href="school_icon.png">
 </head>
 
 <body>
     <div id="landing-page" class="landing-page">
         <div class="landing-content">
             <h2 class="game-title">English Vocabulary Challenge</h2>
+
+
+
             <div class="mode-buttons">
-                <button class="mode-btn" onclick="setGameMode('standard')">Level Game (A1-C2)</button>
-                <button class="mode-btn" onclick="setGameMode('grade9')">9th Grade Unit Vocabulary</button>
+                <button class="mode-btn" onclick="setGameMode('standard')">General English</button>
+                <button class="mode-btn" onclick="setGameMode('grade9')">9TH GRADE VOCABULARY</button>
+                <button class="mode-btn" onclick="setGameMode('ydt')">11TH GRADE UNIT VOCABULARY</button>
             </div>
+            <button class="mode-btn homework-btn" style="margin-top: 20px; border-color: #fca5a5;"
+                onclick="openHomeworkControl()">Homework Control</button>
+            <button class="mode-btn homework-btn" style="font-size: 0.9rem; padding: 10px; margin-top: 10px;"
+                onclick="openHomeworkReport()">Homework Report</button>
+
             <div class="landing-footer">
                 <div class="teacher-name">Berna Fergana Civelek</div>
-                <div class="app-info">V05.12.2025.15 &copy; 2024</div>
-                <button class="contact-btn" onclick="toggleContact()">İletişime Geç</button>
+                <div class="app-info" id="app-version">V11.12.2024.18.44 &copy; 2024</div>
+
+                <button class="contact-btn" onclick="toggleContact()">Contact</button>
                 <div id="contact-info" class="telegram-id">Telegram: @selimciv</div>
             </div>
+        </div>
+    </div>
+
+    <!-- Floating Online User Bubble -->
+    <div id="floating-user-list" class="floating-user-list">
+        <div class="floating-header" onclick="toggleUserList()">
+            <span class="online-dot">●</span>
+            <span id="floating-count">0</span> Online
+            <span class="toggle-arrow" id="user-list-arrow">▼</span>
+        </div>
+        <div id="floating-list-content" class="floating-list-content">
+            <!-- Users injected here -->
+        </div>
+    </div>
+
+    <!-- Game Mode Selection Screen -->
+    <div id="game-mode-selection" class="game-mode-selection" style="display: none;">
+        <div class="game-mode-content">
+            <h2 class="mode-selection-title">Choose Your Game Mode</h2>
+            <div class="game-mode-grid">
+                <button class="game-mode-card" onclick="selectGameMode('team')">
+                    <div class="mode-icon">🏆</div>
+                    <h3>Team Competition</h3>
+                    <p>Classic Jeopardy-style team battle</p>
+                </button>
+                <button class="game-mode-card" onclick="selectGameMode('wheel')">
+                    <div class="mode-icon">🎡</div>
+                    <h3>Wheel of Fortune</h3>
+                    <p>Spin the wheel for random words</p>
+                </button>
+                <button class="game-mode-card" onclick="selectGameMode('millionaire')">
+                    <div class="mode-icon">💰</div>
+                    <h3>Millionaire Quiz</h3>
+                    <p>Progressive difficulty with lifelines</p>
+                </button>
+                <button class="game-mode-card" onclick="selectGameMode('hangman')">
+                    <div class="mode-icon">🎯</div>
+                    <h3>Hangman</h3>
+                    <p>Guess the word letter by letter</p>
+                </button>
+                <button class="game-mode-card" onclick="selectGameMode('taboo')">
+                    <div class="mode-icon">🙊</div>
+                    <h3>Taboo</h3>
+                    <p>Describe words without using forbidden ones</p>
+                </button>
+            </div>
+            <button class="back-to-landing-btn" onclick="backToLanding()">← Back</button>
+        </div>
+    </div>
+
+    <!-- Play Type Selection Screen (Team vs Individual) -->
+    <div id="play-type-selection" class="play-type-selection" style="display: none;">
+        <div class="play-type-content">
+            <h2 class="play-type-title">Choose Play Type</h2>
+            <div class="play-type-grid">
+                <button class="play-type-card team-card" onclick="selectPlayType('team')">
+                    <div class="play-type-icon">👥</div>
+                    <h3>Team Game</h3>
+                    <p>Compete as Team A, B, C, D</p>
+                </button>
+                <button class="play-type-card individual-card" onclick="selectPlayType('individual')">
+                    <div class="play-type-icon">👤</div>
+                    <h3>Individual</h3>
+                    <p>Play solo and collect points</p>
+                </button>
+            </div>
+            <button class="back-to-landing-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+        </div>
+    </div>
+
+    <!-- Wheel of Fortune Container - MODERN DESIGN -->
+    <div id="wheel-container" class="wheel-game-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn wheel-back-btn" onclick="backToGameModes()">❮ Back</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <!-- Main Two-Column Layout -->
+        <div class="wheel-layout">
+            <!-- Left Panel: Game Info -->
+            <div class="wheel-info-panel">
+                <h2 class="wheel-title">🎡 Wheel of Fortune</h2>
+
+                <!-- Stats Cards -->
+                <div class="wheel-stats">
+                    <div class="wheel-stat-card points-card">
+                        <div class="stat-icon">💎</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Points</span>
+                            <span class="stat-value" id="wheel-points">0</span>
+                        </div>
+                    </div>
+                    <div class="wheel-stat-card words-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Words Left</span>
+                            <span class="stat-value" id="wheel-words-left">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Scoreboard -->
+                <div class="wheel-scoreboard-wrapper">
+                    <h3 class="scoreboard-title">Team Scores</h3>
+                    <div id="wheel-scoreboard" class="wheel-scoreboard">
+                        <!-- Team scores injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: The Wheel -->
+            <div class="wheel-main">
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer">▼</div>
+                    <canvas id="wheel-canvas"></canvas>
+                    <div class="wheel-center-button" onclick="spinWheel()">
+                        <div class="spin-text">SPIN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Millionaire Quiz Container -->
+    <div id="millionaire-container" class="millionaire-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+        <div class="millionaire-ladder">
+            <div class="ladder-title">Prize Ladder</div>
+            <div id="prize-ladder"></div>
+        </div>
+        <div class="millionaire-main">
+            <div class="millionaire-question-area">
+                <div id="millionaire-question" class="mill-question">Question will appear here...</div>
+                <div id="millionaire-timer" class="mill-timer">30</div>
+            </div>
+            <div id="millionaire-answers" class="mill-answers">
+                <!-- Answer options generated by JS -->
+            </div>
+            <div class="mill-lifelines">
+                <button class="lifeline-btn" id="lifeline-5050" onclick="useLifeline('5050')" title="50:50">
+                    🎯 50:50
+                </button>
+                <button class="lifeline-btn" id="lifeline-teacher" onclick="useLifeline('teacher')" title="Ask Teacher">
+                    👩‍🏫 Ask
+                </button>
+                <button class="lifeline-btn" id="lifeline-time" onclick="useLifeline('time')" title="Extra Time">
+                    ⏱️ +15s
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="millionaire-game-over" class="millionaire-game-over" style="display: none;">
+            <h2>Game Over</h2>
+            <p id="millionaire-final-score">Final Score: 0 Points</p>
+            <button class="millionaire-restart-btn" onclick="restartMillionaireMode()">Play Again</button>
+            <button class="millionaire-home-btn" onclick="goHome()">Go Home</button>
+        </div>
+    </div>
+
+    <!-- Taboo Game Container -->
+    <div id="taboo-container" class="taboo-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <div class="taboo-top-panel">
+            <div id="taboo-timer" class="taboo-timer">03:00</div>
+        </div>
+
+        <div class="taboo-main-area">
+            <!-- Center Card -->
+            <div class="taboo-card-wrapper">
+                <div id="taboo-card" class="taboo-card">
+                    <div id="taboo-main-word" class="taboo-main-word">Loading...</div>
+                    <div class="taboo-separator"></div>
+                    <div id="taboo-forbidden-list" class="taboo-forbidden-list">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Controls -->
+            <div class="taboo-right-controls">
+                <button id="taboo-pass-btn" class="taboo-control-btn pass-btn" onclick="passTabooCard()">
+                    PASS / NEXT
+                </button>
+                <button id="taboo-correct-btn" class="taboo-control-btn correct-btn"
+                    onclick="alert('Please select a team below!')">
+                    CORRECT !
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Team Scores -->
+        <div class="taboo-bottom-panel">
+            <button class="team-score-btn team-a" onclick="handleTabooScore(0)">
+                <div class="team-label">Team A</div>
+                <div class="team-score" id="taboo-score-0">0</div>
+            </button>
+            <button class="team-score-btn team-b" onclick="handleTabooScore(1)">
+                <div class="team-label">Team B</div>
+                <div class="team-score" id="taboo-score-1">0</div>
+            </button>
+            <button class="team-score-btn team-c" onclick="handleTabooScore(2)">
+                <div class="team-label">Team C</div>
+                <div class="team-score" id="taboo-score-2">0</div>
+            </button>
+            <button class="team-score-btn team-d" onclick="handleTabooScore(3)">
+                <div class="team-label">Team D</div>
+                <div class="team-score" id="taboo-score-3">0</div>
+            </button>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="taboo-game-over" class="taboo-game-over" style="display: none;">
+            <h2>TIME'S UP!</h2>
+            <div id="taboo-final-scores"></div>
+            <button class="taboo-restart-btn" onclick="startTabooRound()">New Round</button>
+            <button class="taboo-home-btn" onclick="goHome()">Home</button>
+        </div>
+
+        <!-- Start Screen Overlay -->
+        <div id="taboo-start-screen" class="taboo-game-over" style="display: none;">
+            <h2>TABOO</h2>
+            <button class="taboo-restart-btn" style="font-size: 2rem; padding: 20px 60px;"
+                onclick="beginTabooGame()">START GAME</button>
+            <button class="taboo-home-btn" onclick="goHome()">Home</button>
         </div>
     </div>
 
@@ -37,13 +296,13 @@
 
             <div class="header-controls">
                 <div id="word-count" class="word-count">Words: 0</div>
-                <button id="lang-toggle" class="lang-btn" onclick="toggleLanguage()">TR</button>
                 <button id="home-btn" class="icon-btn" onclick="goHome()" title="Home">🏠</button>
+
             </div>
     </header>
 
     <div id="level-selector-container"
-        style="display: none; width: 100%; display: flex; justify-content: center; margin-bottom: 2vh; z-index: 5; position: relative;">
+        style="display: none; width: 100%; justify-content: center; margin-bottom: 2vh; z-index: 5; position: relative;">
         <div class="level-container">
             <button class="level-btn active" onclick="changeLevel('A1')">A1</button>
             <button class="level-btn" onclick="changeLevel('A2')">A2</button>
@@ -64,40 +323,216 @@
         <!-- Generated by JavaScript -->
     </div>
 
+    <!-- Unit Selection Screen -->
+    <div id="unit-selection" class="unit-selection" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <div class="unit-selection-content">
+            <h2 class="unit-selection-title">Choose a Unit</h2>
+            <div id="unit-grid" class="unit-grid">
+                <!-- Units generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hangman Container -->
+    <div id="hangman-container" class="hangman-container" style="display: none;">
+        <div class="top-right-nav">
+            <button class="back-to-modes-btn" onclick="backToGameModes()">← Back to Game Modes</button>
+            <button class="top-right-home-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+
+        <div class="hangman-top-bar">
+            <div class="hangman-stat">
+                <span class="stat-label">Points:</span>
+                <span class="stat-value" id="hangman-points">0</span>
+            </div>
+            <div class="hangman-stat">
+                <span class="stat-label">Words Left:</span>
+                <span class="stat-value" id="hangman-words-left">0</span>
+            </div>
+            <div class="hangman-stat">
+                <span class="stat-label">Lives:</span>
+                <span class="stat-value" id="hangman-lives">6</span>
+            </div>
+        </div>
+
+        <div class="hangman-game">
+            <div class="hangman-main-area">
+                <canvas id="hangman-canvas" width="300" height="400"></canvas>
+
+                <div class="hangman-word-section">
+                    <div id="hangman-word" class="hangman-word"></div>
+                    <div id="hangman-hint" class="hangman-hint"></div>
+                </div>
+            </div>
+
+            <div id="hangman-keyboard" class="hangman-keyboard">
+                <!-- Letters generated by JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- Question Modal -->
     <div id="question-modal" class="modal">
-        <div class="modal-content">
-            <button type="button" class="close-btn" onclick="closeModal()" aria-label="Close Modal">&times;</button>
-            <div id="modal-timer" class="modal-timer">25</div>
-            <h2 id="modal-category" style="color: #aaa; margin-bottom: 10px;">Category</h2>
-            <h3 id="modal-points" style="color: #ffcc00; margin-bottom: 20px;">100</h3>
+        <div class="modal-content new-flashcard">
+            <!-- Close Button -->
+            <button type="button" class="close-btn" onclick="closeModal(true)" aria-label="Close Modal">&times;</button>
 
-            <div id="modal-question" class="question-text">
-                Question goes here...
+            <!-- Header: Category + Question Number -->
+            <div class="flashcard-header">
+                <div id="modal-category" class="flashcard-category">Category</div>
+                <div id="modal-question-number" class="flashcard-number">1</div>
             </div>
 
-            <div id="modal-answer" class="answer-text">
-                Answer goes here...
+            <!-- Main Word Section -->
+            <div class="flashcard-word-section">
+                <button class="flashcard-audio-btn" id="word-audio-btn" onclick="speakWord()">🔊</button>
+                <span id="modal-word" class="flashcard-word">Word</span>
+            </div>
+            <div id="modal-pronunciation" class="flashcard-pronunciation">[pronunciation]</div>
+
+            <!-- Separator -->
+            <div class="flashcard-separator"></div>
+
+            <!-- Show Answer Button -->
+            <button id="show-answer-btn" class="flashcard-show-answer" onclick="showAnswer()">SHOW ANSWER</button>
+
+            <!-- Answer Section (Hidden initially) -->
+            <div id="answer-section" class="flashcard-answer-section" style="display:none;">
+                <!-- Turkish Translation -->
+                <div id="modal-answer" class="flashcard-answer"></div>
+                <div id="modal-answer-pronunciation" class="flashcard-answer-pronunciation"></div>
+
+                <!-- Example Sentence Section (shown with answer) -->
+                <div id="example-section" class="flashcard-example-section">
+                    <button class="flashcard-audio-btn small" id="example-audio-btn"
+                        onclick="speakExampleSentence()">🔊</button>
+                    <div class="flashcard-example-container">
+                        <span id="modal-example" class="flashcard-example"></span>
+                        <span id="modal-example-tr" class="flashcard-example-tr"></span>
+                    </div>
+                </div>
+
+                <!-- Team Buttons -->
+                <div id="modal-teams" class="flashcard-teams">
+                    <!-- Team buttons injected by JS -->
+                </div>
             </div>
 
-            <div id="modal-pronunciation" class="pronunciation-text">
-                [ Pronunciation ]
+        </div>
+    </div>
+
+
+    </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <h3 style="color: white; margin-bottom: 20px;">Öğretmen Girişi</h3>
+            <input type="password" id="teacher-password" class="hw-input" placeholder="Şifre"
+                style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+            <div style="margin-top: 20px;">
+                <button class="action-btn" onclick="checkTeacherPassword()">Giriş</button>
+                <button class="action-btn secondary" onclick="closePasswordModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Homework Control Modal -->
+    <div id="homework-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header-actions"
+                style="position: absolute; right: 20px; top: 15px; display: flex; gap: 10px;">
+                <button type="button" id="hw-back-btn" class="nav-btn" onclick="goBackInHomework()"
+                    style="display:none;">⬅ Geri</button>
+                <button type="button" class="close-btn" onclick="closeHomeworkModal()"
+                    style="position: static;">&times;</button>
             </div>
 
-            <div class="modal-actions">
-                <button id="show-answer-btn" class="action-btn" onclick="showAnswer()">Show Answer</button>
+            <h2 style="color: #fff; margin-bottom: 20px; margin-top: 20px;">Ödev Kontrolü</h2>
+
+            <!-- Step 1: Class Selection -->
+            <div id="hw-step-1" class="hw-step">
+                <h3 style="color: #ccc;">Sınıf Seçiniz</h3>
+                <div id="class-selector" class="class-grid">
+                    <!-- Generated by JS -->
+                </div>
             </div>
 
-            <div id="modal-teams" class="modal-teams" style="display:none;">
-                <!-- Team buttons will be injected here -->
+            <!-- Step 2: Homework Details & List -->
+            <div id="hw-step-2" class="hw-step" style="display:none;">
+                <h3 id="hw-class-title" style="color: var(--accent-color);">9-B</h3>
+
+                <div class="hw-form">
+                    <input type="text" id="hw-name" placeholder="Ödevin Konusu (Örn: Unit 1 Words)" class="hw-input">
+                    <!-- Date input removed as per request (auto-filled) -->
+                    <button class="action-btn" onclick="triggerAddHomework()">Ödev Ekle</button>
+                </div>
+
+                <div id="active-homework-container" style="display:none;">
+                    <h4 id="active-homework-title" style="color:white; margin:10px 0;"></h4>
+                    <div id="student-list-header" class="student-list-header">
+                        <span>No</span>
+                        <span>Ad Soyad</span>
+                        <span>Durum</span>
+                    </div>
+                    <div id="student-list-container" class="student-list-container">
+                        <!-- Student rows -->
+                    </div>
+                    <button class="action-btn secondary" onclick="saveHomeworkToFirebase()"
+                        style="margin-top: 20px; width: 100%;">KAYDET</button>
+                </div>
+
+                <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+
+                <h4 style="color: #ccc; text-align: left;">Geçmiş Ödevler</h4>
+                <div id="previous-homeworks" class="prev-hw-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Homework Report Modal -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <button type="button" class="close-btn" onclick="closeReportModal()">&times;</button>
+            <h2 style="color: var(--accent-color); margin-bottom: 20px;">Ödev Kontrol Raporu</h2>
+
+            <div class="report-controls" style="margin-bottom: 20px;">
+                <button class="filter-btn active" id="filter-all-btn" onclick="filterReport('all')">Tümü</button>
+                <div id="report-class-filters" style="display:inline;"></div>
+            </div>
+
+            <div class="report-table-container">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Sınıf</th>
+                            <th>No</th>
+                            <th>Ad Soyad</th>
+                            <th>Yapmadı</th>
+                            <th>Yaptı</th>
+                            <th>Yarım Yaptı</th>
+                            <th>K. Edilemedi</th>
+                            <th>Toplam Ödev</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-body">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <!-- Load settings first -->
     </div>
-    <script src="settings.js"></script>
-    <script src="script.js"></script>
+    <script src="settings.js?v=team_unified_v5"></script>
+    <script src="ydt_settings.js?v=team_unified_v5"></script>
+    <script src="script.js?v=team_unified_v8"></script>
 </body>
 
 </html>
