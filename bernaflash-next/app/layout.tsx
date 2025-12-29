@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BernaFlash - İnteraktif İngilizce Kelime Öğrenme Platformu",
+  title: "Vocab Flash - İnteraktif İngilizce Kelime Öğrenme Platformu",
   description: "9. Sınıf, 11. Sınıf YDT ve genel İngilizce kelime oyunları. Hangman, Taboo, Team Competition ve daha fazlası ile eğlenceli öğrenme deneyimi.",
   keywords: [
     "İngilizce kelime öğrenme",
@@ -30,11 +30,11 @@ export const metadata: Metadata = {
     "Taboo oyunu",
     "İngilizce eğitim",
     "online İngilizce",
-    "BernaFlash"
+    "Vocab Flash"
   ],
-  authors: [{ name: "BernaFlash" }],
-  creator: "BernaFlash",
-  publisher: "BernaFlash",
+  authors: [{ name: "Vocab Flash" }],
+  creator: "Vocab Flash",
+  publisher: "Vocab Flash",
   formatDetection: {
     email: false,
     address: false,
@@ -45,16 +45,16 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "BernaFlash - İnteraktif İngilizce Kelime Öğrenme",
+    title: "Vocab Flash - İnteraktif İngilizce Kelime Öğrenme",
     description: "9. Sınıf, YDT ve genel İngilizce kelime oyunları ile eğlenceli öğrenme",
     url: 'https://bernaflash.vercel.app',
-    siteName: 'BernaFlash',
+    siteName: 'Vocab Flash',
     locale: 'tr_TR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BernaFlash - İnteraktif İngilizce Kelime Öğrenme",
+    title: "Vocab Flash - İnteraktif İngilizce Kelime Öğrenme",
     description: "Hangman, Taboo ve daha fazlası ile İngilizce kelime öğrenin",
   },
   robots: {
