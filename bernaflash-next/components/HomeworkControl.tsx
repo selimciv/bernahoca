@@ -40,7 +40,7 @@ export default function HomeworkControl({ onClose }: HomeworkControlProps) {
             id: s.no.toString(),
             name: s.name,
             no: s.no,
-            status: 'yapilmadi' as const
+            status: 'kontrol_edilemedi' as const
         }));
         setStudentList(initialList);
 
@@ -78,7 +78,7 @@ export default function HomeworkControl({ onClose }: HomeworkControlProps) {
                 id: s.no.toString(),
                 name: s.name,
                 no: s.no,
-                status: 'yapilmadi' as const
+                status: 'kontrol_edilemedi' as const
             })));
         }
     };
