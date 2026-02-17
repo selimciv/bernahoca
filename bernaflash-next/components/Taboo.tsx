@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
+import { selectWord } from '@/lib/wordSelector';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface TabooProps {
     vocabulary: any;
@@ -17,6 +19,7 @@ export default function Taboo({ vocabulary, level, onBack }: TabooProps) {
     const [timeLeft, setTimeLeft] = useState(60);
     const [isPlaying, setIsPlaying] = useState(false);
     const [wordsGuessed, setWordsGuessed] = useState(0);
+    const [usedWordIds, setUsedWordIds] = useState<Set<string>>(new Set());
 
     const categories = vocabulary?.levelData?.[level] || [];
     const allWords = categories.flatMap((cat: any) => cat.pool || []);
@@ -30,8 +33,20 @@ export default function Taboo({ vocabulary, level, onBack }: TabooProps) {
 
     const startRound = () => {
         if (!allWords.length) return;
-        const word = allWords[Math.floor(Math.random() * allWords.length)];
-        setCurrentWord(word);
+
+        const word = selectWord(allWords, usedWordIds);
+
+        if (!word) {
+            setUsedWordIds(new Set());
+            const resetWord = selectWord(allWords);
+            if (!resetWord) return;
+            setCurrentWord(resetWord);
+            setUsedWordIds(new Set([resetWord.answer]));
+        } else {
+            setCurrentWord(word);
+            setUsedWordIds(prev => new Set(prev).add(word.answer));
+        }
+
         setTimeLeft(60);
         setIsPlaying(true);
         setWordsGuessed(0);
@@ -40,11 +55,25 @@ export default function Taboo({ vocabulary, level, onBack }: TabooProps) {
 
     const nextWord = () => {
         if (!allWords.length) return;
-        const word = allWords[Math.floor(Math.random() * allWords.length)];
-        setCurrentWord(word);
+
+        const word = selectWord(allWords, usedWordIds);
+
+        if (!word) {
+            setUsedWordIds(new Set());
+            const resetWord = selectWord(allWords);
+            if (!resetWord) return;
+            setCurrentWord(resetWord);
+            setUsedWordIds(new Set([resetWord.answer]));
+        } else {
+            setCurrentWord(word);
+            setUsedWordIds(prev => new Set(prev).add(word.answer));
+        }
     };
 
     const handleCorrect = () => {
+        if (currentWord) {
+            incrementPlayCount(currentWord.answer);
+        }
         setWordsGuessed(wordsGuessed + 1);
         if (activeTeam === 'A') {
             setTeamAScore(teamAScore + 1);

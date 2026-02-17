@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Snowflake {
     id: number;
@@ -12,6 +13,7 @@ interface Snowflake {
 }
 
 export default function Snowfall() {
+    const pathname = usePathname();
     const [snowflakes, setSnowflakes] = useState<Snowflake[]>([]);
     const [tilt, setTilt] = useState({ x: 0, y: 0 });
     const [showGyroButton, setShowGyroButton] = useState(false);
@@ -121,10 +123,10 @@ export default function Snowfall() {
                 ))}
             </div>
 
-            {showGyroButton && (
+            {showGyroButton && pathname === '/' && (
                 <button
                     onClick={requestGyroPermission}
-                    className="fixed bottom-6 right-6 z-[60] bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 pointer-events-auto font-bold text-sm flex items-center gap-2"
+                    className="fixed bottom-6 right-6 z-40 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 pointer-events-auto font-bold text-sm flex items-center gap-2"
                 >
                     <span>📱</span>
                     <span>Enable Gyroscope</span>

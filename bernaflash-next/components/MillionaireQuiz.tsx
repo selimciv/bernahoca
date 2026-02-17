@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
 import { speak } from '@/lib/textToSpeech';
+import { selectWord } from '@/lib/wordSelector';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface MillionaireQuizProps {
     vocabulary: any;
@@ -26,6 +28,7 @@ export default function MillionaireQuiz({ vocabulary, level, onBack }: Millionai
     const [timeLeft, setTimeLeft] = useState(20);
     const [audienceHint, setAudienceHint] = useState<{ A: number, B: number, C: number, D: number } | null>(null);
     const [friendHint, setFriendHint] = useState<string | null>(null);
+    const [usedWordIds, setUsedWordIds] = useState<Set<string>>(new Set());
 
     const moneyLadder = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
 
@@ -62,7 +65,27 @@ export default function MillionaireQuiz({ vocabulary, level, onBack }: Millionai
         setAudienceHint(null);
         setFriendHint(null);
 
-        const correctWord = allWords[Math.floor(Math.random() * allWords.length)];
+        // Use smart word selection
+        const correctWord = selectWord(allWords, usedWordIds);
+
+        if (!correctWord) {
+            // If no word selected, reset the pool and try again
+            setUsedWordIds(new Set());
+            const resetWord = selectWord(allWords);
+            if (!resetWord) return;
+
+            setUsedWordIds(new Set([resetWord.answer]));
+            generateQuestionFromWord(resetWord);
+            return;
+        }
+
+        // Mark this word as used
+        setUsedWordIds(prev => new Set(prev).add(correctWord.answer));
+
+        generateQuestionFromWord(correctWord);
+    };
+
+    const generateQuestionFromWord = (correctWord: any) => {
 
         // Generate 3 unique wrong answers (Turkish meanings)
         const distractors = [];
@@ -86,6 +109,11 @@ export default function MillionaireQuiz({ vocabulary, level, onBack }: Millionai
     };
 
     const handleAnswer = (correct: boolean) => {
+        // Track that this word was played
+        if (currentQuestion) {
+            incrementPlayCount(currentQuestion.answer);
+        }
+
         if (correct) {
             const newWinnings = moneyLadder[currentLevel - 1] || 0;
             setWinnings(newWinnings);

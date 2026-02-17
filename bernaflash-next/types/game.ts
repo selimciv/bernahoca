@@ -6,6 +6,8 @@ export interface VocabularyWord {
     example: string;
     exampleTR: string;
     points?: number;
+    isNew?: boolean;
+    timesPlayed?: number;
 }
 
 export interface Category {

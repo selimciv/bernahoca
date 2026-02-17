@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
 import { speak } from '@/lib/textToSpeech';
 import GlassCard from './GlassCard';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface WheelOfFortuneProps {
     vocabulary: any;
@@ -417,6 +418,11 @@ export default function WheelOfFortune({ vocabulary, level, onBack }: WheelOfFor
                                                 </button>
                                                 <button
                                                     onClick={() => {
+                                                        // Track word play
+                                                        if (currentQuestion) {
+                                                            incrementPlayCount(currentQuestion.answer);
+                                                        }
+
                                                         // Award point to selected team
                                                         const newTeams = [...teams];
                                                         newTeams[selectedTeam].score += 1;

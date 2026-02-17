@@ -18,7 +18,28 @@ var gameData = {
                     { answer: "Grandfather", pronunciation: "Grendfadır", question: "Büyükbaba", example: "My grandfather is 80 years old.", exampleTR: "Büyükbabam 80 yaşında." },
                     { answer: "Uncle", pronunciation: "Ankıl", question: "Amca/Dayı", example: "My uncle lives in London.", exampleTR: "Amcam Londra'da yaşıyor." },
                     { answer: "Aunt", pronunciation: "Ant", question: "Hala/Teyze", example: "My aunt is visiting us.", exampleTR: "Halam bizi ziyaret ediyor." },
-                    { answer: "Cousin", pronunciation: "Kazın", question: "Kuzen", example: "My cousin is my best friend.", exampleTR: "Kuzenim benim en iyi arkadaşımdır." }
+                    { answer: "Cousin", pronunciation: "Kazın", question: "Kuzen", example: "My cousin is my best friend.", exampleTR: "Kuzenim benim en iyi arkadaşımdır." },
+                    { answer: "Son", pronunciation: "San", question: "Oğul", example: "Their son is very smart.", exampleTR: "Onların oğlu çok zeki.", isNew: true },
+                    { answer: "Daughter", pronunciation: "Dotır", question: "Kız evlat", example: "She is their youngest daughter.", exampleTR: "O onların en küçük kızı.", isNew: true },
+                    { answer: "Parent", pronunciation: "Perınt", question: "Ebeveyn", example: "Parents love their children.", exampleTR: "Ebeveynler çocuklarını sever.", isNew: true },
+                    { answer: "Child", pronunciation: "Çayld", question: "Çocuk", example: "The child is playing.", exampleTR: "Çocuk oynuyor.", isNew: true },
+                    { answer: "Family", pronunciation: "Femıli", question: "Aile", example: "I love my family.", exampleTR: "Ailemi seviyorum.", isNew: true },
+                    { answer: "Husband", pronunciation: "Hazbınd", question: "Koca/Eş", example: "Her husband is very kind.", exampleTR: "Kocası çok nazik.", isNew: true },
+                    { answer: "Wife", pronunciation: "Wayf", question: "Karı/Eş", example: "His wife is a doctor.", exampleTR: "Karısı doktor.", isNew: true },
+                    { answer: "Stepmother", pronunciation: "Stepmadır", question: "Üvey anne", example: "My stepmother is nice.", exampleTR: "Üvey annem iyi.", isNew: true },
+                    { answer: "Stepfather", pronunciation: "Stepfadır", question: "Üvey baba", example: "I like my stepfather.", exampleTR: "Üvey babamı severim.", isNew: true },
+                    { answer: "Stepbrother", pronunciation: "Stepbradır", question: "Üvey erkek kardeş", example: "My stepbrother lives in Paris.", exampleTR: "Üvey erkek kardeşim Paris'te yaşıyor.", isNew: true },
+                    { answer: "Stepsister", pronunciation: "Stepsistır", question: "Üvey kız kardeş", example: "Her stepsister is younger.", exampleTR: "Üvey kız kardeşi daha genç.", isNew: true },
+                    { answer: "Nephew", pronunciation: "Nevyu", question: "Yeğen (erkek)", example: "My nephew is five years old.", exampleTR: "Yeğenim beş yaşında.", isNew: true },
+                    { answer: "Niece", pronunciation: "Nis", question: "Yeğen (kız)", example: "My niece loves dolls.", exampleTR: "Yeğenim bebekleri sever.", isNew: true },
+                    { answer: "Twins", pronunciation: "Twinz", question: "İkizler", example: "They are twins.", exampleTR: "Onlar ikiz.", isNew: true },
+                    { answer: "Relative", pronunciation: "Relıtiv", question: "Akraba", example: "I have many relatives.", exampleTR: "Bir sürü akrabam var.", isNew: true },
+                    { answer: "Grandchildren", pronunciation: "Grendçildrın", question: "Torunlar", example: "My grandchildren visit me often.", exampleTR: "Torunlarım beni sık ziyaret ederler.", isNew: true },
+                    { answer: "Grandson", pronunciation: "Grensan", question: "Erkek torun", example: "My grandson is very smart.", exampleTR: "Erkek torunum çok zeki.", isNew: true },
+                    { answer: "Granddaughter", pronunciation: "Grenddotır", question: "Kız torun", example: "My granddaughter is cute.", exampleTR: "Kız torunum çok tatlı.", isNew: true },
+                    { answer: "In-laws", pronunciation: "İnloz", question: "Kayınlar", example: "I get along with my in-laws.", exampleTR: "Kayınlarımla iyi geçinirim.", isNew: true },
+                    { answer: "Brother-in-law", pronunciation: "Bradır-in-lo", question: "Kayınbirader/Enişte", example: "My brother-in-law helps me.", exampleTR: "Eniştem bana yardım eder.", isNew: true },
+                    { answer: "Sister-in-law", pronunciation: "Sistır-in-lo", question: "Görümce/Baldız", example: "My sister-in-law is friendly.", exampleTR: "Baldızım arkadaş canlısı.", isNew: true }
                 ]
             },
             {
@@ -27,13 +48,33 @@ var gameData = {
                     { answer: "One", pronunciation: "Wan", question: "Bir", example: "I have one apple.", exampleTR: "Bir elmam var." },
                     { answer: "Two", pronunciation: "Tu", question: "İki", example: "She has two cats.", exampleTR: "Onun iki kedisi var." },
                     { answer: "Three", pronunciation: "Tri", question: "Üç", example: "There are three books on the table.", exampleTR: "Masada üç kitap var." },
-                    { answer: "Four", pronunciation: "For", question: "Dört", example: "A car has four wheels.", exampleTR: "Bir arabanın dört tekerleği vardır." },
+                    { answer: "Four", pronunciation: "For", question: "Dört", example: "A car has four wheels.", exampleTR: "Bir arabanın dört teker leği vardır." },
                     { answer: "Five", pronunciation: "Fayv", question: "Beş", example: "Give me five minutes.", exampleTR: "Bana beş dakika ver." },
                     { answer: "Ten", pronunciation: "Ten", question: "On", example: "I have ten fingers.", exampleTR: "On parmağım var." },
                     { answer: "Twenty", pronunciation: "Twenti", question: "Yirmi", example: "He is twenty years old.", exampleTR: "O yirmi yaşında." },
                     { answer: "Hundred", pronunciation: "Handrıd", question: "Yüz", example: "This costs one hundred dollars.", exampleTR: "Bu yüz dolar tutuyor." },
                     { answer: "First", pronunciation: "Fırst", question: "Birinci", example: "She won the first prize.", exampleTR: "Birincilik ödülünü kazandı." },
-                    { answer: "Second", pronunciation: "Sekınd", question: "İkinci", example: "This is my second visit.", exampleTR: "Bu benim ikinci ziyaretim." }
+                    { answer: "Second", pronunciation: "Sekınd", question: "İkinci", example: "This is my second visit.", exampleTR: "Bu benim ikinci ziyaretim." },
+                    { answer: "Six", pronunciation: "Siks", question: "Altı", example: "I wake up at six.", exampleTR: "Saat altıda uyanırım.", isNew: true },
+                    { answer: "Seven", pronunciation: "Sevın", question: "Yedi", example: "There are seven days in a week.", exampleTR: "Bir haftada yedi gün vardır.", isNew: true },
+                    { answer: "Eight", pronunciation: "Eyt", question: "Sekiz", example: "School starts at eight.", exampleTR: "Okul sekizde başlar.", isNew: true },
+                    { answer: "Nine", pronunciation: "Nayn", question: "Dokuz", example: "Nine plus one is ten.", exampleTR: "Dokuz artı bir eşittir on.", isNew: true },
+                    { answer: "Thirty", pronunciation: "Thörti", question: "Otuz", example: "I am thirty years old.", exampleTR: "Otuz yaşındayım.", isNew: true },
+                    { answer: "Forty", pronunciation: "Forti", question: "Kırk", example: "She is forty years old.", exampleTR: "O kırk yaşında.", isNew: true },
+                    { answer: "Fifty", pronunciation: "Fifti", question: "Elli", example: "I have fifty dollars.", exampleTR: "Elli dolarım var.", isNew: true },
+                    { answer: "Sixty", pronunciation: "Siksti", question: "Altmış", example: "He is sixty.", exampleTR: "O altmış yaşında.", isNew: true },
+                    { answer: "Seventy", pronunciation: "Sevınti", question: "Yetmiş", example: "My grandfather is seventy.", exampleTR: "Büyükbabam yetmiş yaşında.", isNew: true },
+                    { answer: "Eighty", pronunciation: "Eyti", question: "Seksen", example: "The car costs eighty thousand.", exampleTR: "Araba seksen bin tutuyor.", isNew: true },
+                    { answer: "Ninety", pronunciation: "Naynti", question: "Doksan", example: "He is ninety years old.", exampleTR: "O doksan yaşında.", isNew: true },
+                    { answer: "Thousand", pronunciation: "Thauzınd", question: "Bin", example: "I need a thousand dollars.", exampleTR: "Bin dolara ihtiyacım var.", isNew: true },
+                    { answer: "Million", pronunciation: "Milyın", question: "Milyon", example: "He has a million dollars.", exampleTR: "Bir milyon doları var.", isNew: true },
+                    { answer: "Third", pronunciation: "Thörd", question: "Üçüncü", example: "This is my third try.", exampleTR: "Bu üçüncü denemem.", isNew: true },
+                    { answer: "Fourth", pronunciation: "Forth", question: "Dördüncü", example: "He came in fourth place.", exampleTR: "Dördüncü oldu.", isNew: true },
+                    { answer: "Fifth", pronunciation: "Fif th", question: "Beşinci", example: "This is the fifth time.", exampleTR: "Bu beşinci kez.", isNew: true },
+                    { answer: "Tenth", pronunciation: "Tenth", question: "Onuncu", example: "Today is my tenth birthday.", exampleTR: "Bugün onuncu doğum günüm.", isNew: true },
+                    { answer: "Eleventh", pronunciation: "İlevınth", question: "On birinci", example: "November is the eleventh month.", exampleTR: "Kasım on birinci aydır.", isNew: true },
+                    { answer: "Twelfth", pronunciation: "Twelfth", question: "On ikinci", example: "December is the twelfth month.", exampleTR: "Aralık on ikinci aydır.", isNew: true },
+                    { answer: "Last", pronunciation: "Last", question: "Son", example: "This is the last one.", exampleTR: "Bu son tanesi.", isNew: true }
                 ]
             },
             {
@@ -48,7 +89,12 @@ var gameData = {
                     { answer: "Orange", pronunciation: "Orınc", question: "Turuncu", example: "Oranges are orange.", exampleTR: "Portakallar turuncudur." },
                     { answer: "Purple", pronunciation: "Pörpıl", question: "Mor", example: "She likes purple flowers.", exampleTR: "O mor çiçekleri sever." },
                     { answer: "Pink", pronunciation: "Pink", question: "Pembe", example: "The dress is pink.", exampleTR: "Elbise pembedir." },
-                    { answer: "Brown", pronunciation: "Brawn", question: "Kahverengi", example: "My eyes are brown.", exampleTR: "Gözlerim kahverengidir." }
+                    { answer: "Brown", pronunciation: "Brawn", question: "Kahverengi", example: "My eyes are brown.", exampleTR: "Gözlerim kahverengidir." },
+                    { answer: "Gray", pronunciation: "Grey", question: "Gri", example: "The clouds are gray.", exampleTR: "Bulutlar gri.", isNew: true },
+                    { answer: "Silver", pronunciation: "Silvır", question: "Gümüş rengi", example: "I like silver cars.", exampleTR: "Gümüş arabaları severim.", isNew: true },
+                    { answer: "Gold", pronunciation: "Gold", question: "Altın rengi", example: "She has a gold ring.", exampleTR: "Altın bir yüzüğü var.", isNew: true },
+                    { answer: "Dark", pronunciation: "Dark", question: "Koyu", example: "It's dark outside.", exampleTR: "Dışarısı karanlık.", isNew: true },
+                    { answer: "Light", pronunciation: "Layt", question: "Açık (renk)", example: "I prefer light colors.", exampleTR: "Açık renkleri tercih ederim.", isNew: true }
                 ]
             },
             {
@@ -63,7 +109,13 @@ var gameData = {
                     { answer: "Sheep", pronunciation: "Şip", question: "Koyun", example: "Sheep have white wool.", exampleTR: "Koyunların beyaz yünü vardır." },
                     { answer: "Lion", pronunciation: "Layın", question: "Aslan", example: "The lion is the king of the jungle.", exampleTR: "Aslan ormanın kralıdır." },
                     { answer: "Monkey", pronunciation: "Manki", question: "Maymun", example: "Monkeys like bananas.", exampleTR: "Maymunlar muz sever." },
-                    { answer: "Elephant", pronunciation: "Elıfınt", question: "Fil", example: "The elephant is very big.", exampleTR: "Fil çok büyüktür." }
+                    { answer: "Elephant", pronunciation: "Elıfınt", question: "Fil", example: "The elephant is very big.", exampleTR: "Fil çok büyüktür." },
+                    { answer: "Rabbit", pronunciation: "Rebit", question: "Tavşan", example: "The rabbit is eating carrots.", exampleTR: "Tavşan havuç yiyor.", isNew: true },
+                    { answer: "Bear", pronunciation: "Ber", question: "Ayı", example: "Bears sleep in winter.", exampleTR: "Ayılar kışın uyur.", isNew: true },
+                    { answer: "Tiger", pronunciation: "Taygır", question: "Kaplan", example: "Tigers are very strong.", exampleTR: "Kaplanlar çok güçlüdür.", isNew: true },
+                    { answer: "Chicken", pronunciation: "Çikın", question: "Tavuk (hayvan)", example: "The chicken laid an egg.", exampleTR: "Tavuk yumurtladı.", isNew: true },
+                    { answer: "Duck", pronunciation: "Dak", question: "Ördek", example: "Ducks can swim.", exampleTR: "Ördekler yüzebilir.", isNew: true },
+                    { answer: "Pig", pronunciation: "Pig", question: "Domuz", example: "The pig is in the mud.", exampleTR: "Domuz çamurdadır.", isNew: true }
                 ]
             },
             {
@@ -78,7 +130,12 @@ var gameData = {
                     { answer: "Cheese", pronunciation: "Çiz", question: "Peynir", example: "This cheese is delicious.", exampleTR: "Bu peynir lezzetli." },
                     { answer: "Chicken", pronunciation: "Çikın", question: "Tavuk", example: "We are having chicken for dinner.", exampleTR: "Akşam yemeğinde tavuk yiyoruz." },
                     { answer: "Rice", pronunciation: "Rays", question: "Pirinç", example: "Rice is popular in Asia.", exampleTR: "Pirinç Asya'da popülerdir." },
-                    { answer: "Cake", pronunciation: "Keyk", question: "Kek", example: "Happy birthday! Here is your cake.", exampleTR: "Doğum günün kutlu olsun! İşte pastan." }
+                    { answer: "Cake", pronunciation: "Keyk", question: "Kek", example: "Happy birthday! Here is your cake.", exampleTR: "Doğum günün kutlu olsun! İşte pastan." },
+                    { answer: "Orange", pronunciation: "Orınc", question: "Portakal", example: "I love fresh orange juice.", exampleTR: "Taze portakal suyunu çok severim.", isNew: true },
+                    { answer: "Tomato", pronunciation: "Tımeyto", question: "Domates", example: "Add tomatoes to the salad.", exampleTR: "Salataya domates ekle.", isNew: true },
+                    { answer: "Potato", pronunciation: "Pıteyto", question: "Patates", example: "I like fried potatoes.", exampleTR: "Kızarmış patates severim.", isNew: true },
+                    { answer: "Carrot", pronunciation: "Kerıt", question: "Havuç", example: "Carrots are good for your eyes.", exampleTR: "Havuç gözlerine iyidir.", isNew: true },
+                    { answer: "Meat", pronunciation: "Mit", question: "Et", example: "Do you eat meat?", exampleTR: "Et yer misin?", isNew: true }
                 ]
             },
             {
@@ -93,7 +150,12 @@ var gameData = {
                     { answer: "Bed", pronunciation: "Bed", question: "Yatak", example: "I go to bed at 10 PM.", exampleTR: "Saat 10'da yatağa giderim." },
                     { answer: "Kitchen", pronunciation: "Kiçın", question: "Mutfak", example: "My mom is in the kitchen.", exampleTR: "Annem mutfakta." },
                     { answer: "Garden", pronunciation: "Gardın", question: "Bahçe", example: "We have a beautiful garden.", exampleTR: "Güzel bir bahçemiz var." },
-                    { answer: "Key", pronunciation: "Ki", question: "Anahtar", example: "I lost my key.", exampleTR: "Anahtarımı kaybettim." }
+                    { answer: "Key", pronunciation: "Ki", question: "Anahtar", example: "I lost my key.", exampleTR: "Anahtarmı kaybettim." },
+                    { answer: "Bathroom", pronunciation: "Bathrum", question: "Banyo", example: "The bathroom is upstairs.", exampleTR: "Banyo üst katta.", isNew: true },
+                    { answer: "Sofa", pronunciation: "Sofa", question: "Kanepe", example: "Sit on the sofa.", exampleTR: "Kanepeye otur.", isNew: true },
+                    { answer: "Lamp", pronunciation: "Lemp", question: "Lamba", example: "Turn on the lamp.", exampleTR: "Lambayı aç.", isNew: true },
+                    { answer: "Clock", pronunciation: "Klak", question: "Saat (Duvar)", example: "The clock shows 3 PM.", exampleTR: "Saat 3'ü gösteriyor.", isNew: true },
+                    { answer: "Mirror", pronunciation: "Mirır", question: "Ayna", example: "Look in the mirror.", exampleTR: "Aynaya bak.", isNew: true }
                 ]
             },
             {
@@ -104,11 +166,16 @@ var gameData = {
                     { answer: "Dress", pronunciation: "Dres", question: "Elbise", example: "She is wearing a red dress.", exampleTR: "O kırmızı bir elbise giyiyor." },
                     { answer: "Hat", pronunciation: "Het", question: "Şapka", example: "Put on your hat.", exampleTR: "Şapkanı tak." },
                     { answer: "Coat", pronunciation: "Kot", question: "Mont", example: "It is cold, wear a coat.", exampleTR: "Hava soğuk, mont giy." },
-                    { answer: "Pants", pronunciation: "Pents", question: "Pantolon", example: "I need new pants.", exampleTR: "Yeni pantolona ihtiyacım var." },
+                    { answer: "Pants", pronunciation: "Pents", question: "Pantolon", example: "I need new pants.", exampleTR: "Yeni pantolona ihtiyaçım var." },
                     { answer: "Skirt", pronunciation: "Skört", question: "Etek", example: "The skirt is too short.", exampleTR: "Etek çok kısa." },
                     { answer: "Socks", pronunciation: "Saks", question: "Çorap", example: "Where are my socks?", exampleTR: "Çoraplarım nerede?" },
                     { answer: "Jacket", pronunciation: "Cekıt", question: "Ceket", example: "Take your jacket.", exampleTR: "Ceketini al." },
-                    { answer: "Boots", pronunciation: "Buts", question: "Bot", example: "I wear boots in winter.", exampleTR: "Kışın bot giyerim." }
+                    { answer: "Boots", pronunciation: "Buts", question: "Bot", example: "I wear boots in winter.", exampleTR: "Kışın bot giyerim." },
+                    { answer: "T-shirt", pronunciation: "Tişört", question: "Tişört", example: "I'm wearing a white t-shirt.", exampleTR: "Beyaz bir tişört giyiyorum.", isNew: true },
+                    { answer: "Jeans", pronunciation: "Cinz", question: "Kot pantolon", example: "Blue jeans are popular.", exampleTR: "Mavi kot pantolonlar popülerdir.", isNew: true },
+                    { answer: "Sweater", pronunciation: "Swetır", question: "Kaz ak", example: "This sweater is warm.", exampleTR: "Bu kazak sıcak.", isNew: true },
+                    { answer: "Scarf", pronunciation: "Skarf", question: "Ateş", example: "Wear a scarf, it's cold.", exampleTR: "Ateş tak, hava soğuk.", isNew: true },
+                    { answer: "Gloves", pronunciation: "Glovz", question: "Eldiven", example: "I need winter gloves.", exampleTR: "Kış eldivene ihtiyacım var.", isNew: true }
                 ]
             },
             {
@@ -123,7 +190,12 @@ var gameData = {
                     { answer: "Foot", pronunciation: "Fut", question: "Ayak", example: "My foot is big.", exampleTR: "Ayağım büyük." },
                     { answer: "Arm", pronunciation: "Arm", question: "Kol", example: "He broke his arm.", exampleTR: "Kolunu kırdı." },
                     { answer: "Leg", pronunciation: "Leg", question: "Bacak", example: "My legs are tired.", exampleTR: "Bacaklarım yorgun." },
-                    { answer: "Hair", pronunciation: "Heyr", question: "Saç", example: "She has long hair.", exampleTR: "Onun uzun saçları var." }
+                    { answer: "Hair", pronunciation: "Heyr", question: "Saç", example: "She has long hair.", exampleTR: "Onun uzun saçları var." },
+                    { answer: "Face", pronunciation: "Feys", question: "Yüz", example: "Wash your face.", exampleTR: "Yüzünü yıka.", isNew: true },
+                    { answer: "Finger", pronunciation: "Fingır", question: "Parmak", example: "I have ten fingers.", exampleTR: "On parmağım var.", isNew: true },
+                    { answer: "Teeth", pronunciation: "Tith", question: "Dişler", example: "Brush your teeth.", exampleTR: "Dişlerini fırçala.", isNew: true },
+                    { answer: "Stomach", pronunciation: "Stımık", question: "Mide/Karın", example: "My stomach hurts.", exampleTR: "Midem ağrıyor.", isNew: true },
+                    { answer: "Heart", pronunciation: "Hart", question: "Kalp", example: "My heart is beating fast.", exampleTR: "Kalbim hızlı atıyor.", isNew: true }
                 ]
             },
             {
@@ -138,7 +210,12 @@ var gameData = {
                     { answer: "Minute", pronunciation: "Minıt", question: "Dakika", example: "Wait a minute.", exampleTR: "Bir dakika bekle." },
                     { answer: "Morning", pronunciation: "Morning", question: "Sabah", example: "Good morning.", exampleTR: "Günaydın." },
                     { answer: "Evening", pronunciation: "Ivning", question: "Akşam", example: "See you in the evening.", exampleTR: "Akşam görüşürüz." },
-                    { answer: "Today", pronunciation: "Tudey", question: "Bugün", example: "Today is Monday.", exampleTR: "Bugün Pazartesi." }
+                    { answer: "Today", pronunciation: "Tudey", question: "Bugün", example: "Today is Monday.", exampleTR: "Bugün Pazartesi." },
+                    { answer: "Tomorrow", pronunciation: "Tımorou", question: "Yarın", example: "See you tomorrow.", exampleTR: "Yarın görüşürüz.", isNew: true },
+                    { answer: "Yesterday", pronunciation: "Yestırdey", question: "Dün", example: "I saw her yesterday.", exampleTR: "Onu dün gördüm.", isNew: true },
+                    { answer: "Afternoon", pronunciation: "Aftırnun", question: "Öğleden sonra", example: "I study in the afternoon.", exampleTR: "Öğleden sonra çalışırım.", isNew: true },
+                    { answer: "Weekend", pronunciation: "Wikend", question: "Hafta sonu", example: "Happy weekend!", exampleTR: "İyi hafta sonları!", isNew: true },
+                    { answer: "Birthday", pronunciation: "Börthdey", question: "Doğum günü", example: "Today is my birthday.", exampleTR: "Bugün benim doğum günüm.", isNew: true }
                 ]
             },
             {
@@ -153,7 +230,12 @@ var gameData = {
                     { answer: "Nurse", pronunciation: "Nörs", question: "Hemşire", example: "The nurse is working.", exampleTR: "Hemşire çalışıyor." },
                     { answer: "Worker", pronunciation: "Vörkır", question: "İşçi", example: "The worker is tired.", exampleTR: "İşçi yorgun." },
                     { answer: "Police", pronunciation: "Polis", question: "Polis", example: "Call the police!", exampleTR: "Polisi ara!" },
-                    { answer: "Artist", pronunciation: "Artist", question: "Sanatçı", example: "She is a great artist.", exampleTR: "O harika bir sanatçı." }
+                    { answer: "Artist", pronunciation: "Artist", question: "Sanatçı", example: "She is a great artist.", exampleTR: "O harika bir sanatçı." },
+                    { answer: "Engineer", pronunciation: "Encinir", question: "Mühendis", example: "He is an engineer.", exampleTR: "O bir mühendis.", isNew: true },
+                    { answer: "Lawyer", pronunciation: "Loyır", question: "Avukat", example: "My sister is a lawyer.", exampleTR: "Kız kardeşim avukat.", isNew: true },
+                    { answer: "Pilot", pronunciation: "Paylıt", question: "Pilot", example: "The pilot flies the plane.", exampleTR: "Pilot uçağı uçurur.", isNew: true },
+                    { answer: "Waiter", pronunciation: "Weytır", question: "Garson", example: "The waiter is bringing food.", exampleTR: "Garson yemek getiriyor.", isNew: true },
+                    { answer: "Singer", pronunciation: "Singır", question: "Şarkıcı", example: "She is a famous singer.", exampleTR: "O ünlü bir şarkıcı.", isNew: true }
                 ]
             },
             {
@@ -168,7 +250,12 @@ var gameData = {
                     { answer: "Ship", pronunciation: "Şip", question: "Gemi", example: "The ship is big.", exampleTR: "Gemi büyük." },
                     { answer: "Boat", pronunciation: "Bot", question: "Tekne", example: "We went fishing on a boat.", exampleTR: "Tekneyle balık tutmaya gittik." },
                     { answer: "Road", pronunciation: "Rod", question: "Yol", example: "The road is long.", exampleTR: "Yol uzun." },
-                    { answer: "Ticket", pronunciation: "Tikıt", question: "Bilet", example: "I have a ticket.", exampleTR: "Biletin var." }
+                    { answer: "Ticket", pronunciation: "Tikıt", question: "Bilet", example: "I have a ticket.", exampleTR: "Biletin var." },
+                    { answer: "Airport", pronunciation: "Erport", question: "Havaalanı", example: "We are at the airport.", exampleTR: "Havaalanındayız.", isNew: true },
+                    { answer: "Station", pronunciation: "Steyşın", question: "İstasyon", example: "The train station is near.", exampleTR: "Tren istasyonu yakın.", isNew: true },
+                    { answer: "Helicopter", pronunciation: "Helikıptır", question: "Helikopter", example: "The helicopter is loud.", exampleTR: "Helikopter gürültülüdür.", isNew: true },
+                    { answer: "Truck", pronunciation: "Trak", question: "Kam yon", example: "The truck is carrying goods.", exampleTR: "Kamyon mal taşıyor.", isNew: true },
+                    { answer: "Motorcycle", pronunciation: "Motorsaykıl", question: "Motosiklet", example: "He rides a motorcycle.", exampleTR: "O motosiklet sürüyor.", isNew: true }
                 ]
             },
             {
@@ -183,7 +270,12 @@ var gameData = {
                     { answer: "Cold", pronunciation: "Kold", question: "Soğuk", example: "Winter is cold.", exampleTR: "Kış soğuktur." },
                     { answer: "Storm", pronunciation: "Storm", question: "Fırtına", example: "There is a storm coming.", exampleTR: "Fırtına geliyor." },
                     { answer: "Sky", pronunciation: "Skay", question: "Gökyüzü", example: "The sky is blue.", exampleTR: "Gökyüzü mavi." },
-                    { answer: "Ice", pronunciation: "Ays", question: "Buz", example: "The water turned to ice.", exampleTR: "Su buza dönüştü." }
+                    { answer: "Ice", pronunciation: "Ays", question: "Buz", example: "The water turned to ice.", exampleTR: "Su buza dönüştü." },
+                    { answer: "Sunny", pronunciation: "Sani", question: "Güneşli", example: "It's a sunny day.", exampleTR: "Güneşli bir gün.", isNew: true },
+                    { answer: "Rainy", pronunciation: "Reyni", question: "Yağmurlu", example: "It's rainy today.", exampleTR: "Bugün yağmurlu.", isNew: true },
+                    { answer: "Foggy", pronunciation: "Fogi", question: "Sisli", example: "The morning is foggy.", exampleTR: "Sabah sisli.", isNew: true },
+                    { answer: "Warm", pronunciation: "Worm", question: "İlık", example: "The weather is warm.", exampleTR: "Hava ılık.", isNew: true },
+                    { answer: "Cool", pronunciation: "Kul", question: "Serin", example: "The evening is cool.", exampleTR: "Akşam serin.", isNew: true }
                 ]
             }
         ],
@@ -200,7 +292,12 @@ var gameData = {
                     { answer: "Dinner", pronunciation: "Dinır", question: "Akşam yemeği", example: "Dinner is ready.", exampleTR: "Akşam yemeği hazır." },
                     { answer: "Sleep", pronunciation: "Slip", question: "Uyumak", example: "I sleep 8 hours a day.", exampleTR: "Günde 8 saat uyurum." },
                     { answer: "Brush", pronunciation: "Braş", question: "Fırçalamak", example: "Brush your teeth.", exampleTR: "Dişlerini fırçala." },
-                    { answer: "Dress", pronunciation: "Dres", question: "Giyinmek", example: "I dress quickly.", exampleTR: "Hızlıca giyinirim." }
+                    { answer: "Dress", pronunciation: "Dres", question: "Giyinmek", example: "I dress quickly.", exampleTR: "Hızlıca giyinirim." },
+                    { answer: "Exercise", pronunciation: "Eksırsayz", question: "Egzersiz yapmak", example: "I exercise every morning.", exampleTR: "Her sabah egzersiz yaparım.", isNew: true },
+                    { answer: "Study", pronunciation: "Stadi", question: "Çalışmak (ders)", example: "I study English every day.", exampleTR: "Her gün İngilizce çalışırım.", isNew: true },
+                    { answer: "Relax", pronunciation: "Rileks", question: "Dinlenmek", example: "I relax after work.", exampleTR: "İşten sonra dinlenirim.", isNew: true },
+                    { answer: "Cook", pronunciation: "Kuk", question: "Yemek pişirmek", example: "I cook dinner for my family.", exampleTR: "Ailem için akşam yemeği pişiririm.", isNew: true },
+                    { answer: "Clean", pronunciation: "Klin", question: "Temizlemek", example: "I clean my room on weekends.", exampleTR: "Hafta sonları odامı temizlerim.", isNew: true }
                 ]
             },
             {
@@ -215,7 +312,12 @@ var gameData = {
                     { answer: "Skirt", pronunciation: "Skört", question: "Etek", example: "She likes wearing skirts.", exampleTR: "Etek giymeyi sever." },
                     { answer: "Socks", pronunciation: "Saks", question: "Çorap", example: "I need warm socks.", exampleTR: "Sıcak tutan çoraplara ihtiyacım var." },
                     { answer: "Jacket", pronunciation: "Cekıt", question: "Ceket", example: "Your jacket is cool.", exampleTR: "Ceketin havalı." },
-                    { answer: "Boots", pronunciation: "Buts", question: "Bot", example: "These boots are for hiking.", exampleTR: "Bu botlar yürüyüş için." }
+                    { answer: "Boots", pronunciation: "Buts", question: "Bot", example: "These boots are for hiking.", exampleTR: "Bu botlar yürüyüş için." },
+                    { answer: "Tie", pronunciation: "Tay", question: "Kravat", example: "He wears a tie to work.", exampleTR: "İşe kravat takarak gider.", isNew: true },
+                    { answer: "Suit", pronunciation: "Sut", question: "Takım elbise", example: "He bought a new suit.", exampleTR: "Yeni bir takım elbise aldı.", isNew: true },
+                    { answer: "Belt", pronunciation: "Belt", question: "Kemer", example: "I need a leather belt.", exampleTR: "Deri bir kemere ihtiyacım var.", isNew: true },
+                    { answer: "Sandals", pronunciation: "Sendıls", question: "Sandalet", example: "I wear sandals in summer.", exampleTR: "Yazları sandalet giyerim.", isNew: true },
+                    { answer: "Uniform", pronunciation: "Yuniform", question: "Üniforma", example: "Students wear uniforms.", exampleTR: "Öğrenciler üniforma giyer.", isNew: true }
                 ]
             },
             {
@@ -245,7 +347,12 @@ var gameData = {
                     { answer: "Artist", pronunciation: "Artist", question: "Sanatçı", example: "The artist paints a picture.", exampleTR: "Sanatçı resim yapıyor." },
                     { answer: "Pilot", pronunciation: "Paylıt", question: "Pilot", example: "The pilot flies the plane.", exampleTR: "Pilot uçağı uçurur." },
                     { answer: "Actor", pronunciation: "Ektır", question: "Oyuncu", example: "He is a famous actor.", exampleTR: "O ünlü bir oyuncu." },
-                    { answer: "Worker", pronunciation: "Wörkır", question: "İşçi", example: "The worker builds houses.", exampleTR: "İşçi evler inşa eder." }
+                    { answer: "Worker", pronunciation: "Wörkır", question: "İşçi", example: "The worker builds houses.", exampleTR: "İşçi evler inşa eder." },
+                    { answer: "Scientist", pronunciation: "Sayıntist", question: "Bilim insanı", example: "The scientist does research.", exampleTR: "Bilim insanı araştırma yapar.", isNew: true },
+                    { answer: "Accountant", pronunciation: "ıkauntınt", question: "Muhasebeci", example: "The accountant checks the accounts.", exampleTR: "Muhasebeci hesapları kontrol eder.", isNew: true },
+                    { answer: "Dentist", pronunciation: "Dentist", question: "Dişçi", example: "I visit the dentist twice a year.", exampleTR: "Yılda iki kez dişçiye giderim.", isNew: true },
+                    { answer: "Mechanic", pronunciation: "Mikanik", question: "Tamirci/Mekanikçi", example: "The mechanic fixes cars.", exampleTR: "Tamirci arabaları tamir eder.", isNew: true },
+                    { answer: "Journalist", pronunciation: "Cörnılist", question: "Gazeteci", example: "The journalist writes news.", exampleTR: "Gazeteci haber yazar.", isNew: true }
                 ]
             },
             {
@@ -260,7 +367,12 @@ var gameData = {
                     { answer: "Street", pronunciation: "Strit", question: "Cadde/Sokak", example: "Don't play on the street.", exampleTR: "Caddede oynama." },
                     { answer: "Bridge", pronunciation: "Bric", question: "Köprü", example: "We crossed the bridge.", exampleTR: "Köprüyü geçtik." },
                     { answer: "Beach", pronunciation: "Biç", question: "Plaj", example: "The beach is beautiful.", exampleTR: "Plaj çok güzel." },
-                    { answer: "Farm", pronunciation: "Farm", question: "Çiftlik", example: "Animals live on the farm.", exampleTR: "Hayvanlar çiftlikte yaşar." }
+                    { answer: "Farm", pronunciation: "Farm", question: "Çiftlik", example: "Animals live on the farm.", exampleTR: "Hayvanlar çiftlikte yaşar." },
+                    { answer: "Museum", pronunciation: "Myuziyım", question: "Müze", example: "We visited the museum.", exampleTR: "Müzeyi ziyaret ettik.", isNew: true },
+                    { answer: "Restaurant", pronunciation: "Restırant", question: "Restoran", example: "The restaurant serves good food.", exampleTR: "Restoran iyi yemek sunar.", isNew: true },
+                    { answer: "Hotel", pronunciation: "Hotel", question: "Otel", example: "We stayed at a hotel.", exampleTR: "Bir otelde kaldık.", isNew: true },
+                    { answer: "Stadium", pronunciation: "Steydiyım", question: "Stadyum", example: "The match is at the stadium.", exampleTR: "Maç stadyumda.", isNew: true },
+                    { answer: "Factory", pronunciation: "Fektıri", question: "Fabrika", example: "He works in a factory.", exampleTR: "Bir fabrikada çalışıyor.", isNew: true }
                 ]
             },
             {
@@ -307,7 +419,12 @@ var gameData = {
                     { answer: "Healthy", pronunciation: "Helthi", question: "Sağlıklı", example: "Eat healthy food.", exampleTR: "Sağlıklı yiyecekler ye." },
                     { answer: "Sick", pronunciation: "Sik", question: "Hasta", example: "I feel sick today.", exampleTR: "Bugün hasta hissediyorum." },
                     { answer: "Emergency", pronunciation: "İmörcınsi", question: "Acil Durum", example: "Call 911 in an emergency.", exampleTR: "Acil durumda 911'i ara." },
-                    { answer: "Diet", pronunciation: "Dayıt", question: "Diyet", example: "She is on a diet.", exampleTR: "O diyette." }
+                    { answer: "Diet", pronunciation: "Dayıt", question: "Diyet", example: "She is on a diet.", exampleTR: "O diyette." },
+                    { answer: "Headache", pronunciation: "Hedeyk", question: "Baş ağrısı", example: "I have a terrible headache.", exampleTR: "Korku nç bir baş ağrım var.", isNew: true },
+                    { answer: "Allergy", pronunciation: "Elerci", question: "Alerji", example: "She has a food allergy.", exampleTR: "Yiyecek alerjisi var.", isNew: true },
+                    { answer: "Vaccine", pronunciation: "Veksin", question: "Aşı", example: "Get your flu vaccine.", exampleTR: "Grip aşını ol.", isNew: true },
+                    { answer: "Injury", pronunciation: "İnciri", question: "Yaralanma", example: "He has a knee injury.", exampleTR: "Diz yaralanması var.", isNew: true },
+                    { answer: "Treatment", pronunciation: "Tritmınt", question: "Tedavi", example: "The treatment is working.", exampleTR: "Tedavi işe yarıyor.", isNew: true }
                 ]
             },
             {
@@ -322,7 +439,12 @@ var gameData = {
                     { answer: "Library", pronunciation: "Laybrıri", question: "Kütüphane", example: "I study in the library.", exampleTR: "Kütüphanede çalışırım." },
                     { answer: "University", pronunciation: "Yünivörsiti", question: "Üniversite", example: "She goes to university.", exampleTR: "O üniversiteye gidiyor." },
                     { answer: "Teacher", pronunciation: "Tiçır", question: "Öğretmen", example: "Listen to your teacher.", exampleTR: "Öğretmenini dinle." },
-                    { answer: "Student", pronunciation: "Sityudınt", question: "Öğrenci", example: "Every student must learn.", exampleTR: "Her öğrenci öğrenmelidir." }
+                    { answer: "Student", pronunciation: "Sityudınt", question: "Öğrenci", example: "Every student must learn.", exampleTR: "Her öğrenci öğrenmelidir." },
+                    { answer: "Scholar ship", pronunciation: "Skolırşip", question: "Burs", example: "She got a scholarship.", exampleTR: "Burs aldı.", isNew: true },
+                    { answer: "Research", pronunciation: "Risörç", question: "Araştırma", example: "I'm doing research on history.", exampleTR: "Tarih üzerine araştırma yapıyorum.", isNew: true },
+                    { answer: "Classroom", pronunciation: "Klasrum", question: "Sınıf", example: "The classroom is empty.", exampleTR: "Sınıf boş.", isNew: true },
+                    { answer: "Certificate", pronunciation: "Sörtifikit", question: "Sertifika", example: "I received a certificate.", exampleTR: "Sertifika aldım.", isNew: true },
+                    { answer: "Lecture", pronunciation: "Lekçır", question: "Ders/Konferans", example: "The professor gave a lecture.", exampleTR: "Profesör bir ders verdi.", isNew: true }
                 ]
             },
             {
@@ -375,7 +497,7 @@ var gameData = {
             {
                 name: "Environment",
                 pool: [
-                    { answer: "Pollution", pronunciation: "Poluşın", question: "Kirlilik", example: "Pollution harms the environment.", exampleTR: "Kirlilik çevreye zarar verir." },
+                    { answer: "Pollution", pronunciation: "Poluşın", question: "Kirlilik", example: "Pollution harms the environment.", exampleTR: "Çevreye zarar verir." },
                     { answer: "Climate", pronunciation: "Klaymıt", question: "İklim", example: "The climate is changing rapidly.", exampleTR: "İklim hızla değişiyor." },
                     { answer: "Recycle", pronunciation: "Risaykıl", question: "Geri dönüşüm", example: "We should recycle paper and plastic.", exampleTR: "Kağıt ve plastiği geri dönüştürmeliyiz." },
                     { answer: "Global Warming", pronunciation: "Globıl Worming", question: "Küresel Isınma", example: "Global warming causes melting ice.", exampleTR: "Küresel ısınma buzların erimesine neden olur." },
@@ -384,7 +506,12 @@ var gameData = {
                     { answer: "Waste", pronunciation: "Weyst", question: "Atık", example: "Do not throw waste in the river.", exampleTR: "Nehre atık atmayın." },
                     { answer: "Nature", pronunciation: "Neyçır", question: "Doğa", example: "I love spending time in nature.", exampleTR: "Doğada vakit geçirmeyi severim." },
                     { answer: "Species", pronunciation: "Spişiz", question: "Türler", example: "Some species are in danger.", exampleTR: "Bazı türler tehlikede." },
-                    { answer: "Damage", pronunciation: "Demıc", question: "Hasar", example: "The storm caused a lot of damage.", exampleTR: "Fırtına çok hasara neden oldu." }
+                    { answer: "Damage", pronunciation: "Demıc", question: "Hasar", example: "The storm caused a lot of damage.", exampleTR: "Fırtına çok hasara neden oldu." },
+                    { answer: "Renewable", pronunciation: "Rinyuıbıl", question: "Yenilenebilir", example: "Use renewable energy sources.", exampleTR: "Yenilenebilir enerji kaynakları kullan.", isNew: true },
+                    { answer: "Deforestation", pronunciation: "Diforist eyşın", question: "Ormanların yok edilmesi", example: "Deforestation is a major problem.", exampleTR: "Ormanların yok edilmesi büyük bir sorun.", isNew: true },
+                    { answer: "Sustainable", pronunciation: "Sısteynıbıl", question: "Sürdürülebilir", example: "We need sustainable development.", exampleTR: "Sürdürülebilir kalkınmaya ihtiyaç var.", isNew: true },
+                    { answer: "Conservation", pronunciation: "Konsırveyşın", question: "Koruma", example: "Wildlife conservation is important.", exampleTR: "Vahşi yaşam koruması önemlidir.", isNew: true },
+                    { answer: "Ecosystem", pronunciation: "Ikosistım", question: "Ekosistem", example: "The ecosystem is balanced.", exampleTR: "Ekosistem dengeli.", isNew: true }
                 ]
             },
             {
@@ -510,7 +637,12 @@ var gameData = {
                     { answer: "Hypothesis", pronunciation: "Haypathısis", question: "Hipotez", example: "Test the hypothesis.", exampleTR: "Hipotezi test et." },
                     { answer: "Phenomenon", pronunciation: "Finamınan", question: "Olgu/Fenomen", example: "It is a natural phenomenon.", exampleTR: "Bu doğal bir olgudur." },
                     { answer: "Strategy", pronunciation: "Stretıci", question: "Strateji", example: "We have a long-term strategy.", exampleTR: "Uzun vadeli bir stratejimiz var." },
-                    { answer: "Analysis", pronunciation: "Enelısis", question: "Analiz", example: "The analysis is detailed.", exampleTR: "Analiz detaylı." }
+                    { answer: "Analysis", pronunciation: "Enelısis", question: "Analiz", example: "The analysis is detailed.", exampleTR: "Analiz detaylı." },
+                    { answer: "Paradigm", pronunciation: "Peradaym", question: "Paradigma", example: "A new paradigm shift.", exampleTR: "Yeni bir paradigma kayması.", isNew: true },
+                    { answer: "Methodology", pronunciation: "Methadolaci", question: "Metodoloji", example: "Our research methodology.", exampleTR: "Araştırma metodolojimiz.", isNew: true },
+                    { answer: "Criterion", pronunciation: "Kraytıriın", question: "Kriter", example: "What is the selection criterion?", exampleTR: "Seçim kriteri nedir?", isNew: true },
+                    { answer: "Coherence", pronunciation: "Kouırıns", question: "Tutarlılık", example: "Maintain coherence in your argument.", exampleTR: "Argümanında tutarlılığı koru.", isNew: true },
+                    { answer: "Ambiguity", pronunciation: "Embigyuiti", question: "Belirsizlik", example: "Avoid ambiguity in statements.", exampleTR: "İfadelerde belirsizlikten kaçın.", isNew: true }
                 ]
             },
             {
@@ -602,7 +734,12 @@ var gameData = {
                     { answer: "Paradox", pronunciation: "Perıdaks", question: "Paradoks", example: "This is a paradox.", exampleTR: "Bu bir paradoks." },
                     { answer: "Rational", pronunciation: "Reşınıl", question: "Rasyonel", example: "Be rational.", exampleTR: "Rasyonel ol." },
                     { answer: "Moral", pronunciation: "Morıl", question: "Ahlaki", example: "A moral dilemma.", exampleTR: "Ahlaki bir ikilem." },
-                    { answer: "Wisdom", pronunciation: "Wizdım", question: "Bilgelik", example: "Age brings wisdom.", exampleTR: "Yaş bilgelik getirir." }
+                    { answer: "Wisdom", pronunciation: "Wizdım", question: "Bilgelik", example: "Age brings wisdom.", exampleTR: "Yaş bilgelik getirir." },
+                    { answer: "Virtue", pronunciation: "Vörçu", question: "Erdem", example: "Honesty is a virtue.", exampleTR: "Dürüstlük bir erdemdir.", isNew: true },
+                    { answer: "Justice", pronunciation: "Castis", question: "Adalet", example: "We demand justice.", exampleTR: "Adalet istiyoruz.", isNew: true },
+                    { answer: "Truth", pronunciation: "Truth", question: "Hakikat/Gerçek", example: "Seek the truth.", exampleTR: "Hakikati ara.", isNew: true },
+                    { answer: "Reasoning", pronunciation: "Rizıning", question: "Akıl yürütme", example: "Use logical reasoning.", exampleTR: "Mantıksal akıl yürütme kullan.", isNew: true },
+                    { answer: "Dilemma", pronunciation: "Dilemı", question: "İkilem", example: "A moral dilemma.", exampleTR: "Ahlaki bir ikilem.", isNew: true }
                 ]
             },
             {
@@ -695,7 +832,7 @@ var gameData = {
                     { answer: "South Korea", pronunciation: "Sauth Koriya", question: "Güney Kore", example: "Seoul is a big city in South Korea.", exampleTR: "Seul, Güney Kore'de büyük bir şehirdir." },
                     { answer: "Italy", pronunciation: "İtaly", question: "İtalya", example: "Pizza comes from Italy.", exampleTR: "Pizza İtalya'dan gelir." },
                     { answer: "Spain", pronunciation: "Sapeyn", question: "İspanya", example: "They speak Spanish in Spain.", exampleTR: "İspanya'da İspanyolca konuşurlar." },
-                    { answer: "Germany", pronunciation: "Cörmıny", question: "Almanya", example: "Berlin is the capital of Germany.", exampleTR: "Berlin Almanya'nın başkentidir." },
+                    { answer: "Germany", pronunciation: "Cörmıny", question: "Almanya", example: "Berlin is the capital of Germany.", exampleTR: "Berlin Almanya'ın başkentidir." },
                     { answer: "Turkish", pronunciation: "Törkiş", question: "Türk/Türkçe", example: "He speaks Turkish fluently.", exampleTR: "O akıcı bir şekilde Türkçe konuşur." },
                     { answer: "German", pronunciation: "Cörmın", question: "Alman/Almanca", example: "German is a difficult language.", exampleTR: "Almanca zor bir dildir." },
                     { answer: "Spanish", pronunciation: "Speniş", question: "İspanyol/İspanyolca", example: "She is learning Spanish.", exampleTR: "O İspanyolca öğreniyor." },
@@ -703,10 +840,15 @@ var gameData = {
                     { answer: "Capital", pronunciation: "Kepitıl", question: "Başkent", example: "Ankara is the capital of Türkiye.", exampleTR: "Ankara Türkiye'nin başkentidir." },
                     { answer: "Language", pronunciation: "Lengwıc", question: "Dil", example: "English is a global language.", exampleTR: "İngilizce küresel bir dildir." },
                     { answer: "Native language", pronunciation: "Neytiv lengwıc", question: "Ana dil", example: "My native language is Turkish.", exampleTR: "Ana dilim Türkçe." },
-                    { answer: "Official language", pronunciation: "Ofişıl lengwıc", question: "Resmi dil", example: "The official language of Brazil is Portuguese.", exampleTR: "Brezilya'nın resmi dili Portekizcedir." },
+                    { answer: "Official language", pronunciation: "Ofişıl lengwıc", question: "Resmi dil", example: "The official language of Brazil is Portuguese.", exampleTR: "Brezilya'ın resmi dili Portekizcedir." },
                     { answer: "Nationality", pronunciation: "Neşıneliti", question: "Milliyet", example: "What is your nationality?", exampleTR: "Milliyetin nedir?" },
-                    { answer: "Citizen", pronunciation: "Sitizın", question: "Vatandaş", example: "He is a Turkish citizen.", exampleTR: "O bir Türk vatandaşı." },
-                    { answer: "Turkic states", pronunciation: "Törkik steyts", question: "Türkî devletler", example: "The Turkic states share similar cultures.", exampleTR: "Türkî devletler benzer kültürleri paylaşır." }
+                    { answer: "Citizen", pronunciation: "Sitizın", question: "Vatan daş", example: "He is a Turkish citizen.", exampleTR: "O bir Türk vatandaşı." },
+                    { answer: "Turkic states", pronunciation: "Törkik steyts", question: "Türkî devletler", example: "The Turkic states share similar cultures.", exampleTR: "Türkî devletler benzer kültürleri paylaşır." },
+                    { answer: "Portugal", pronunciation: "Portıgıl", question: "Portekiz", example: "Portugal is in Western Europe.", exampleTR: "Portekiz Batı Avrupa'dadır.", isNew: true },
+                    { answer: "Greece", pronunciation: "Gris", question: "Yunanistan", example: "Athens is the capital of Greece.", exampleTR: "Atina Yunanistan'ın başkentidir.", isNew: true },
+                    { answer: "Sweden", pronunciation: "Swidın", question: "İsveç", example: "Sweden is a Scandinavian country.", exampleTR: "İsveç bir İskandinav ülkesidir.", isNew: true },
+                    { answer: "Arabic", pronunciation: "Erebik", question: "Arapça", example: "Arabic is spoken in many countries.", exampleTR: "Arapça birçok ülkede konuşulur.", isNew: true },
+                    { answer: "Border", pronunciation: "Bordır", question: "Sınır", example: "The border is closed.", exampleTR: "Sınır kapalı.", isNew: true }
                 ]
             },
             {

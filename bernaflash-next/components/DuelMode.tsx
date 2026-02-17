@@ -4,6 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logGameActivity } from '@/lib/gameActivityLogger';
 import { speak } from '@/lib/textToSpeech';
+import { soundGenerator } from '@/lib/soundGenerator';
+import confetti from 'canvas-confetti';
+import { selectWord } from '@/lib/wordSelector';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface DuelModeProps {
     vocabulary: any;
@@ -20,15 +24,22 @@ export default function DuelMode({ vocabulary, level, onBack }: DuelModeProps) {
     const [teamAScore, setTeamAScore] = useState(0);
     const [teamBScore, setTeamBScore] = useState(0);
     const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-    const [phase, setPhase] = useState<'countdown' | 'active' | 'result'>('countdown');
+    const [phase, setPhase] = useState<'countdown' | 'active' | 'result' | 'gameOver'>('countdown');
     const [countdown, setCountdown] = useState(3);
     const [lockout, setLockout] = useState<{ A: boolean; B: boolean }>({ A: false, B: false });
     const [winner, setWinner] = useState<'A' | 'B' | null>(null);
     const [roundMessage, setRoundMessage] = useState<string>('');
     const [optionsOrder, setOptionsOrder] = useState<number[]>([]); // To ensure same order for both
+    const [gameWinner, setGameWinner] = useState<'A' | 'B' | null>(null);
+    const [usedWordIds, setUsedWordIds] = useState<Set<string>>(new Set());
+
+    const [roundNumber, setRoundNumber] = useState(1);
+    const MAX_ROUNDS = 10;
 
     const categories = vocabulary?.levelData?.[level] || [];
     const allWords = categories.flatMap((cat: any) => cat.pool || []);
+
+
 
     // Initial setup
     useEffect(() => {
@@ -45,9 +56,25 @@ export default function DuelMode({ vocabulary, level, onBack }: DuelModeProps) {
         setLockout({ A: false, B: false });
         setWinner(null);
         setRoundMessage('');
+        soundGenerator.playCountdown();
 
-        // Prepare Question
-        const word = allWords[Math.floor(Math.random() * allWords.length)];
+        // Use smart word selection
+        const word = selectWord(allWords, usedWordIds);
+
+        if (!word) {
+            setUsedWordIds(new Set());
+            const resetWord = selectWord(allWords);
+            if (!resetWord) return;
+            setUsedWordIds(new Set([resetWord.answer]));
+            generateQuestionFromWord(resetWord);
+            return;
+        }
+
+        setUsedWordIds(prev => new Set(prev).add(word.answer));
+        generateQuestionFromWord(word);
+    };
+
+    const generateQuestionFromWord = (word: any) => {
 
         // Generate options (1 correct + 3 distractors)
         const distractors = allWords
@@ -75,29 +102,176 @@ export default function DuelMode({ vocabulary, level, onBack }: DuelModeProps) {
         }, 1000);
     };
 
+    const celebrateWinner = (winningTeam: 'A' | 'B') => {
+        const teamColor = winningTeam === 'A' ? '#60A5FA' : '#F87171'; // blue-400 or red-400
+        const duration = 5000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+        function randomInRange(min: number, max: number) {
+            return Math.random() * (max - min) + min;
+        }
+
+        const interval: any = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+
+            // Konfeti patlaması (soldan)
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                colors: [teamColor, '#FFD700', '#FFF'],
+            }));
+
+            // Konfeti patlaması (sağdan)
+            confetti(Object.assign({}, defaults, {
+                particleCount,
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                colors: [teamColor, '#FFD700', '#FFF'],
+            }));
+        }, 250);
+
+        // Havai fişek efekti
+        setTimeout(() => {
+            const count = 200;
+            const defaults2 = {
+                origin: { y: 0.7 },
+                zIndex: 9999
+            };
+
+            function fire(particleRatio: number, opts: any) {
+                confetti(Object.assign({}, defaults2, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, {
+                spread: 26,
+                startVelocity: 55,
+                colors: [teamColor],
+            });
+            fire(0.2, {
+                spread: 60,
+                colors: ['#FFD700'],
+            });
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91,
+                scalar: 0.8,
+                colors: ['#FFF'],
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 25,
+                decay: 0.92,
+                scalar: 1.2,
+                colors: [teamColor],
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 45,
+                colors: ['#FFD700'],
+            });
+        }, 500);
+    };
+
     const handleAnswer = (team: 'A' | 'B', isCorrect: boolean) => {
         if (phase !== 'active' || lockout[team]) return;
 
+        // Track word play
+        if (currentQuestion && isCorrect) {
+            incrementPlayCount(currentQuestion.word.answer);
+        }
+
         if (isCorrect) {
             // WIN CASE
-            if (team === 'A') setTeamAScore(prev => prev + 1);
-            else setTeamBScore(prev => prev + 1);
+            let newScore = 0;
+            if (team === 'A') {
+                newScore = teamAScore + 1;
+                setTeamAScore(newScore);
+            } else {
+                newScore = teamBScore + 1;
+                setTeamBScore(newScore);
+            }
 
+            setWinner(team);
             setWinner(team);
             setRoundMessage(`${team === 'A' ? 'TEAM A' : 'TEAM B'} WINS!`);
             setPhase('result');
+            soundGenerator.playCorrect();
 
-            // Auto restart after delay
-            setTimeout(startNewRound, 2000);
+            // Check if game over (MAX_ROUNDS reached)
+            if (roundNumber >= MAX_ROUNDS) {
+                // Determine Winner
+                let finalWinner: 'A' | 'B' | null = null;
+                if (newScore > (team === 'A' ? teamBScore : teamAScore)) {
+                    finalWinner = team;
+                } else if ((team === 'A' ? teamBScore : teamAScore) > newScore) {
+                    finalWinner = team === 'A' ? 'B' : 'A';
+                }
+
+                // If draw, maybe extra round? For now just show draw or simple logic
+                // Let's assume high score wins, if equal it's a draw (handled by UI)
+
+                if (newScore === (team === 'A' ? teamBScore : teamAScore)) {
+                    // Draw case - maybe add one more round? 
+                    // OR just show DRAW. User asked for "winner determined".
+                    // Let's implement simple Tie-Breaker: Continue until someone wins a point
+                    setRoundNumber(prev => prev + 1); // Extra round
+                    setTimeout(startNewRound, 2000);
+                    return;
+                }
+
+                setGameWinner(finalWinner);
+                setPhase('gameOver');
+                if (finalWinner) celebrateWinner(finalWinner);
+                soundGenerator.playWin();
+
+            } else {
+                // Next Round
+                setRoundNumber(prev => prev + 1);
+                setTimeout(startNewRound, 2000);
+            }
         } else {
             // LOSE CASE (Lockout)
             setLockout(prev => ({ ...prev, [team]: true }));
 
             // Check if BOTH are locked out
             if (lockout[team === 'A' ? 'B' : 'A']) {
-                setRoundMessage('NO POINTS!');
-                setPhase('result');
-                setTimeout(startNewRound, 2000);
+                if (lockout[team === 'A' ? 'B' : 'A']) {
+                    setRoundMessage('NO POINTS!');
+                    setPhase('result');
+                    soundGenerator.playWrong();
+
+                    // Even nicely, if no one gets points, we still move to next round or repeat?
+                    // Let's move to next round but don't increment score.
+                    if (roundNumber >= MAX_ROUNDS) {
+                        // Check scores for game over
+                        let finalWinner: 'A' | 'B' | null = null;
+                        if (teamAScore > teamBScore) finalWinner = 'A';
+                        else if (teamBScore > teamAScore) finalWinner = 'B';
+
+                        if (teamAScore === teamBScore) {
+                            // Draw - Extra Round
+                            setRoundNumber(prev => prev + 1);
+                            setTimeout(startNewRound, 2000);
+                            return;
+                        }
+
+                        setGameWinner(finalWinner);
+                        setPhase('gameOver');
+                        if (finalWinner) celebrateWinner(finalWinner);
+                        soundGenerator.playWin();
+                    } else {
+                        setRoundNumber(prev => prev + 1);
+                        setTimeout(startNewRound, 2000);
+                    }
+                }
             }
         }
     };
@@ -138,6 +312,68 @@ export default function DuelMode({ vocabulary, level, onBack }: DuelModeProps) {
                         <div className="text-white text-2xl bg-white/10 px-6 py-2 rounded-xl border border-white/20">
                             {currentQuestion.word.answer} = {currentQuestion.word.question}
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Game Over Overlay */}
+            <AnimatePresence>
+                {phase === 'gameOver' && gameWinner && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-lg pointer-events-none"
+                    >
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.1, 1],
+                                rotate: [0, 5, -5, 0],
+                            }}
+                            transition={{
+                                duration: 0.5,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                            }}
+                            className={`text-9xl font-black mb-8 drop-shadow-[0_0_50px_rgba(255,255,255,0.5)] ${gameWinner === 'A' ? 'text-blue-400' : 'text-red-400'
+                                }`}
+                        >
+                            🏆
+                        </motion.div>
+                        <motion.div
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className={`text-7xl font-bold mb-4 drop-shadow-lg ${gameWinner === 'A' ? 'text-blue-400' : 'text-red-400'
+                                }`}
+                        >
+                            TEAM {gameWinner} KAZANDI!
+                        </motion.div>
+                        <motion.div
+                            initial={{ y: 50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.5 }}
+                            className="text-white text-4xl font-bold mt-4"
+                        >
+                            Final Skor: Team A ({teamAScore}) - Team B ({teamBScore})
+                        </motion.div>
+
+
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 2, type: "spring" }}
+                            onClick={() => {
+                                setTeamAScore(0);
+                                setTeamBScore(0);
+                                setGameWinner(null);
+                                setRoundNumber(1);
+                                startNewRound();
+                            }}
+                            className="mt-8 px-12 py-4 bg-white text-black font-black text-2xl rounded-full hover:scale-105 active:scale-95 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] z-50 pointer-events-auto cursor-pointer"
+                        >
+                            YENİ OYUN
+                        </motion.button>
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -233,12 +469,16 @@ export default function DuelMode({ vocabulary, level, onBack }: DuelModeProps) {
                 </div>
 
                 {/* VS Badge Center */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-white rounded-full flex items-center justify-center z-10 font-black text-2xl text-black shadow-[0_0_20px_rgba(255,255,255,0.5)]">
-                    VS
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4 z-10 pointer-events-none">
+                    <div className="bg-white/10 backdrop-blur-md px-4 py-1 rounded-full border border-white/20 text-white/80 text-sm font-bold shadow-lg">
+                        ROUND {Math.min(roundNumber, 10)} / 10
+                    </div>
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center font-black text-2xl text-black shadow-[0_0_20px_rgba(255,255,255,0.5)]">
+                        VS
+                    </div>
                 </div>
             </div>
-
-
         </div>
+
     );
 }

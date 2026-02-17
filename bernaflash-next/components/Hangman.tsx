@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
 import { speak } from '@/lib/textToSpeech';
+import { selectWord } from '@/lib/wordSelector';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface HangmanProps {
     vocabulary: any;
@@ -15,6 +17,7 @@ export default function Hangman({ vocabulary, level, onBack }: HangmanProps) {
     const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set());
     const [wrongGuesses, setWrongGuesses] = useState(0);
     const [score, setScore] = useState(0);
+    const [usedWordIds, setUsedWordIds] = useState<Set<string>>(new Set());
     const maxWrong = 6;
 
     const categories = vocabulary?.levelData?.[level] || [];
@@ -22,8 +25,23 @@ export default function Hangman({ vocabulary, level, onBack }: HangmanProps) {
 
     const startNewWord = () => {
         if (!allWords.length) return;
-        const word = allWords[Math.floor(Math.random() * allWords.length)];
-        setCurrentWord(word);
+
+        // Use smart word selection
+        const word = selectWord(allWords, usedWordIds);
+
+        if (!word) {
+            // If no word selected, reset the pool and try again
+            setUsedWordIds(new Set());
+            const resetWord = selectWord(allWords);
+            if (!resetWord) return;
+
+            setCurrentWord(resetWord);
+            setUsedWordIds(new Set([resetWord.answer]));
+        } else {
+            setCurrentWord(word);
+            setUsedWordIds(prev => new Set(prev).add(word.answer));
+        }
+
         setGuessedLetters(new Set());
         setWrongGuesses(0);
     };
@@ -165,6 +183,10 @@ export default function Hangman({ vocabulary, level, onBack }: HangmanProps) {
                                 <button
                                     onClick={() => {
                                         if (isWon) setScore(score + 10);
+                                        // Track that this word was played
+                                        if (currentWord) {
+                                            incrementPlayCount(currentWord.answer);
+                                        }
                                         startNewWord();
                                     }}
                                     className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:translate-y-[-2px]"

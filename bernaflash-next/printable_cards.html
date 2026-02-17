@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Öğrenci Şifre Kartları</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 210mm;
+            /* A4 width */
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border: 2px dashed #ccc;
+            padding: 20px;
+            page-break-inside: avoid;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .school-name {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .student-class {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 5px;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #111;
+        }
+
+        .credentials {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: inline-block;
+            width: 90%;
+            border: 1px solid #e2e8f0;
+        }
+
+        .cred-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .label {
+            color: #64748b;
+        }
+
+        .value {
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .instructions {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 15px;
+            background: #4f46e5;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="no-print">
+        <h1>Öğrenci Şifre Kartları</h1>
+        <p style="text-align: center; margin-bottom: 30px; color: #666;">
+            Bu sayfayı yazdırın (Ctrl+P). Her sayfada 8-10 kart olacak şekilde ayarlanmıştır. Kesik çizgi yerlerinden
+            keserek öğrencilere dağıtabilirsiniz.
+            <br>Excel dosyası (CSV) da ayrıca oluşturulmuştur.
+        </p>
+        <button onclick="window.print()" class="btn">🖨️ Yazdır</button>
+    </div>
+
+    <div class="container" id="cardContainer">
+        <!-- Cards will be generated here -->
+    </div>
+
+    <script>
+        const students = [
+            // 9-B
+            { class: "9-B", no: 375, name: "KÜBRANUR ÇİFTÇİ", pass: "2847" },
+            { class: "9-B", no: 420, name: "ZEKİ HAN EKMEKÇİ", pass: "5193" },
+            { class: "9-B", no: 438, name: "SÜMEYRA TORUN", pass: "7264" },
+            { class: "9-B", no: 519, name: "SUDE TOKTAŞ", pass: "3851" },
+            { class: "9-B", no: 529, name: "SACİDE KILIÇASLAN", pass: "9417" },
+            { class: "9-B", no: 534, name: "RAMAZAN ALİ", pass: "6285" },
+            { class: "9-B", no: 562, name: "FEYZA TOPAL", pass: "1749" },
+            { class: "9-B", no: 563, name: "TALHA AKŞEKER", pass: "8436" },
+            { class: "9-B", no: 585, name: "NEHİR AKIN", pass: "4927" },
+            { class: "9-B", no: 615, name: "BERAT KILIÇ", pass: "3158" },
+            { class: "9-B", no: 737, name: "ZEHRA OBUZ", pass: "7592" },
+            { class: "9-B", no: 743, name: "MÜZEFFER MERDELİ", pass: "2684" },
+            { class: "9-B", no: 748, name: "GÖKHAN ÖZCAN", pass: "9137" },
+            { class: "9-B", no: 752, name: "MURAT VATAN", pass: "4763" },
+            { class: "9-B", no: 755, name: "MUHAMMED ALİ DUYĞU", pass: "6241" },
+            { class: "9-B", no: 760, name: "MUSTAFA KARABACAK", pass: "8915" },
+            { class: "9-B", no: 776, name: "ERDEM ALTUN", pass: "3528" },
+            { class: "9-B", no: 835, name: "EDA ZEREN", pass: "7194" },
+            { class: "9-B", no: 888, name: "BAHADIR ULUTAŞ", pass: "5673" },
+            { class: "9-B", no: 962, name: "MUHAMMET EMİN TIRPANCİ", pass: "2948" },
+            { class: "9-B", no: 976, name: "KUMSAL AKA", pass: "8251" },
+            { class: "9-B", no: 1000, name: "BURAK TAŞDEMİR", pass: "4586" },
+            { class: "9-B", no: 1037, name: "ECRİN ÖZTÜRK", pass: "9374" },
+            { class: "9-B", no: 1039, name: "YAĞMUR ÖNDER", pass: "6129" },
+            { class: "9-B", no: 1040, name: "FATMA DEMİR", pass: "3865" },
+            { class: "9-B", no: 1048, name: "EMİR KAYRA BİLİCAN", pass: "7418" },
+            { class: "9-B", no: 1049, name: "HATİCE ZEHRA YILDIRIM", pass: "2596" },
+            { class: "9-B", no: 1053, name: "HAMZA ALİ DUYĞU", pass: "5842" },
+            // 9-E
+            { class: "9-E", no: 121, name: "YASEMİN ÖZTÜRK", pass: "9157" },
+            { class: "9-E", no: 169, name: "EMİN ÇAVDAR", pass: "4723" },
+            { class: "9-E", no: 180, name: "TİMUÇİN SAMET BALCİ", pass: "6381" },
+            { class: "9-E", no: 306, name: "FURKAN DUMANLAR", pass: "2954" },
+            { class: "9-E", no: 325, name: "ESMA KUZKAYA", pass: "8176" },
+            { class: "9-E", no: 353, name: "ŞAKİR ALİ", pass: "5429" },
+            { class: "9-E", no: 471, name: "NUMAN ÜZÜLMEZ", pass: "7638" },
+            { class: "9-E", no: 532, name: "YAKUP İSKENDER", pass: "3914" },
+            { class: "9-E", no: 549, name: "ASLAN SHASHUYEV", pass: "6285" },
+            { class: "9-E", no: 591, name: "MİKAİL KARAKAŞ", pass: "1847" },
+            { class: "9-E", no: 733, name: "MUHAMMED EMİN ALPSOY", pass: "9562" },
+            { class: "9-E", no: 774, name: "ZEHRA GÜNDÜZ", pass: "4218" },
+            { class: "9-E", no: 845, name: "KÜBRA DEMİR", pass: "7394" },
+            { class: "9-E", no: 853, "name": "GAMZE YILMAZ", pass: "2651" },
+            { class: "9-E", no: 859, name: "AZRA YILDIZ", pass: "5983" },
+            { class: "9-E", no: 879, name: "NİRA NUR KESKİN", pass: "8427" },
+            { class: "9-E", no: 914, name: "MURAT TURANOĞLU", pass: "3759" },
+            { class: "9-E", no: 919, name: "EMRE ARDAHANLI", pass: "6142" },
+            { class: "9-E", no: 924, name: "ASYA NİL DEMİR", pass: "9586" },
+            { class: "9-E", no: 957, name: "ECRİN DURU ÖZTOPÇU", pass: "4271" },
+            { class: "9-E", no: 974, name: "EYLÜL DEMİR", pass: "7835" },
+            { class: "9-E", no: 975, name: "BEYZANUR BAHAR DEMİR", pass: "2469" },
+            { class: "9-E", no: 1002, name: "EBRAR KOCAMAN", pass: "5917" },
+            { class: "9-E", no: 1035, name: "MUHAMMED EMİN ALĞAN", pass: "8354" },
+            { class: "9-E", no: 1044, name: "MEHTAP KORKMAZ", pass: "3682" },
+            { class: "9-E", no: 1050, name: "SUNA AKÇİMEN", pass: "7149" },
+            { class: "9-E", no: 1051, name: "ZEYNEP AKALAN", pass: "4926" },
+            { class: "9-E", no: 1072, name: "AYSİMA SEL", pass: "6573" },
+            // 11-C
+            { class: "11-C", no: 112, name: "MUSTAFA EGE HATAY", pass: "5842" },
+            { class: "11-C", no: 405, name: "ALPEREN AYKAÇ", pass: "9374" },
+            { class: "11-C", no: 423, name: "MUHAMMET ALİ ÖZKAN", pass: "2617" },
+            { class: "11-C", no: 440, name: "BİLGE DİLMAÇ", pass: "7159" },
+            { class: "11-C", no: 557, name: "ROBIIA MALIKZHONOVA", pass: "4283" },
+            { class: "11-C", no: 764, name: "NEFİSE ALİ", pass: "8946" },
+            { class: "11-C", no: 788, name: "MEDINA SHASHUYEVA", pass: "3571" },
+            { class: "11-C", no: 862, name: "KAYRA EFE KORKMAZ", pass: "6285" },
+            { class: "11-C", no: 935, name: "NAZLI YİLMAZ", pass: "1749" },
+            { class: "11-C", no: 1022, name: "YUSUF KAYĞISIZ", pass: "5163" },
+            { class: "11-C", no: 1034, name: "FIRAT DURDENİZ", pass: "9428" }
+        ];
+
+        const container = document.getElementById('cardContainer');
+
+        students.forEach(student => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="school-name">BernaFlash Ödev Sistemi</div>
+                <div class="student-class">${student.class}</div>
+                <div class="student-name">${student.name}</div>
+                <div class="credentials">
+                    <div class="cred-row">
+                        <span class="label">Okul No:</span>
+                        <span class="value">${student.no}</span>
+                    </div>
+                </div>
+                <div class="credentials">
+                    <div class="cred-row">
+                        <span class="label">Şifre:</span>
+                        <span class="value">${student.pass}</span>
+                    </div>
+                </div>
+                <div class="instructions">berna-flash.vercel.app adresinden giriş yapınız.</div>
+            `;
+            container.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>

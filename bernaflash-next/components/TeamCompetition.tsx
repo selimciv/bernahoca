@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { logGameActivity } from '@/lib/gameActivityLogger';
 import { speak } from '@/lib/textToSpeech';
+import { incrementPlayCount } from '@/lib/wordPlayTracker';
 
 interface TeamCompetitionProps {
     vocabulary: any;
@@ -86,6 +87,11 @@ export default function TeamCompetition({ vocabulary, level, onBack }: TeamCompe
 
     const handleAwardPoints = (teamIndex: number) => {
         if (!selectedCard) return;
+
+        // Track word play
+        if (selectedCard.question) {
+            incrementPlayCount(selectedCard.question.answer);
+        }
 
         const newTeams = [...teams];
         newTeams[teamIndex].score += selectedCard.question.points || (selectedCard.questionIndex + 1);

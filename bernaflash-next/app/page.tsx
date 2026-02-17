@@ -5,18 +5,28 @@ import { motion } from 'framer-motion';
 import PasswordModal from '@/components/PasswordModal';
 import HomeworkControl from '@/components/HomeworkControl';
 import HomeworkReport from '@/components/HomeworkReport';
+import HomeworkModeSelection from '@/components/HomeworkModeSelection';
+import StudentLogin from '@/components/StudentLogin';
+import AnonymousLogin from '@/components/AnonymousLogin';
+import StudentHomeworkDashboard from '@/components/StudentHomeworkDashboard';
+import AnonymousHomeworkDashboard from '@/components/AnonymousHomeworkDashboard';
+import TeacherHomeworkDashboard from '@/components/TeacherHomeworkDashboard';
 import ParticleBackground from '@/components/ParticleBackground';
 import PremiumButton from '@/components/PremiumButton';
 import GlassCard from '@/components/GlassCard';
 import FeedbackButton from '@/components/FeedbackButton';
 
-type ModalType = 'password-control' | 'password-report' | 'homework-control' | 'homework-report' | null;
+type ModalType = 'password-control' | 'password-report' | 'homework-control' | 'homework-report' | 'homework-mode' | 'homework-teacher-password' | 'homework-teacher-dashboard' | 'homework-student-login' | 'homework-student-dashboard' | 'homework-anonymous-login' | 'homework-anonymous-dashboard' | null;
 type Theme = 'gaming' | 'space' | 'neon';
 
 export default function LandingPage() {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [theme, setTheme] = useState<Theme>('gaming');
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+
+  // Homework system state
+  const [studentData, setStudentData] = useState<{ id: string; name: string; class: '9-B' | '9-E' | '11-C' } | null>(null);
+  const [anonymousData, setAnonymousData] = useState<{ name: string; sessionId: string } | null>(null);
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -170,7 +180,17 @@ export default function LandingPage() {
               👩‍🏫 Tools
             </motion.h2>
 
-            <div className="grid grid-cols-2 gap-2 md:gap-4 max-w-2xl mx-auto w-full">
+            <div className="grid grid-cols-3 gap-2 md:gap-4 max-w-3xl mx-auto w-full">
+              <PremiumButton
+                onClick={() => setActiveModal('homework-mode')}
+                icon="📚"
+                title="Homework"
+                description="Ödev Sistemi"
+                glowColor="cyan"
+                size="medium"
+                delay={1.1}
+              />
+
               <PremiumButton
                 onClick={openHomeworkControl}
                 icon="📝"
@@ -178,7 +198,7 @@ export default function LandingPage() {
                 description="Check Homework"
                 glowColor="purple"
                 size="medium"
-                delay={1.1}
+                delay={1.25}
               />
 
               <PremiumButton
@@ -188,7 +208,7 @@ export default function LandingPage() {
                 description="View Report"
                 glowColor="yellow"
                 size="medium"
-                delay={1.25}
+                delay={1.4}
               />
             </div>
           </div>
@@ -231,6 +251,77 @@ export default function LandingPage() {
 
       {activeModal === 'homework-report' && (
         <HomeworkReport onClose={() => setActiveModal(null)} />
+      )}
+
+      {/* Homework Mode Selection */}
+      {activeModal === 'homework-mode' && (
+        <HomeworkModeSelection
+          onClose={() => setActiveModal(null)}
+          onTeacherLogin={() => setActiveModal('homework-teacher-password')}
+          onStudentLogin={() => setActiveModal('homework-student-login')}
+          onAnonymousLogin={() => setActiveModal('homework-anonymous-login')}
+        />
+      )}
+
+      {/* Teacher Password */}
+      {activeModal === 'homework-teacher-password' && (
+        <PasswordModal
+          title="Öğretmen Girişi - Ödev Sistemi"
+          onSuccess={() => setActiveModal('homework-teacher-dashboard')}
+          onClose={() => setActiveModal(null)}
+        />
+      )}
+
+      {/* Teacher Dashboard */}
+      {activeModal === 'homework-teacher-dashboard' && (
+        <TeacherHomeworkDashboard onClose={() => setActiveModal(null)} />
+      )}
+
+      {/* Student Login */}
+      {activeModal === 'homework-student-login' && (
+        <StudentLogin
+          onClose={() => setActiveModal(null)}
+          onSuccess={(schoolNumber, name, studentClass) => {
+            setStudentData({ id: schoolNumber.toString(), name, class: studentClass });
+            setActiveModal('homework-student-dashboard');
+          }}
+        />
+      )}
+
+      {/* Student Dashboard */}
+      {activeModal === 'homework-student-dashboard' && studentData && (
+        <StudentHomeworkDashboard
+          onClose={() => {
+            setStudentData(null);
+            setActiveModal(null);
+          }}
+          studentId={studentData.id}
+          studentName={studentData.name}
+          studentClass={studentData.class}
+        />
+      )}
+
+      {/* Anonymous Login */}
+      {activeModal === 'homework-anonymous-login' && (
+        <AnonymousLogin
+          onClose={() => setActiveModal(null)}
+          onSuccess={(name, sessionId) => {
+            setAnonymousData({ name, sessionId });
+            setActiveModal('homework-anonymous-dashboard');
+          }}
+        />
+      )}
+
+      {/* Anonymous Dashboard */}
+      {activeModal === 'homework-anonymous-dashboard' && anonymousData && (
+        <AnonymousHomeworkDashboard
+          onClose={() => {
+            setAnonymousData(null);
+            setActiveModal(null);
+          }}
+          name={anonymousData.name}
+          sessionId={anonymousData.sessionId}
+        />
       )}
     </div>
   );
