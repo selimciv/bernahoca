@@ -117,7 +117,7 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold leading-none">Total:</span>
-              <span className="text-white font-bold text-sm leading-none font-mono">1,725</span>
+              <span className="text-white font-bold text-sm leading-none font-mono">1,118</span>
             </div>
           </motion.div>
         </div>
